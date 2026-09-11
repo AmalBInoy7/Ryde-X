@@ -152,10 +152,12 @@ input,select,textarea{font-family:inherit}
 .promo{border-radius:16px;padding:15px 17px;margin-bottom:15px;position:relative;overflow:hidden;
   background:var(--grad-teal);border:1px solid rgba(94,234,212,.3);
   display:flex;align-items:center;gap:13px}
+.promo.green{background:linear-gradient(135deg,#0F9D58,#0a7a44);
+  border-color:rgba(110,231,160,.35)}
 .promo .em{font-size:29px}
 .promo .tx{flex:1}
 .promo .tx h4{font-size:14.5px;font-weight:900}
-.promo .tx p{font-size:11px;opacity:.85;margin-top:3px}
+.promo .tx p{font-size:11px;opacity:.9;margin-top:3px}
 
 .route-card{padding:15px;border-radius:var(--r);background:var(--black-3);
   border:1px solid var(--line);margin-bottom:15px}
@@ -244,29 +246,228 @@ input,select,textarea{font-family:inherit}
   transition:.2s;flex-shrink:0}
 .chip.on{background:var(--yellow-soft);border-color:rgba(255,212,0,.5);color:var(--yellow)}
 
-.pkg-types{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:15px}
-.pkg-type{padding:12px 6px;border-radius:13px;text-align:center;cursor:pointer;
-  background:var(--black-3);border:1.5px solid var(--line);transition:.2s}
-.pkg-type.on{border-color:var(--yellow);
-  background:linear-gradient(135deg,rgba(255,212,0,.12),rgba(24,24,34,1))}
-.pkg-type .em{font-size:22px;display:block;margin-bottom:5px}
-.pkg-type .nm{font-size:10.5px;font-weight:800}
-.pkg-type .sub{font-size:9px;color:var(--muted);margin-top:2px}
+/* BUS CARDS (customer bus tracker) */
+.bus-search{
+  padding:12px 14px;border-radius:14px;background:var(--black-3);
+  border:1.5px solid var(--line);display:flex;align-items:center;gap:10px;
+  margin-bottom:15px}
+.bus-search .ico{font-size:18px;color:var(--muted)}
+.bus-search input{
+  flex:1;background:transparent;border:none;outline:none;
+  color:var(--text);font-size:14px;font-weight:600
+}
+.bus-search input::placeholder{color:#55555F;font-weight:500}
 
-.weight-opts{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:15px}
-.weight-opt{padding:11px 4px;border-radius:12px;text-align:center;cursor:pointer;
-  background:rgba(255,255,255,.04);border:1.5px solid var(--line);transition:.2s;
-  font-size:11px;font-weight:800}
-.weight-opt.on{border-color:var(--yellow);background:var(--yellow-soft);color:var(--yellow)}
-.weight-opt small{display:block;font-size:9px;color:var(--muted);font-weight:600;margin-top:2px}
+.bus-list-item{
+  padding:15px;border-radius:15px;background:var(--black-3);
+  border:1.5px solid var(--line);margin-bottom:10px;cursor:pointer;
+  transition:.2s;position:relative;overflow:hidden}
+.bus-list-item:hover{border-color:rgba(15,157,88,.55);transform:translateX(3px)}
+.bus-list-item .bi-top{
+  display:flex;align-items:center;gap:12px;margin-bottom:11px}
+.bus-list-item .bi-ic{
+  width:46px;height:46px;border-radius:13px;flex-shrink:0;
+  background:linear-gradient(135deg,#0F9D58,#0a7a44);
+  display:grid;place-items:center;font-size:22px;
+  border:1px solid rgba(110,231,160,.4)}
+.bus-list-item .bi-info{flex:1;min-width:0}
+.bus-list-item .bi-info h4{
+  font-size:14px;font-weight:900;display:flex;align-items:center;gap:7px}
+.bus-list-item .bi-info .rno{
+  font-family:ui-monospace,monospace;background:rgba(15,157,88,.2);
+  color:var(--green-light);font-size:11px;padding:2px 7px;border-radius:5px;
+  border:1px solid rgba(110,231,160,.35);letter-spacing:.5px}
+.bus-list-item .bi-info p{
+  font-size:11px;color:var(--muted);margin-top:4px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bus-list-item .bi-eta{text-align:right;flex-shrink:0}
+.bus-list-item .bi-eta .n{font-size:20px;font-weight:900;color:var(--yellow);letter-spacing:-.7px}
+.bus-list-item .bi-eta .l{font-size:9px;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.5px;font-weight:700;margin-top:2px}
+.bus-list-item .bi-foot{
+  display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.bus-tag{
+  font-size:9.5px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;
+  padding:4px 9px;border-radius:6px}
+.bus-tag.ok{background:rgba(34,197,94,.14);color:#6EE7A0;border:1px solid rgba(34,197,94,.35)}
+.bus-tag.late{background:rgba(239,68,68,.14);color:#FCA5A5;border:1px solid rgba(239,68,68,.35)}
+.bus-tag.warn{background:rgba(245,158,11,.14);color:#FCD34D;border:1px solid rgba(245,158,11,.35)}
+.bus-tag.n{background:rgba(255,255,255,.05);color:var(--muted);border:1px solid var(--line)}
+.bus-tag.gps{background:rgba(34,197,94,.1);color:#6EE7A0;border:1px solid rgba(34,197,94,.28)}
+.crowd{display:flex;gap:3px;align-items:center;font-size:9.5px;color:var(--muted);
+  font-weight:700;margin-left:auto}
+.crowd i{width:5px;height:12px;border-radius:2px;background:rgba(255,255,255,.14);display:block}
+.crowd i.f1{background:var(--green)}
+.crowd i.f2{background:var(--yellow)}
+.crowd i.f3{background:var(--red)}
 
-.parcel-hero{border-radius:16px;padding:16px;margin-bottom:15px;
-  background:var(--grad-orange);border:1px solid rgba(255,180,120,.3);
-  display:flex;align-items:center;gap:14px}
-.parcel-hero .em{font-size:34px}
-.parcel-hero .tx{flex:1}
-.parcel-hero .tx h4{font-size:15.5px;font-weight:900}
-.parcel-hero .tx p{font-size:11.5px;opacity:.9;margin-top:3px;line-height:1.5}
+/* BUS DETAIL — WHERE IS MY BUS */
+.bus-detail-head{
+  padding:16px;border-radius:16px;
+  background:linear-gradient(135deg,rgba(15,157,88,.20),rgba(24,24,34,.95));
+  border:1.5px solid rgba(110,231,160,.4);margin-bottom:15px}
+.bdh-top{display:flex;align-items:center;gap:13px;margin-bottom:13px}
+.bdh-icon{width:56px;height:56px;border-radius:16px;flex-shrink:0;
+  background:linear-gradient(135deg,#0F9D58,#0a7a44);
+  display:grid;place-items:center;font-size:28px;
+  border:2px solid rgba(110,231,160,.4);position:relative}
+.bdh-icon .live-dot{
+  position:absolute;bottom:-2px;right:-2px;width:16px;height:16px;
+  border-radius:50%;background:var(--green);border:2px solid var(--black-3);
+  box-shadow:0 0 0 0 rgba(15,157,88,.6);animation:ping 1.6s infinite}
+@keyframes ping{
+  0%{box-shadow:0 0 0 0 rgba(15,157,88,.6)}
+  70%{box-shadow:0 0 0 10px rgba(15,157,88,0)}
+  100%{box-shadow:0 0 0 0 rgba(15,157,88,0)}}
+.bdh-info{flex:1;min-width:0}
+.bdh-info h3{font-size:16px;font-weight:900;display:flex;align-items:center;gap:8px}
+.bdh-info p{font-size:12px;color:var(--muted);margin-top:4px}
+.bdh-status{
+  font-size:11px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;
+  padding:5px 11px;border-radius:8px}
+.bdh-status.live{background:rgba(15,157,88,.2);color:#6EE7A0;
+  border:1px solid rgba(110,231,160,.4)}
+.bdh-status.late{background:rgba(239,68,68,.16);color:#FCA5A5;
+  border:1px solid rgba(239,68,68,.4)}
+
+.bdh-stats{
+  display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin-top:6px}
+.bdh-stat{
+  padding:11px 8px;border-radius:11px;text-align:center;
+  background:rgba(255,255,255,.05);border:1px solid var(--line)}
+.bdh-stat .k{font-size:9px;font-weight:800;letter-spacing:.5px;
+  text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+.bdh-stat .v{font-size:16px;font-weight:900;color:var(--yellow);letter-spacing:-.4px}
+.bdh-stat .v small{font-size:10px;color:var(--muted);font-weight:600}
+.bdh-stat.g .v{color:#6EE7A0}
+.bdh-stat.v .v{color:var(--violet-light)}
+
+/* ROUTE TIMELINE */
+.route-timeline{
+  padding:16px;border-radius:16px;background:var(--black-3);
+  border:1px solid var(--line);margin-bottom:15px;position:relative}
+.tl-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:18px;padding-bottom:12px;border-bottom:1px dashed rgba(255,255,255,.1)}
+.tl-header h4{font-size:13px;font-weight:900;letter-spacing:-.2px}
+.tl-header .tl-live{
+  display:flex;align-items:center;gap:6px;font-size:10.5px;
+  font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:#6EE7A0}
+.tl-header .tl-live::before{
+  content:'';width:8px;height:8px;border-radius:50%;background:#6EE7A0;
+  box-shadow:0 0 0 0 rgba(15,157,88,.6);animation:ping 1.6s infinite}
+
+.tl-stop{
+  display:flex;align-items:flex-start;gap:13px;
+  padding:11px 0;position:relative;min-height:60px}
+.tl-stop .tl-marker{
+  width:26px;height:26px;border-radius:50%;flex-shrink:0;
+  display:grid;place-items:center;font-size:12px;font-weight:800;
+  border:2px solid var(--line);background:var(--black-3);
+  position:relative;z-index:2}
+.tl-stop .tl-marker.done{
+  background:var(--green);border-color:var(--green);color:#fff}
+.tl-stop .tl-marker.current{
+  background:var(--yellow);border-color:var(--yellow);color:#0A0A0F;
+  box-shadow:0 0 0 0 rgba(255,212,0,.6);animation:ping 1.6s infinite}
+.tl-stop .tl-marker.next{
+  background:var(--black-3);border-color:rgba(255,212,0,.5);color:var(--yellow)}
+.tl-stop .tl-marker.future{
+  background:var(--black-3);border-color:var(--line);color:var(--muted)}
+.tl-line{
+  position:absolute;left:12px;top:37px;bottom:-11px;width:2px;
+  background:var(--line);z-index:1}
+.tl-line.done{background:var(--green)}
+.tl-line.current{
+  background:repeating-linear-gradient(180deg,
+    var(--yellow) 0 4px,transparent 4px 8px)}
+.tl-stop:last-child .tl-line{display:none}
+.tl-body{flex:1;min-width:0;padding-top:2px}
+.tl-name{font-size:14px;font-weight:800;letter-spacing:-.2px;
+  display:flex;align-items:center;gap:8px}
+.tl-name.current-t{color:var(--yellow)}
+.tl-name .tl-code{
+  font-family:ui-monospace,monospace;font-size:10px;
+  color:var(--muted);background:rgba(255,255,255,.06);
+  padding:2px 6px;border-radius:4px}
+.tl-meta{
+  font-size:11.5px;color:var(--muted);margin-top:5px;
+  display:flex;gap:14px;flex-wrap:wrap}
+.tl-meta .arr{color:#6EE7A0;font-weight:700}
+.tl-meta .arr.missed{color:var(--muted);opacity:.7}
+.tl-meta .arr.current{color:var(--yellow);font-weight:800}
+.tl-meta .arr.soon{color:var(--violet-light);font-weight:700}
+.tl-meta b{color:var(--text);font-weight:700}
+.tl-delay{
+  font-size:10px;font-weight:800;letter-spacing:.4px;
+  padding:2px 7px;border-radius:5px;
+  background:rgba(239,68,68,.14);color:#FCA5A5;
+  border:1px solid rgba(239,68,68,.32);margin-left:6px}
+.tl-delay.on-time{
+  background:rgba(34,197,94,.14);color:#6EE7A0;
+  border-color:rgba(34,197,94,.32)}
+
+/* LIVE BUS MAP */
+.bus-live-map{
+  position:relative;border-radius:16px;overflow:hidden;
+  border:1px solid var(--line);margin-bottom:15px;background:#f2efe9;height:260px}
+.bus-live-map svg{display:block;width:100%;height:100%}
+.bus-live-map .blm-badge{
+  position:absolute;top:10px;left:10px;font-size:10px;font-weight:800;
+  letter-spacing:.5px;text-transform:uppercase;color:#137333;
+  background:rgba(255,255,255,.94);padding:5px 10px;border-radius:7px;
+  border:1px solid rgba(19,115,51,.3);display:flex;align-items:center;gap:6px}
+.bus-live-map .blm-badge::before{
+  content:'';width:7px;height:7px;border-radius:50%;background:#137333;
+  box-shadow:0 0 0 0 rgba(15,157,88,.6);animation:ping 1.6s infinite}
+.bus-live-map .blm-time{
+  position:absolute;top:10px;right:10px;font-size:10px;font-weight:800;
+  letter-spacing:.4px;color:#3c4043;background:rgba(255,255,255,.94);
+  padding:5px 10px;border-radius:7px;border:1px solid rgba(0,0,0,.08);
+  font-family:ui-monospace,monospace}
+
+/* QR driver etc */
+.upi-apps-list{display:flex;flex-direction:column;gap:10px;margin-bottom:15px}
+.upi-app-item{padding:14px 16px;border-radius:14px;background:var(--black-3);
+  border:1.5px solid var(--line);display:flex;align-items:center;gap:14px;
+  transition:.2s;cursor:pointer}
+.upi-app-item .app-logo{width:46px;height:46px;border-radius:12px;flex-shrink:0;
+  display:grid;place-items:center;font-size:24px;font-weight:900;
+  background:rgba(255,255,255,.06);border:1.5px solid var(--line)}
+.upi-app-item .app-info{flex:1;min-width:0}
+.upi-app-item .app-info h4{font-size:14px;font-weight:800}
+.upi-app-item .app-info p{font-size:11px;color:var(--muted);margin-top:2px}
+
+.upi-pin-sheet{padding:20px 0;
+  background:linear-gradient(180deg,rgba(24,24,34,.6),rgba(16,16,24,.9));
+  border-radius:20px;border:1px solid var(--line);margin-bottom:15px}
+.upi-pin-head{display:flex;align-items:center;gap:12px;padding:0 20px 18px;
+  border-bottom:1px solid var(--line);margin-bottom:18px}
+.upi-pin-head .app-logo{width:48px;height:48px;border-radius:14px;flex-shrink:0;
+  display:grid;place-items:center;font-size:24px;font-weight:900;
+  background:rgba(255,255,255,.06);border:1.5px solid var(--line)}
+.upi-pin-head .tx h4{font-size:15px;font-weight:900}
+.upi-pin-head .tx p{font-size:11px;color:var(--muted);margin-top:2px}
+.upi-pin-amt{text-align:center;margin-bottom:22px;padding:0 20px}
+.upi-pin-amt .k{font-size:10px;font-weight:800;letter-spacing:1px;
+  text-transform:uppercase;color:var(--violet-light);margin-bottom:6px}
+.upi-pin-amt .v{font-size:32px;font-weight:900;color:var(--yellow);letter-spacing:-1.2px;line-height:1}
+.upi-pin-amt .to{font-size:11.5px;color:var(--muted);margin-top:8px}
+.upi-pin-amt .to b{color:var(--text)}
+.upi-pin-lbl{text-align:center;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:14px}
+.upi-pin-lbl b{color:var(--yellow)}
+.upi-dots{display:flex;justify-content:center;gap:18px;margin-bottom:22px;padding:6px 0}
+.upi-dots span{width:16px;height:16px;border-radius:50%;
+  background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.2);transition:.2s}
+.upi-dots span.filled{background:var(--yellow);border-color:var(--yellow);transform:scale(1.08)}
+.upi-keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:0 18px 14px}
+.upi-keypad button{padding:16px 6px;border-radius:13px;
+  background:rgba(255,255,255,.05);border:1px solid var(--line);
+  font-size:22px;font-weight:800;color:var(--text);user-select:none}
+.upi-keypad button.fn{font-size:16px;color:var(--muted)}
+.upi-secure{display:flex;align-items:center;justify-content:center;gap:7px;
+  font-size:10.5px;color:var(--muted);font-weight:600}
+.upi-secure b{color:#6EE7A0}
 
 .driver-card{padding:16px;border-radius:16px;background:var(--black-3);
   border:1.5px solid var(--line);margin-bottom:12px;cursor:pointer;transition:.22s;
@@ -431,47 +632,29 @@ input,select,textarea{font-family:inherit}
 .pay-option .tx p{font-size:11.5px;color:var(--muted);line-height:1.4}
 .pay-option .arrow{font-size:20px;color:var(--muted);flex-shrink:0}
 
-.upi-apps-list{display:flex;flex-direction:column;gap:10px;margin-bottom:15px}
-.upi-app-item{padding:14px 16px;border-radius:14px;background:var(--black-3);
-  border:1.5px solid var(--line);display:flex;align-items:center;gap:14px;
-  transition:.2s;cursor:pointer}
-.upi-app-item .app-logo{width:46px;height:46px;border-radius:12px;flex-shrink:0;
-  display:grid;place-items:center;font-size:24px;font-weight:900;
-  background:rgba(255,255,255,.06);border:1.5px solid var(--line)}
-.upi-app-item .app-info{flex:1;min-width:0}
-.upi-app-item .app-info h4{font-size:14px;font-weight:800}
-.upi-app-item .app-info p{font-size:11px;color:var(--muted);margin-top:2px}
+.pkg-types{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:15px}
+.pkg-type{padding:12px 6px;border-radius:13px;text-align:center;cursor:pointer;
+  background:var(--black-3);border:1.5px solid var(--line);transition:.2s}
+.pkg-type.on{border-color:var(--yellow);
+  background:linear-gradient(135deg,rgba(255,212,0,.12),rgba(24,24,34,1))}
+.pkg-type .em{font-size:22px;display:block;margin-bottom:5px}
+.pkg-type .nm{font-size:10.5px;font-weight:800}
+.pkg-type .sub{font-size:9px;color:var(--muted);margin-top:2px}
 
-.upi-pin-sheet{padding:20px 0;
-  background:linear-gradient(180deg,rgba(24,24,34,.6),rgba(16,16,24,.9));
-  border-radius:20px;border:1px solid var(--line);margin-bottom:15px}
-.upi-pin-head{display:flex;align-items:center;gap:12px;padding:0 20px 18px;
-  border-bottom:1px solid var(--line);margin-bottom:18px}
-.upi-pin-head .app-logo{width:48px;height:48px;border-radius:14px;flex-shrink:0;
-  display:grid;place-items:center;font-size:24px;font-weight:900;
-  background:rgba(255,255,255,.06);border:1.5px solid var(--line)}
-.upi-pin-head .tx h4{font-size:15px;font-weight:900}
-.upi-pin-head .tx p{font-size:11px;color:var(--muted);margin-top:2px}
-.upi-pin-amt{text-align:center;margin-bottom:22px;padding:0 20px}
-.upi-pin-amt .k{font-size:10px;font-weight:800;letter-spacing:1px;
-  text-transform:uppercase;color:var(--violet-light);margin-bottom:6px}
-.upi-pin-amt .v{font-size:32px;font-weight:900;color:var(--yellow);letter-spacing:-1.2px;line-height:1}
-.upi-pin-amt .to{font-size:11.5px;color:var(--muted);margin-top:8px}
-.upi-pin-amt .to b{color:var(--text)}
-.upi-pin-lbl{text-align:center;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:14px}
-.upi-pin-lbl b{color:var(--yellow)}
-.upi-dots{display:flex;justify-content:center;gap:18px;margin-bottom:22px;padding:6px 0}
-.upi-dots span{width:16px;height:16px;border-radius:50%;
-  background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.2);transition:.2s}
-.upi-dots span.filled{background:var(--yellow);border-color:var(--yellow);transform:scale(1.08)}
-.upi-keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:0 18px 14px}
-.upi-keypad button{padding:16px 6px;border-radius:13px;
-  background:rgba(255,255,255,.05);border:1px solid var(--line);
-  font-size:22px;font-weight:800;color:var(--text);user-select:none}
-.upi-keypad button.fn{font-size:16px;color:var(--muted)}
-.upi-secure{display:flex;align-items:center;justify-content:center;gap:7px;
-  font-size:10.5px;color:var(--muted);font-weight:600}
-.upi-secure b{color:#6EE7A0}
+.weight-opts{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:15px}
+.weight-opt{padding:11px 4px;border-radius:12px;text-align:center;cursor:pointer;
+  background:rgba(255,255,255,.04);border:1.5px solid var(--line);transition:.2s;
+  font-size:11px;font-weight:800}
+.weight-opt.on{border-color:var(--yellow);background:var(--yellow-soft);color:var(--yellow)}
+.weight-opt small{display:block;font-size:9px;color:var(--muted);font-weight:600;margin-top:2px}
+
+.parcel-hero{border-radius:16px;padding:16px;margin-bottom:15px;
+  background:var(--grad-orange);border:1px solid rgba(255,180,120,.3);
+  display:flex;align-items:center;gap:14px}
+.parcel-hero .em{font-size:34px}
+.parcel-hero .tx{flex:1}
+.parcel-hero .tx h4{font-size:15.5px;font-weight:900}
+.parcel-hero .tx p{font-size:11.5px;opacity:.9;margin-top:3px;line-height:1.5}
 
 .qr-driver-box{padding:20px;border-radius:var(--r);
   background:linear-gradient(135deg,rgba(13,148,136,.18),rgba(24,24,34,.95));
@@ -725,6 +908,7 @@ td{padding:12px;border-bottom:1px solid rgba(255,255,255,.045);vertical-align:mi
   .veh-opt{padding:10px 4px}
   .veh-opt .em{font-size:22px}
   .veh-opt .nm{font-size:9.5px}
+  .bdh-stats{grid-template-columns:1fr 1fr 1fr}
 }
 </style>
 </head>
@@ -745,8 +929,8 @@ td{padding:12px;border-bottom:1px solid rgba(255,255,255,.045);vertical-align:mi
     <div class="brand">
       <div class="brand-mark">🛺</div>
       <h1><span>RydeX</span></h1>
-      <p>Rides · Parcels · Live Tracking — Delhi NCR</p>
-      <div class="tags"><span>Bike</span><span>Scooter</span><span>Auto</span><span>Cab</span><span>Parcel</span></div>
+      <p>Rides · Parcels · Live Bus Tracking — Delhi NCR</p>
+      <div class="tags"><span>Bike</span><span>Scooter</span><span>Auto</span><span>Cab</span><span>Parcel</span><span>Bus</span></div>
     </div>
     <div class="card pad">
       <div class="sec-title" style="margin-top:0">Choose your role</div>
@@ -900,6 +1084,70 @@ td{padding:12px;border-bottom:1px solid rgba(255,255,255,.045);vertical-align:mi
 
       <button class="btn btn-orange" id="btn-send-parcel">Send parcel →</button>
       <div style="height:110px"></div>
+    </div>
+
+    <!-- ============ BUS TRACKER (Where Is My Bus) ============ -->
+    <div class="pane" id="pane-buses">
+      <div class="promo green">
+        <div class="em">🚌</div>
+        <div class="tx">
+          <h4>Delhi Live Bus Tracker</h4>
+          <p>DTC + Cluster buses · Live GPS · Real-time arrival</p>
+        </div>
+      </div>
+
+      <div class="bus-search">
+        <span class="ico">🔍</span>
+        <input id="bus-search-input" placeholder="Search route number or stop…" />
+      </div>
+
+      <div class="sec-title">Nearby buses <span class="cnt" id="bus-count-lbl">0 buses</span></div>
+      <div id="bus-list"></div>
+      <div style="height:110px"></div>
+    </div>
+
+    <!-- ============ BUS DETAIL (Where Is My Bus detail view) ============ -->
+    <div class="pane" id="pane-bus-detail">
+      <div style="display:flex;align-items:center;gap:11px;margin-bottom:16px">
+        <button class="mini-btn" onclick="goPane('buses')">← Back</button>
+        <div style="flex:1">
+          <div style="font-size:15px;font-weight:900">Live bus tracking</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px">Where is my bus · Live GPS</div>
+        </div>
+      </div>
+
+      <div class="bus-detail-head">
+        <div class="bdh-top">
+          <div class="bdh-icon">🚌<span class="live-dot"></span></div>
+          <div class="bdh-info">
+            <h3 id="bd-route">Route 500</h3>
+            <p id="bd-vehicle">DL-1PC-3421 · DTC</p>
+          </div>
+          <span class="bdh-status live" id="bd-status">Live</span>
+        </div>
+        <div class="bdh-stats">
+          <div class="bdh-stat g"><div class="k">Speed</div><div class="v" id="bd-speed">28 <small>km/h</small></div></div>
+          <div class="bdh-stat v"><div class="k">Delay</div><div class="v" id="bd-delay">On time</div></div>
+          <div class="bdh-stat"><div class="k">Next ETA</div><div class="v" id="bd-eta">2 <small>min</small></div></div>
+        </div>
+      </div>
+
+      <div class="bus-live-map">
+        <svg viewBox="0 0 400 260" preserveAspectRatio="xMidYMid meet" id="bd-map"></svg>
+        <div class="blm-badge">Live GPS</div>
+        <div class="blm-time" id="bd-clock">--:--:--</div>
+      </div>
+
+      <div class="route-timeline">
+        <div class="tl-header">
+          <h4>Route progress</h4>
+          <span class="tl-live" id="tl-updated">Live · 2s ago</span>
+        </div>
+        <div id="tl-stops"></div>
+      </div>
+
+      <button class="btn btn-teal" id="btn-track-bus">🔔 Notify me when bus arrives</button>
+      <div style="height:100px"></div>
     </div>
 
     <div class="pane" id="pane-searching">
@@ -1119,6 +1367,7 @@ td{padding:12px;border-bottom:1px solid rgba(255,255,255,.045);vertical-align:mi
 
     <nav class="tabbar" id="cust-tabs">
       <button class="tab on" data-pane="book"><span class="i">🚕</span>Ride</button>
+      <button class="tab" data-pane="buses"><span class="i">🚌</span>Bus</button>
       <button class="tab" data-pane="parcel"><span class="i">📦</span>Parcel</button>
       <button class="tab" data-pane="rides"><span class="i">📋</span>Rides</button>
       <button class="tab" data-pane="profile"><span class="i">👤</span>Profile</button>
@@ -1292,6 +1541,7 @@ td{padding:12px;border-bottom:1px solid rgba(255,255,255,.045);vertical-align:mi
     <div class="admin-tabs" id="admin-tabs">
       <button class="atab on" data-apane="a-overview">📊 Overview</button>
       <button class="atab" data-apane="a-fleet">🛰️ Live Fleet</button>
+      <button class="atab" data-apane="a-buses">🚌 Buses</button>
       <button class="atab" data-apane="a-drivers">🧑‍✈️ Drivers</button>
       <button class="atab" data-apane="a-feedback">📣 Feedback</button>
     </div>
@@ -1352,6 +1602,38 @@ td{padding:12px;border-bottom:1px solid rgba(255,255,255,.045);vertical-align:mi
           <table>
             <thead><tr><th>Vehicle type</th><th>Active</th><th>Idle</th><th>On trip</th><th>Status</th></tr></thead>
             <tbody id="ad-fleet-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- BUS FLEET (admin) -->
+    <div class="apane" id="a-buses">
+      <div class="panel">
+        <h3>Live bus tracking <span class="sub" id="ad-bus-map-sub">28 DTC buses moving on Delhi routes</span></h3>
+        <div style="position:relative;border-radius:14px;overflow:hidden;
+          background:#f2efe9;border:1px solid var(--line);height:520px">
+          <svg viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice" id="ad-bus-map" style="width:100%;height:100%;display:block"></svg>
+          <div style="position:absolute;top:12px;right:12px;font-size:10px;font-weight:800;
+            letter-spacing:.6px;text-transform:uppercase;color:#137333;
+            background:rgba(255,255,255,.94);padding:6px 11px;border-radius:8px;
+            border:1px solid rgba(19,115,51,.3);display:flex;align-items:center;gap:6px">
+            <span style="width:7px;height:7px;border-radius:50%;background:#137333;
+              box-shadow:0 0 0 4px rgba(19,115,51,.2)"></span>Live GPS
+          </div>
+          <div style="position:absolute;bottom:12px;left:12px;font-size:10px;color:#5f6368;
+            background:rgba(255,255,255,.94);padding:7px 11px;border-radius:8px;
+            border:1px solid rgba(0,0,0,.08);font-weight:700">
+            🚌 Green bus markers show live position along route
+          </div>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>Bus fleet status <span class="sub">Real-time</span></h3>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Bus ID</th><th>Route</th><th>From → To</th><th>Progress</th><th>Speed</th><th>Delay</th><th>Status</th></tr></thead>
+            <tbody id="ad-buses-body"></tbody>
           </table>
         </div>
       </div>
@@ -1493,6 +1775,72 @@ const DRIVER_POOL = [
   {n:'Manoj Tiwari',  ic:'🧑‍🦱', r:4.9, langs:['Hindi','English'],           exp:10, trips:3120, phone:'+91 98110 12121'},
 ];
 
+/* ============================================================
+   BUS DATA — 28 DTC / Cluster buses with full route schedules
+   ============================================================ */
+const BUS_ROUTES = [
+  // route number, from, to, stop list (subset), operator
+  {rno:'500', from:'Nehru Place',    to:'Rohini Sec 22',  op:'DTC',
+    stops:['Nehru Place','AIIMS','Dhaula Kuan','Karol Bagh','Punjabi Bagh','Rohini West','Rohini Sec 22']},
+  {rno:'405', from:'Kashmere Gate',  to:'Badarpur',       op:'DTC',
+    stops:['Kashmere Gate','Red Fort','ITO','Lajpat Nagar','Badarpur']},
+  {rno:'764', from:'Anand Vihar',    to:'Najafgarh',      op:'Cluster',
+    stops:['Anand Vihar','Ghaziabad Vaishali','Pitampura','Janakpuri','Najafgarh']},
+  {rno:'623', from:'Shivaji Stadium',to:'IGI Airport',    op:'DTC',
+    stops:['Shivaji Stadium','Dhaula Kuan','IGI Airport T3']},
+  {rno:'990', from:'Connaught Place',to:'Dwarka Sec 21',  op:'Cluster',
+    stops:['Connaught Place','Janakpuri','Dwarka Sector 21']},
+  {rno:'419', from:'Old Delhi Stn',  to:'Mehrauli',       op:'DTC',
+    stops:['New Delhi Railway Stn','Chandni Chowk','AIIMS','Hauz Khas','Mehrauli']},
+  {rno:'534', from:'Lajpat Nagar',   to:'Noida Sec 62',   op:'Cluster',
+    stops:['Lajpat Nagar','Lotus Temple','Noida Sector 62']},
+  {rno:'218', from:'Karol Bagh',     to:'Saket',          op:'DTC',
+    stops:['Karol Bagh','Connaught Place','AIIMS','Hauz Khas','Saket']},
+  {rno:'892', from:'Rohini West',    to:'Hauz Khas',      op:'Cluster',
+    stops:['Rohini West','Pitampura','Karol Bagh','AIIMS','Hauz Khas']},
+  {rno:'174', from:'Pitampura',      to:'AIIMS',          op:'DTC',
+    stops:['Pitampura','Karol Bagh','Connaught Place','AIIMS']},
+  {rno:'442', from:'Janakpuri',      to:'Red Fort',       op:'Cluster',
+    stops:['Janakpuri','Karol Bagh','Chandni Chowk','Red Fort']},
+  {rno:'688', from:'Dwarka Sec 21',  to:'Chandni Chowk',  op:'DTC',
+    stops:['Dwarka Sector 21','Janakpuri','Karol Bagh','Chandni Chowk']},
+  {rno:'350', from:'IGI Airport T3', to:'New Delhi Stn',  op:'Cluster',
+    stops:['IGI Airport T3','Dhaula Kuan','Connaught Place','New Delhi Railway Stn']},
+  {rno:'102', from:'Gurugram',       to:'Dilli Haat INA', op:'DTC',
+    stops:['Gurugram Cyber City','Dilli Haat INA']},
+  {rno:'490', from:'Faridabad',      to:'Kashmere Gate',  op:'DTC',
+    stops:['Faridabad Sector 15','Saket','AIIMS','Connaught Place','Kashmere Gate']},
+  {rno:'579', from:'Saket',          to:'Dwarka Sec 21',  op:'Cluster',
+    stops:['Saket','Hauz Khas','Janakpuri','Dwarka Sector 21']},
+  {rno:'212', from:'Ghaziabad',      to:'Karol Bagh',     op:'DTC',
+    stops:['Ghaziabad Vaishali','Anand Vihar','Pitampura','Karol Bagh']},
+  {rno:'333', from:'Rohini',         to:'Badarpur',       op:'Cluster',
+    stops:['Rohini West','Pitampura','Karol Bagh','AIIMS','Badarpur']},
+  {rno:'447', from:'Noida Sec 62',   to:'Connaught Place',op:'DTC',
+    stops:['Noida Sector 62','Lotus Temple','Connaught Place']},
+  {rno:'781', from:'Gurugram',       to:'New Delhi Stn',  op:'DTC',
+    stops:['Gurugram Cyber City','Dhaula Kuan','New Delhi Railway Stn']},
+  {rno:'563', from:'Noida Sec 62',   to:'Lajpat Nagar',   op:'Cluster',
+    stops:['Noida Sector 62','Lotus Temple','Lajpat Nagar']},
+  {rno:'123', from:'Kashmere Gate',  to:'Rohini West',    op:'DTC',
+    stops:['Kashmere Gate','Red Fort','Pitampura','Rohini West']},
+  {rno:'304', from:'Dilli Haat INA', to:'Badarpur',       op:'DTC',
+    stops:['Dilli Haat INA','AIIMS','Saket','Badarpur']},
+  {rno:'625', from:'Chandni Chowk',  to:'Hauz Khas',      op:'Cluster',
+    stops:['Chandni Chowk','Connaught Place','AIIMS','Hauz Khas']},
+  {rno:'709', from:'Dwarka Sec 21',  to:'Gurugram',       op:'DTC',
+    stops:['Dwarka Sector 21','Janakpuri','Gurugram Cyber City']},
+  {rno:'847', from:'Faridabad',      to:'Noida Sec 62',   op:'Cluster',
+    stops:['Faridabad Sector 15','Saket','Lotus Temple','Noida Sector 62']},
+  {rno:'145', from:'Rohini West',    to:'Ghaziabad',      op:'DTC',
+    stops:['Rohini West','Pitampura','Anand Vihar','Ghaziabad Vaishali']},
+  {rno:'531', from:'Karol Bagh',     to:'Red Fort',       op:'Cluster',
+    stops:['Karol Bagh','Chandni Chowk','Red Fort']},
+];
+
+/* ============================================================
+   STATE
+   ============================================================ */
 const state = {
   role:'customer',
   phone:'9876543210',
@@ -1516,8 +1864,13 @@ const state = {
   currentOTP:'',
   resendTimer:null, resendSeconds:30,
   parcel:{type:'doc', weight:'sm', vehicle:'bike', pickup:'Connaught Place', drop:'Hauz Khas'},
+  // BUS
+  busFilter:'',
+  activeBus:null,
+  busTickIndex:0,
   timers:{},
   adminVehicles:[], adminBuses:[], adminParcels:[],
+  buses:[],
 };
 
 /* ============================================================
@@ -1578,7 +1931,7 @@ function randomPlate(veh){
 }
 
 /* ============================================================
-   PAYMENT SUCCESS SOUND (Paytm/GPay style chime)
+   PAYMENT SUCCESS SOUND
    ============================================================ */
 let audioCtx = null;
 function getAudioContext(){
@@ -1611,15 +1964,101 @@ function playPaymentSuccessSound(){
   const ctx = getAudioContext();
   if(!ctx) return;
   const now = ctx.currentTime + 0.02;
-  // Three-note ascending chime (like GPay / Paytm):
-  // A5 → D6 → G6 (a nice major arpeggio)
   playNote(ctx, now,        880,  0.32, 'sine',     0.32);
   playNote(ctx, now + 0.12, 1174, 0.34, 'sine',     0.34);
   playNote(ctx, now + 0.24, 1568, 0.55, 'sine',     0.30);
-  // Warm subharmonic layer
   playNote(ctx, now,        440,  0.55, 'triangle', 0.12);
-  // Light shimmer on the top note
   playNote(ctx, now + 0.24, 3136, 0.35, 'sine',     0.06);
+}
+
+/* ============================================================
+   BUS ENGINE
+   ============================================================ */
+function initBuses(){
+  state.buses = BUS_ROUTES.map(r=>{
+    // Build stop list with geo coords
+    const stops = r.stops.map((name,idx)=>{
+      const p = placeByName(name);
+      return { name, lat:p.lat, lng:p.lng, idx };
+    });
+    // Bus begins at a random progress along route
+    const startFrac = Math.random();
+    // Assign live delay in minutes (0 = on time, positive = late)
+    const delayMins = [0,0,0,1,1,2,3][Math.floor(Math.random()*7)];
+    // Assign speed
+    const speed = r.op === 'DTC' ? 22+Math.floor(Math.random()*10) : 18+Math.floor(Math.random()*12);
+    // Crowd level 1-3
+    const crowd = 1 + Math.floor(Math.random()*3);
+    // Bus ID / plate
+    const busId = `DL-1${r.op==='DTC'?'PC':'CC'}-${1000+Math.floor(Math.random()*8999)}`;
+    return {
+      id: busId,
+      rno: r.rno, from: r.from, to: r.to, op: r.op,
+      stops, progress: startFrac,
+      speedKmh: speed,
+      delayMins, crowd,
+      // The "current stop index" is floor((stops.length-1) * progress)
+      lastUpdate: Date.now(),
+      status: delayMins===0?'ok':delayMins<=2?'warn':'late',
+    };
+  });
+}
+function updateBusProgress(){
+  // Move buses slowly forward. Speed is arbitrary to look alive.
+  const now = Date.now();
+  state.buses.forEach(b=>{
+    const dt = (now - b.lastUpdate) / 1000; // seconds
+    b.lastUpdate = now;
+    // progress moves at ~0.0006 per second (a full trip in ~28 min)
+    const speedFrac = 0.0006;
+    b.progress += speedFrac * dt;
+    if(b.progress >= 1){
+      // Recycle: swap from/to and start from 0
+      [b.from, b.to] = [b.to, b.from];
+      b.stops = b.stops.slice().reverse().map((s,i)=>({...s, idx:i}));
+      b.progress = 0;
+    }
+    // Occasionally jitter delay
+    if(Math.random() < 0.02){
+      b.delayMins = Math.max(0, Math.min(4, b.delayMins + (Math.random()<0.5?-1:1)));
+      b.status = b.delayMins===0?'ok':b.delayMins<=2?'warn':'late';
+    }
+  });
+}
+function busCurrentStop(b){
+  const total = b.stops.length - 1;
+  const idx = Math.min(total, Math.floor(b.progress * total));
+  return idx;
+}
+function busPosition(b){
+  // Interpolate between two stops using lat/lng
+  const total = b.stops.length - 1;
+  const idx = busCurrentStop(b);
+  const nextIdx = Math.min(total, idx + 1);
+  const frac = (b.progress * total) - idx;
+  const a = b.stops[idx], c = b.stops[nextIdx];
+  return {
+    lat: a.lat + (c.lat - a.lat) * frac,
+    lng: a.lng + (c.lng - a.lng) * frac,
+    stopIdx: idx,
+    nextIdx: nextIdx,
+  };
+}
+function busNextStopETA(b){
+  const total = b.stops.length - 1;
+  const idx = busCurrentStop(b);
+  const nextIdx = Math.min(total, idx + 1);
+  // Remaining fraction to next stop
+  const frac = (b.progress * total) - idx;
+  const remainingFrac = (1 - frac) + (nextIdx - idx - 1);
+  // Each stop segment ~ 5 min on average
+  return Math.max(1, Math.round(remainingFrac * 5));
+}
+function busTotalETA(b){
+  const total = b.stops.length - 1;
+  const idx = busCurrentStop(b);
+  const frac = (b.progress * total) - idx;
+  return Math.max(2, Math.round(((total - idx - frac) * 5)));
 }
 
 /* ============================================================
@@ -1739,7 +2178,7 @@ function bindTabs(sel){
   });
 }
 function goPane(name){
-  const ids=['book','parcel','searching','arriving','trip','pay','upi-apps','upi-pin','success','feedback','rides','profile',
+  const ids=['book','parcel','buses','bus-detail','searching','arriving','trip','pay','upi-apps','upi-pin','success','feedback','rides','profile',
              'drv-home','drv-approach','drv-trip','drv-qr','drv-earn'];
   ids.forEach(id=>{
     const el=document.getElementById('pane-'+id);
@@ -1749,7 +2188,8 @@ function goPane(name){
   if(target) target.classList.add('active');
   const bs=$('#book-sticky');
   if(bs) bs.style.display=(name==='book'&&state.role==='customer'&&state.mode==='fastest')?'block':'none';
-  const map={book:'book',parcel:'parcel',rides:'rides',profile:'profile','drv-home':'drv-home','drv-earn':'drv-earn'};
+  const map={book:'book',parcel:'parcel',buses:'buses',rides:'rides',profile:'profile',
+             'drv-home':'drv-home','drv-earn':'drv-earn'};
   if(map[name]){
     const bar=state.role==='customer'?'#cust-tabs':'#drv-tabs';
     $$(bar+' .tab').forEach(t=>t.classList.toggle('on',t.dataset.pane===map[name]));
@@ -1765,7 +2205,34 @@ function initCustomer(){
   updateRoute();
   renderHistory();
   updateInlineDriverList();
+  // Buses
+  if(!state.buses.length) initBuses();
+  renderBusList();
+  bindBusSearch();
+  if(state.timers.buses){
+    clearInterval(state.timers.buses);
+  }
+  state.timers.buses = setInterval(()=>{
+    updateBusProgress();
+    if($('#pane-buses').classList.contains('active')) renderBusList();
+    if($('#pane-bus-detail').classList.contains('active') && state.activeBus){
+      renderBusDetail(true);
+    }
+    // Admin bus table refresh
+    if(state.role==='admin' && $('#pane-admin')){
+      if(document.getElementById('ad-buses-body')) renderAdminBusesTable();
+    }
+  }, 1000);
 }
+function bindBusSearch(){
+  const inp = $('#bus-search-input');
+  if(!inp) return;
+  inp.addEventListener('input',()=>{
+    state.busFilter = inp.value.toLowerCase().trim();
+    renderBusList();
+  });
+}
+
 function buildSelects(){
   const pu=$('#sel-pickup'), dr=$('#sel-drop');
   const opts=PLACES.map(p=>`<option value="${p.n}">${p.n}</option>`).join('');
@@ -2085,6 +2552,239 @@ $('#btn-share-sms').addEventListener('click',()=>{
   window.open(`sms:?body=${encodeURIComponent(`Track my RydeX ride: ${link}`)}`,'_blank');
 });
 
+/* ============================================================
+   BUS TRACKER — customer side
+   ============================================================ */
+function renderBusList(){
+  const wrap = $('#bus-list');
+  if(!wrap) return;
+
+  // Filter
+  const filter = state.busFilter;
+  let buses = state.buses.slice();
+  if(filter){
+    buses = buses.filter(b =>
+      b.rno.toLowerCase().includes(filter) ||
+      b.from.toLowerCase().includes(filter) ||
+      b.to.toLowerCase().includes(filter) ||
+      b.op.toLowerCase().includes(filter) ||
+      b.stops.some(s=>s.name.toLowerCase().includes(filter))
+    );
+  }
+  // Sort by remaining ETA (closer first)
+  buses.sort((a,b)=>busNextStopETA(a) - busNextStopETA(b));
+
+  $('#bus-count-lbl').textContent = buses.length + ' buses';
+
+  if(!buses.length){
+    wrap.innerHTML = `<div class="empty"><span class="e">🚌</span><p>No buses matched your search.</p></div>`;
+    return;
+  }
+
+  wrap.innerHTML = buses.map(b=>{
+    const nextIdx = busPosition(b).nextIdx;
+    const nextStop = b.stops[nextIdx] ? b.stops[nextIdx].name : b.to;
+    const eta = busNextStopETA(b);
+    const statusClass = b.status==='ok'?'ok':b.status==='late'?'late':'warn';
+    const statusText = b.status==='ok'?'On time':b.status==='late'?`Delayed ${b.delayMins}m`:`Slight delay`;
+    const crowd = b.crowd;
+    return `
+      <div class="bus-list-item" data-bus="${b.id}">
+        <div class="bi-top">
+          <div class="bi-ic">🚌</div>
+          <div class="bi-info">
+            <h4><span class="rno">${b.rno}</span> ${b.from} → ${b.to}</h4>
+            <p>Next: <b style="color:var(--yellow)">${nextStop}</b> · ${b.op}</p>
+          </div>
+          <div class="bi-eta">
+            <div class="n">${eta}</div>
+            <div class="l">min</div>
+          </div>
+        </div>
+        <div class="bi-foot">
+          <span class="bus-tag ${statusClass}">${statusText}</span>
+          <span class="bus-tag gps">● Live GPS</span>
+          <span class="bus-tag n">${b.speedKmh} km/h</span>
+          <span class="crowd">
+            <i class="${crowd>=1?'f1':''}"></i>
+            <i class="${crowd>=2?'f2':''}"></i>
+            <i class="${crowd>=3?'f3':''}"></i>
+            ${crowd===1?'Light':crowd===2?'Moderate':'Crowded'}
+          </span>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  $$('.bus-list-item', wrap).forEach(el=>{
+    el.onclick = ()=>{
+      const bus = state.buses.find(x=>x.id === el.dataset.bus);
+      state.activeBus = bus;
+      renderBusDetail(false);
+      goPane('bus-detail');
+    };
+  });
+}
+
+function renderBusDetail(isLive){
+  const b = state.activeBus;
+  if(!b) return;
+  const pos = busPosition(b);
+  const nextIdx = pos.nextIdx;
+  const nextName = b.stops[nextIdx] ? b.stops[nextIdx].name : b.to;
+
+  // Header
+  $('#bd-route').textContent = `Route ${b.rno} · ${b.op}`;
+  $('#bd-vehicle').textContent = `${b.id} · ${b.from} → ${b.to}`;
+  const st = $('#bd-status');
+  if(b.status === 'ok'){
+    st.className = 'bdh-status live'; st.textContent = 'On time';
+  } else {
+    st.className = 'bdh-status late'; st.textContent = `Delayed ${b.delayMins} min`;
+  }
+
+  $('#bd-speed').innerHTML = `${b.speedKmh} <small>km/h</small>`;
+  $('#bd-delay').textContent = b.delayMins === 0 ? 'On time' : `+${b.delayMins} min`;
+  $('#bd-eta').innerHTML = `${busNextStopETA(b)} <small>min</small>`;
+
+  // Live clock
+  const now = new Date();
+  const pad = n => String(n).padStart(2,'0');
+  $('#bd-clock').textContent = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+
+  // Draw the live map
+  drawBusLiveMap(b, pos);
+
+  // Route timeline
+  drawBusTimeline(b, pos);
+
+  // Updated label
+  if(isLive){
+    $('#tl-updated').textContent = 'Live · just now';
+  } else {
+    $('#tl-updated').textContent = 'Live · 1s ago';
+  }
+}
+
+function drawBusLiveMap(b, pos){
+  const svg = document.getElementById('bd-map');
+  if(!svg) return;
+  const W = 400, H = 260;
+  // Project all stops
+  const lats = b.stops.map(s=>s.lat);
+  const lngs = b.stops.map(s=>s.lng);
+  const minLat = Math.min(...lats) - 0.005, maxLat = Math.max(...lats) + 0.005;
+  const minLng = Math.min(...lngs) - 0.005, maxLng = Math.max(...lngs) + 0.005;
+  const dLat = Math.max(maxLat - minLat, 0.001);
+  const dLng = Math.max(maxLng - minLng, 0.001);
+  const pad = 30;
+  const proj = (lat,lng)=>({
+    x: pad + (lng - minLng) / dLng * (W - pad*2),
+    y: (H - pad) - (lat - minLat) / dLat * (H - pad*2),
+  });
+
+  let out = '';
+  // Background
+  out += `<rect width="${W}" height="${H}" fill="#f2efe9"/>`;
+  // Grid
+  for(let x=20; x<W; x+=40){
+    out += `<line x1="${x}" y1="0" x2="${x}" y2="${H}" stroke="#e8e5df" stroke-width="1"/>`;
+  }
+  for(let y=20; y<H; y+=40){
+    out += `<line x1="0" y1="${y}" x2="${W}" y2="${y}" stroke="#e8e5df" stroke-width="1"/>`;
+  }
+  // Route line (base)
+  const stopPts = b.stops.map(s=>proj(s.lat,s.lng));
+  const routeD = stopPts.map((p,i)=> i===0 ? `M ${p.x.toFixed(1)} ${p.y.toFixed(1)}` : `L ${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(' ');
+  out += `<path d="${routeD}" fill="none" stroke="#cfccc4" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>`;
+  out += `<path d="${routeD}" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>`;
+  out += `<path d="${routeD}" fill="none" stroke="#0F9D58" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="10 8" opacity="0.75"/>`;
+
+  // Stops
+  stopPts.forEach((p,i)=>{
+    if(i < pos.stopIdx){
+      out += `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="6" fill="#0F9D58" stroke="#fff" stroke-width="2"/>`;
+    } else if(i === pos.stopIdx){
+      out += `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="7" fill="#FFD400" stroke="#fff" stroke-width="2"/>`;
+      out += `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="12" fill="none" stroke="rgba(255,212,0,.5)" stroke-width="2">
+        <animate attributeName="r" values="8;18;8" dur="2s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values=".9;0;.9" dur="2s" repeatCount="indefinite"/>
+      </circle>`;
+    } else {
+      out += `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="5" fill="#fff" stroke="#c8c5bb" stroke-width="1.5"/>`;
+    }
+    // Stop name
+    const isShort = b.stops[i].name.length > 14 ? b.stops[i].name.slice(0,12)+'…' : b.stops[i].name;
+    out += `<text x="${p.x.toFixed(1)}" y="${(p.y-12).toFixed(1)}" font-family="Roboto,Arial" font-size="8.5" font-weight="600" fill="#3c4043" text-anchor="middle" paint-order="stroke" stroke="#fff" stroke-width="2.5">${isShort}</text>`;
+  });
+
+  // Bus marker at interpolated position
+  const bp = proj(pos.lat, pos.lng);
+  out += `<g transform="translate(${bp.x.toFixed(1)},${bp.y.toFixed(1)})">
+    <circle r="16" fill="rgba(15,157,88,.28)">
+      <animate attributeName="r" values="13;19;13" dur="2s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values=".5;.15;.5" dur="2s" repeatCount="indefinite"/>
+    </circle>
+    <circle r="12" fill="#fff" stroke="#0a7a44" stroke-width="1.2"/>
+    <circle r="9.5" fill="#0F9D58"/>
+    <text y="3.5" text-anchor="middle" font-size="10" fill="#fff">🚌</text>
+  </g>`;
+
+  svg.innerHTML = out;
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+}
+
+function drawBusTimeline(b, pos){
+  const wrap = $('#tl-stops');
+  if(!wrap) return;
+  const now = Date.now();
+  wrap.innerHTML = b.stops.map((s, i)=>{
+    let cls = 'future';
+    let arrClass = '';
+    let arrLabel = '—';
+    if(i < pos.stopIdx){
+      cls = 'done';
+      arrClass = 'missed';
+      arrLabel = `Departed ${(i*3)} min ago`;
+    } else if(i === pos.stopIdx){
+      cls = 'current';
+      arrClass = 'current';
+      arrLabel = `Arriving now`;
+    } else if(i === pos.stopIdx + 1){
+      cls = 'next';
+      arrClass = 'soon';
+      arrLabel = `ETA ${busNextStopETA(b)} min`;
+    } else {
+      const eta = (i - pos.stopIdx) * 4 + busNextStopETA(b);
+      arrLabel = `ETA ~${eta} min`;
+    }
+    const lineCls = i < pos.stopIdx ? 'done' : i === pos.stopIdx ? 'current' : '';
+    const isLast = i === b.stops.length - 1;
+    return `
+      <div class="tl-stop">
+        <div class="tl-marker ${cls}">${i < pos.stopIdx ? '✓' : (i+1)}</div>
+        ${!isLast ? `<div class="tl-line ${lineCls}"></div>` : ''}
+        <div class="tl-body">
+          <div class="tl-name ${i===pos.stopIdx?'current-t':''}">
+            ${s.name}
+            <span class="tl-code">ST-${String(i+1).padStart(2,'0')}</span>
+            ${i===pos.stopIdx?`<span class="tl-delay on-time">Live</span>`:''}
+          </div>
+          <div class="tl-meta">
+            <span class="arr ${arrClass}">${arrLabel}</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+$('#btn-track-bus').addEventListener('click',()=>{
+  toast('🔔 You will be notified 2 stops before arrival');
+});
+
+/* ============================================================
+   PARCEL
+   ============================================================ */
 function buildParcelUI(){
   const ptWrap=$('#pkg-types');
   ptWrap.innerHTML=PKG_TYPES.map(p=>
@@ -2094,7 +2794,6 @@ function buildParcelUI(){
   $$('.pkg-type',ptWrap).forEach(el=>el.onclick=()=>{
     state.parcel.type=el.dataset.t; buildParcelUI();
   });
-
   const wWrap=$('#weight-opts');
   wWrap.innerHTML=WEIGHT_OPTS.map(w=>
     `<div class="weight-opt ${state.parcel.weight===w.id?'on':''}" data-w="${w.id}">
@@ -2106,7 +2805,6 @@ function buildParcelUI(){
     state.parcel.vehicle=w.veh;
     buildParcelUI();
   });
-
   const pp=$('#par-pickup'), pd=$('#par-drop');
   if(!pp.options.length){
     const opts=PLACES.map(p=>`<option value="${p.n}">${p.n}</option>`).join('');
@@ -2159,6 +2857,9 @@ $('#btn-send-parcel').addEventListener('click',()=>{
   },3000);
 });
 
+/* ============================================================
+   PAYMENT
+   ============================================================ */
 function showPayment(){
   const b=state.booking, f=b.fare;
   const v=b.veh;
@@ -2173,7 +2874,6 @@ function showPayment(){
   window.scrollTo({top:0,behavior:'auto'});
   toast(b.isParcel?'📦 Parcel delivered — please pay':'🏁 Trip completed — please pay');
 }
-
 $('#pay-upi').addEventListener('click',()=>{ state.payMethod='upi'; renderUpiApps(); goPane('upi-apps'); });
 $('#pay-cash').addEventListener('click',()=>{ state.payMethod='cash'; completePayment('cash'); });
 
@@ -2216,7 +2916,6 @@ function updatePinDots(){
   $$('#upi-dots span').forEach((d,i)=>d.classList.toggle('filled',i<state.upiPin.length));
 }
 $('#upi-keypad').addEventListener('click',(e)=>{
-  // Prime audio context on first user gesture so the success chime can play later
   getAudioContext();
   const btn=e.target.closest('button'); if(!btn)return;
   const k=btn.dataset.k;
@@ -2233,12 +2932,10 @@ function submitPin(){
   $('#upi-dots').style.display='none';
   $('#upi-pin-loading').style.display='block';
   setTimeout(()=>{
-    // PLAY SUCCESS CHIME — like Paytm/GPay
     playPaymentSuccessSound();
     completePayment('upi');
   },1800);
 }
-
 function completePayment(method){
   const b=state.booking, f=b.fare;
   const v=b.veh;
@@ -2251,7 +2948,6 @@ function completePayment(method){
   $('#succ-dist').textContent=b.km+' km';
   $('#succ-dur').textContent=b.duration+' min';
   $('#succ-drv').textContent=b.driver.n;
-
   state.totalSpent+=f.total;
   state.history.unshift({
     id:b.id, from:b.pickup, to:b.drop,
@@ -2261,12 +2957,10 @@ function completePayment(method){
   });
   state.feedbackRef='#RYDEX'+Math.floor(1000+Math.random()*9000);
   $('#fb-ref').textContent=state.feedbackRef;
-
   renderHistory();
   goPane('success');
   toast('🎉 Payment confirmed');
 }
-
 let fbRating=0;
 $$('#fb-stars .star').forEach(s=>{
   s.addEventListener('click',()=>{
@@ -2287,7 +2981,6 @@ $('#btn-submit-feedback').addEventListener('click',()=>{
   toast('✅ Feedback submitted');
   setTimeout(showReturnAsk, 600);
 });
-
 function showReturnAsk(){
   const b=state.booking;
   $('#ret-from').textContent=b.drop;
@@ -2329,7 +3022,6 @@ function finishRide(){
   state.availableDrivers=null;
   goPane('book');
 }
-
 function renderHistory(){
   const wrap=$('#rides-list');
   $('#rides-count').textContent=state.history.length+' rides';
@@ -2357,16 +3049,13 @@ function renderHistory(){
 }
 
 /* ============================================================
-   DELHI MAP  (arriving mode now shows driver approaching rider)
+   DELHI MAP
    ============================================================ */
 function buildDelhiMap(cfg){
   const { W, H, seed, aName, bName, progress, icon, mode } = cfg;
   const rng=makeRng(seed||1);
-
   let svg='';
   svg+=`<rect width="${W}" height="${H}" fill="#f2efe9"/>`;
-
-  /* FIELDS */
   const fieldColors=['#e5dfa8','#ddd7a0','#e8e4b5','#d6d4a2','#e2dfae','#dcd9a4'];
   for(let x=0;x<W;x+=W*0.055){
     const fw=W*0.045+rng()*W*0.02;
@@ -2380,8 +3069,6 @@ function buildDelhiMap(cfg){
     const c=fieldColors[Math.floor(rng()*fieldColors.length)];
     svg+=`<rect x="${x.toFixed(1)}" y="${(H-fh).toFixed(1)}" width="${fw.toFixed(1)}" height="${fh.toFixed(1)}" fill="${c}" opacity="0.65"/>`;
   }
-
-  /* RIDGE FOREST */
   const forestPath=`M ${W*0.02} ${H*0.05} Q ${W*0.10} ${H*0.01} ${W*0.19} ${H*0.04}
     Q ${W*0.27} ${H*0.08} ${W*0.29} ${H*0.16} Q ${W*0.30} ${H*0.25} ${W*0.24} ${H*0.30}
     Q ${W*0.16} ${H*0.33} ${W*0.08} ${H*0.30} Q ${W*0.02} ${H*0.25} ${W*0.02} ${H*0.16} Z`;
@@ -2397,9 +3084,6 @@ function buildDelhiMap(cfg){
     const shades=['#7ba86a','#8ab877','#6d9c5d','#94c083'];
     svg+=`<circle cx="${tx.toFixed(1)}" cy="${ty.toFixed(1)}" r="${tr.toFixed(1)}" fill="${shades[Math.floor(rng()*4)]}" opacity="0.85"/>`;
   }
-  svg+=`<text x="${forestCX.toFixed(0)}" y="${forestCY.toFixed(0)}" font-family="Roboto,Arial" font-size="10" font-style="italic" fill="#3d5a2f" font-weight="600" text-anchor="middle" paint-order="stroke" stroke="#f2efe9" stroke-width="2.5" stroke-linejoin="round">Ridge Forest</text>`;
-
-  /* PARKS */
   const parkCenters=[
     {x:W*0.24,y:H*0.55,r:W*0.06},
     {x:W*0.55,y:H*0.78,r:W*0.055},
@@ -2408,71 +3092,21 @@ function buildDelhiMap(cfg){
   ];
   parkCenters.forEach((p,i)=>{
     let path=`M ${p.x-p.r} ${p.y}`;
-    const steps=8;
-    for(let s=1;s<=steps;s++){
-      const ang=(s/steps)*Math.PI*2;
+    for(let s=1;s<=8;s++){
+      const ang=(s/8)*Math.PI*2;
       const r=p.r*(0.85+rng()*0.35);
       path+=` L ${(p.x+Math.cos(ang)*r*1.2).toFixed(1)} ${(p.y+Math.sin(ang)*r*0.8).toFixed(1)}`;
     }
     path+=' Z';
     svg+=`<path d="${path}" fill="#c9e7c0" stroke="#a8d29c" stroke-width="0.9"/>`;
-    svg+=`<path d="M ${p.x-p.r*0.7} ${p.y} Q ${p.x} ${p.y-p.r*0.4} ${p.x+p.r*0.7} ${p.y}" fill="none" stroke="#e8f0d8" stroke-width="2.2"/>`;
-    for(let t=0;t<8;t++){
-      const ang=rng()*Math.PI*2;
-      const rad=rng()*p.r*0.75;
-      const tx=p.x+Math.cos(ang)*rad*1.15;
-      const ty=p.y+Math.sin(ang)*rad*0.8;
-      svg+=`<circle cx="${tx.toFixed(1)}" cy="${ty.toFixed(1)}" r="${(2.2+rng()*1.5).toFixed(1)}" fill="#8ab877" opacity="0.85"/>`;
-    }
-    const parkNames=['Lodhi Garden','Deer Park','Nehru Park','Mughal Garden'];
-    svg+=`<text x="${p.x.toFixed(0)}" y="${(p.y-p.r*0.9).toFixed(0)}" font-family="Roboto,Arial" font-size="8.5" fill="#3d5a2f" font-weight="600" text-anchor="middle" paint-order="stroke" stroke="#f2efe9" stroke-width="2.2" stroke-linejoin="round">${parkNames[i]}</text>`;
   });
-
-  /* YAMUNA */
   const riverX=W*0.86;
   const riverPath=`M ${riverX+10} -10 Q ${riverX-15} ${H*0.2} ${riverX-5} ${H*0.35}
     Q ${riverX+15} ${H*0.5} ${riverX-10} ${H*0.65}
     Q ${riverX-25} ${H*0.8} ${riverX-5} ${H+10}`;
   svg+=`<path d="${riverPath}" fill="none" stroke="#c9e7c0" stroke-width="52" stroke-linecap="round" opacity="0.85"/>`;
-  svg+=`<path d="${riverPath}" fill="none" stroke="#f0e6c8" stroke-width="46" stroke-linecap="round" opacity="0.6"/>`;
   svg+=`<path d="${riverPath}" fill="none" stroke="#8fbde0" stroke-width="34" stroke-linecap="round"/>`;
   svg+=`<path d="${riverPath}" fill="none" stroke="#a6cdf0" stroke-width="28" stroke-linecap="round"/>`;
-  svg+=`<path d="${riverPath}" fill="none" stroke="#c5dff5" stroke-width="14" stroke-linecap="round" opacity="0.55"/>`;
-  svg+=`<text x="${riverX}" y="${(H*0.45).toFixed(0)}" font-family="Roboto,Arial" font-size="10" font-style="italic" fill="#3d6f9e" font-weight="600" text-anchor="middle" transform="rotate(82 ${riverX} ${H*0.45})" paint-order="stroke" stroke="#f2efe9" stroke-width="2.8" stroke-linejoin="round">Yamuna River</text>`;
-
-  const tribPath=`M ${riverX-15} ${H*0.55} Q ${W*0.7} ${H*0.6} ${W*0.55} ${H*0.65} Q ${W*0.42} ${H*0.7} ${W*0.32} ${H*0.72}`;
-  svg+=`<path d="${tribPath}" fill="none" stroke="#8fbde0" stroke-width="12" stroke-linecap="round" opacity="0.75"/>`;
-  svg+=`<path d="${tribPath}" fill="none" stroke="#a6cdf0" stroke-width="8" stroke-linecap="round"/>`;
-
-  /* LAKES */
-  const lakes=[
-    {x:W*0.36,y:H*0.48,rx:W*0.045,ry:H*0.035},
-    {x:W*0.62,y:H*0.15,rx:W*0.032,ry:H*0.022},
-    {x:W*0.18,y:H*0.78,rx:W*0.038,ry:H*0.025}
-  ];
-  lakes.forEach(lk=>{
-    svg+=`<ellipse cx="${lk.x}" cy="${lk.y}" rx="${(lk.rx*1.25).toFixed(1)}" ry="${(lk.ry*1.25).toFixed(1)}" fill="#c9e7c0" opacity="0.75"/>`;
-    svg+=`<ellipse cx="${lk.x}" cy="${lk.y}" rx="${lk.rx.toFixed(1)}" ry="${lk.ry.toFixed(1)}" fill="#a6cdf0"/>`;
-    svg+=`<ellipse cx="${lk.x}" cy="${lk.y}" rx="${(lk.rx*0.55).toFixed(1)}" ry="${(lk.ry*0.5).toFixed(1)}" fill="#c5dff5" opacity="0.6"/>`;
-  });
-
-  /* RAILWAY */
-  const railPath=`M -10 ${H*0.88} Q ${W*0.25} ${H*0.84} ${W*0.5} ${H*0.82} Q ${W*0.75} ${H*0.80} ${W+10} ${H*0.76}`;
-  svg+=`<path d="${railPath}" fill="none" stroke="#5a5a5a" stroke-width="4"/>`;
-  svg+=`<path d="${railPath}" fill="none" stroke="#f2efe9" stroke-width="1" stroke-dasharray="3 5"/>`;
-  svg+=`<path d="${railPath}" fill="none" stroke="#3a3a3a" stroke-width="6" stroke-dasharray="2 12" opacity="0.7"/>`;
-  const stX=W*0.42, stY=H*0.82;
-  svg+=`<rect x="${stX-14}" y="${stY-6}" width="28" height="12" fill="#d6cfc0" stroke="#8a8478" stroke-width="0.8" rx="1"/>`;
-  svg+=`<text x="${stX}" y="${(stY-10).toFixed(0)}" font-family="Roboto,Arial" font-size="8" fill="#5f6368" font-weight="600" text-anchor="middle" paint-order="stroke" stroke="#f2efe9" stroke-width="2.2">New Delhi Rly Stn</text>`;
-
-  /* AIRPORT */
-  const apX=W*0.06, apY=H*0.86, apW=W*0.15, apH=H*0.035;
-  svg+=`<rect x="${apX}" y="${apY}" width="${apW}" height="${apH}" fill="#b8b5ae" rx="2"/>`;
-  svg+=`<rect x="${apX}" y="${(apY+apH/2-0.6).toFixed(1)}" width="${apW}" height="1.2" fill="#ffffff" opacity="0.9"/>`;
-  svg+=`<rect x="${apX}" y="${(apY-apH*0.6).toFixed(1)}" width="${apW*0.4}" height="${(apH*0.5).toFixed(1)}" fill="#d6cfc0" stroke="#8a8478" stroke-width="0.6"/>`;
-  svg+=`<text x="${(apX+apW/2).toFixed(0)}" y="${(apY-4).toFixed(0)}" font-family="Roboto,Arial" font-size="8" fill="#5f6368" font-weight="600" text-anchor="middle" paint-order="stroke" stroke="#f2efe9" stroke-width="2">IGI Airport</text>`;
-
-  /* ROADS */
   const vMain=[W*0.16,W*0.34,W*0.53,W*0.72].map(Math.round);
   const hMain=[H*0.20,H*0.45,H*0.68].map(Math.round);
   const vLocal=[], hLocal=[];
@@ -2483,31 +3117,24 @@ function buildDelhiMap(cfg){
     if(!hMain.some(m=>Math.abs(m-y)<H*0.055)) hLocal.push(Math.round(y));
   }
   hLocal.forEach(y=>{
-    svg+=`<line x1="0" y1="${y}" x2="${W}" y2="${y}" stroke="#c8c5bb" stroke-width="5" opacity="0.55"/>`;
     svg+=`<line x1="0" y1="${y}" x2="${W}" y2="${y}" stroke="#ffffff" stroke-width="3.2"/>`;
   });
   vLocal.forEach(x=>{
-    svg+=`<line x1="${x}" y1="0" x2="${x}" y2="${H}" stroke="#c8c5bb" stroke-width="5" opacity="0.55"/>`;
     svg+=`<line x1="${x}" y1="0" x2="${x}" y2="${H}" stroke="#ffffff" stroke-width="3.2"/>`;
   });
   hMain.forEach(y=>{
-    svg+=`<line x1="0" y1="${y}" x2="${W}" y2="${y}" stroke="#c8c5bb" stroke-width="11"/>`;
     svg+=`<line x1="0" y1="${y}" x2="${W}" y2="${y}" stroke="#ffffff" stroke-width="7.5"/>`;
     svg+=`<line x1="0" y1="${y}" x2="${W}" y2="${y}" stroke="#ffe7a0" stroke-width="1" stroke-dasharray="14 12" opacity="0.7"/>`;
   });
   vMain.forEach(x=>{
-    svg+=`<line x1="${x}" y1="0" x2="${x}" y2="${H}" stroke="#c8c5bb" stroke-width="11"/>`;
     svg+=`<line x1="${x}" y1="0" x2="${x}" y2="${H}" stroke="#ffffff" stroke-width="7.5"/>`;
     svg+=`<line x1="${x}" y1="0" x2="${x}" y2="${H}" stroke="#ffe7a0" stroke-width="1" stroke-dasharray="14 12" opacity="0.7"/>`;
   });
   const hwy1=`M -10 ${H*0.94} Q ${W*0.2} ${H*0.82} ${W*0.38} ${H*0.62} Q ${W*0.55} ${H*0.42} ${W*0.7} ${H*0.32} Q ${W*0.85} ${H*0.22} ${W+10} ${H*0.12}`;
   svg+=`<path d="${hwy1}" fill="none" stroke="#d49a10" stroke-width="18" stroke-linecap="round"/>`;
   svg+=`<path d="${hwy1}" fill="none" stroke="#fdc644" stroke-width="12" stroke-linecap="round"/>`;
-
-  /* BUILDINGS */
   const allV=[...vMain,...vLocal].sort((a,b)=>a-b);
   const allH=[...hMain,...hLocal].sort((a,b)=>a-b);
-  const cx=W/2, cy=H/2, maxDist=Math.hypot(W/2,H/2);
   const shades=['#e8e5df','#dcd8ce','#e6e3dc','#eae7e0','#dedad1','#e2dfd7'];
   for(let vi=0;vi<allV.length-1;vi++){
     for(let hi=0;hi<allH.length-1;hi++){
@@ -2516,90 +3143,56 @@ function buildDelhiMap(cfg){
       const bW=bx1-bx0, bH=by1-by0;
       if(bW<12||bH<12) continue;
       const cxc=(bx0+bx1)/2, cyc=(by0+by1)/2;
-      const dist=Math.hypot(cxc-cx,cyc-cy)/maxDist;
       let skip=false;
       for(const p of parkCenters){if(Math.hypot(cxc-p.x,cyc-p.y)<p.r*1.1){skip=true;break}}
       if(!skip && cxc<W*0.28 && cyc<H*0.3) skip=true;
       if(!skip && cxc>W*0.78) skip=true;
-      if(!skip){for(const lk of lakes){if(Math.abs(cxc-lk.x)<lk.rx*1.3 && Math.abs(cyc-lk.y)<lk.ry*1.3){skip=true;break}}}
-      if(!skip && cyc>H*0.76 && cyc<H*0.9) skip=true;
-      if(!skip && cxc<W*0.24 && cyc>H*0.82) skip=true;
       if(skip) continue;
-      const density=1-dist*0.75;
-      const count=Math.floor(1+density*4);
+      const count=Math.floor(1+(1-Math.hypot(cxc-W/2,cyc-H/2)/Math.hypot(W/2,H/2))*4);
       for(let b=0;b<count;b++){
         const w=bW*(0.22+rng()*0.35);
         const h=bH*(0.22+rng()*0.35);
         const x=bx0+rng()*Math.max(0,bW-w);
         const y=by0+rng()*Math.max(0,bH-h);
         svg+=`<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${w.toFixed(1)}" height="${h.toFixed(1)}" fill="${shades[Math.floor(rng()*shades.length)]}"/>`;
-        svg+=`<rect x="${x.toFixed(1)}" y="${(y+h-0.9).toFixed(1)}" width="${w.toFixed(1)}" height="0.9" fill="rgba(0,0,0,.07)"/>`;
       }
     }
   }
-
-  /* BRIDGES */
-  [H*0.32,H*0.68].forEach(y=>{
-    const bx1=riverX-40, bx2=riverX+40;
-    svg+=`<rect x="${bx1}" y="${y-5}" width="${bx2-bx1}" height="10" fill="#c9c5be" stroke="#8a8478" stroke-width="0.8"/>`;
-  });
-
-  /* LABELS */
   const labels=[
     {x:W*0.08,y:H*0.14,t:'Pitampura'},{x:W*0.32,y:H*0.14,t:'Model Town'},
     {x:W*0.55,y:H*0.14,t:'Civil Lines'},{x:W*0.74,y:H*0.14,t:'Kashmere Gate'},
-    {x:W*0.08,y:H*0.40,t:'Punjabi Bagh'},{x:W*0.30,y:H*0.40,t:'Karol Bagh'},
-    {x:W*0.55,y:H*0.40,t:'Connaught Pl'},{x:W*0.74,y:H*0.40,t:'ITO'},
-    {x:W*0.08,y:H*0.62,t:'Dwarka'},{x:W*0.28,y:H*0.62,t:'Dhaula Kuan'},
-    {x:W*0.55,y:H*0.62,t:'Lodhi Colony'},{x:W*0.74,y:H*0.62,t:'Nizamuddin'},
-    {x:W*0.30,y:H*0.94,t:'Hauz Khas'},{x:W*0.55,y:H*0.94,t:'Saket'}
+    {x:W*0.30,y:H*0.40,t:'Karol Bagh'},{x:W*0.55,y:H*0.40,t:'Connaught Pl'},
+    {x:W*0.74,y:H*0.40,t:'ITO'},{x:W*0.55,y:H*0.62,t:'Lodhi Colony'}
   ];
   labels.forEach(l=>{
     svg+=`<text x="${l.x.toFixed(0)}" y="${l.y.toFixed(0)}" font-family="Roboto,Arial" font-size="10" fill="#5f6368" font-weight="500" text-anchor="middle" paint-order="stroke" stroke="#ffffff" stroke-width="3" stroke-linejoin="round">${l.t}</text>`;
   });
-
-  /* ============================================================
-     ROUTE MODES
-     ============================================================ */
-
-  /* ---- MODE: TRIP (pickup → drop) ---- */
   if(mode==='trip' && aName && bName){
-    const allVSnap=[...vMain,...vLocal];
-    const allHSnap=[...hMain,...hLocal];
+    const allVSnap=[...vMain,...vLocal], allHSnap=[...hMain,...hLocal];
     let A={x:W*0.12+rng()*W*0.6, y:H*0.15+rng()*H*0.6};
     let B={x:W*0.12+rng()*W*0.6, y:H*0.15+rng()*H*0.6};
     if(Math.hypot(A.x-B.x,A.y-B.y)<W*0.35){
-      B.x=Math.min(W*0.88,B.x+W*0.4);
-      B.y=Math.min(H*0.85,B.y+H*0.15);
+      B.x=Math.min(W*0.88,B.x+W*0.4); B.y=Math.min(H*0.85,B.y+H*0.15);
     }
     const pathPoints=[{x:A.x,y:A.y}];
-    const segments=4;
-    for(let i=1;i<=segments;i++){
-      const t=i/(segments+1);
-      let wx=A.x+(B.x-A.x)*t;
-      let wy=A.y+(B.y-A.y)*t;
+    for(let i=1;i<=4;i++){
+      const t=i/5;
+      let wx=A.x+(B.x-A.x)*t, wy=A.y+(B.y-A.y)*t;
       const snapV=allVSnap.reduce((b,x)=>Math.abs(x-wx)<Math.abs(b-wx)?x:b,allVSnap[0]);
       const snapH=allHSnap.reduce((b,y)=>Math.abs(y-wy)<Math.abs(b-wy)?y:b,allHSnap[0]);
       if(Math.abs(snapV-wx)<Math.abs(snapH-wy)) wx=snapV; else wy=snapH;
       const prev=pathPoints[pathPoints.length-1];
-      if(Math.abs(prev.x-wx)>Math.abs(prev.y-wy)){
-        pathPoints.push({x:wx,y:prev.y});
-      } else {
-        pathPoints.push({x:prev.x,y:wy});
-      }
+      if(Math.abs(prev.x-wx)>Math.abs(prev.y-wy)){ pathPoints.push({x:wx,y:prev.y}); }
+      else { pathPoints.push({x:prev.x,y:wy}); }
       pathPoints.push({x:wx,y:wy});
     }
     const last=pathPoints[pathPoints.length-1];
-    pathPoints.push({x:B.x,y:last.y});
-    pathPoints.push({x:B.x,y:B.y});
+    pathPoints.push({x:B.x,y:last.y}); pathPoints.push({x:B.x,y:B.y});
     let routeD=`M ${pathPoints[0].x.toFixed(1)} ${pathPoints[0].y.toFixed(1)}`;
-    for(let i=1;i<pathPoints.length;i++){
-      routeD+=` L ${pathPoints[i].x.toFixed(1)} ${pathPoints[i].y.toFixed(1)}`;
-    }
+    for(let i=1;i<pathPoints.length;i++){ routeD+=` L ${pathPoints[i].x.toFixed(1)} ${pathPoints[i].y.toFixed(1)}`; }
     let totalDist=0; const segs=[];
     for(let i=1;i<pathPoints.length;i++){
-      const dx=pathPoints[i].x-pathPoints[i-1].x;
-      const dy=pathPoints[i].y-pathPoints[i-1].y;
+      const dx=pathPoints[i].x-pathPoints[i-1].x, dy=pathPoints[i].y-pathPoints[i-1].y;
       const d=Math.hypot(dx,dy);
       segs.push({p0:pathPoints[i-1],p1:pathPoints[i],d,start:totalDist});
       totalDist+=d;
@@ -2609,85 +3202,52 @@ function buildDelhiMap(cfg){
     for(const s of segs){
       if(targetDist<=s.start+s.d){
         const t=(targetDist-s.start)/s.d;
-        vx=s.p0.x+(s.p1.x-s.p0.x)*t;
-        vy=s.p0.y+(s.p1.y-s.p0.y)*t;
-        break;
+        vx=s.p0.x+(s.p1.x-s.p0.x)*t; vy=s.p0.y+(s.p1.y-s.p0.y)*t; break;
       }
     }
     if(progress>=1){vx=B.x;vy=B.y}
-
     svg+=`<path d="${routeD}" fill="none" stroke="#ffffff" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>`;
     svg+=`<path d="${routeD}" fill="none" stroke="#4285F4" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>`;
     svg+=`<path d="${routeD}" fill="none" stroke="#1967d2" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="3200" stroke-dashoffset="${3200*(1-progress)}"/>`;
-
     svg+=`<circle cx="${A.x.toFixed(1)}" cy="${A.y.toFixed(1)}" r="11" fill="#0F9D58" opacity="0.28"/>`;
     svg+=`<circle cx="${A.x.toFixed(1)}" cy="${A.y.toFixed(1)}" r="7" fill="#0F9D58" stroke="#ffffff" stroke-width="2"/>`;
-
     svg+=`<g transform="translate(${B.x.toFixed(1)},${B.y.toFixed(1)})">
-      <ellipse cx="0" cy="2" rx="7" ry="2.5" fill="rgba(0,0,0,.22)"/>
-      <path d="M 0 -30 C -9 -30 -15 -23 -15 -14 C -15 -5 0 3 0 3 C 0 3 15 -5 15 -14 C 15 -23 9 -30 0 -30 Z" fill="#EA4335" stroke="#ffffff" stroke-width="2.2" stroke-linejoin="round"/>
+      <path d="M 0 -30 C -9 -30 -15 -23 -15 -14 C -15 -5 0 3 0 3 C 0 3 15 -5 15 -14 C 15 -23 9 -30 0 -30 Z" fill="#EA4335" stroke="#ffffff" stroke-width="2.2"/>
       <circle cx="0" cy="-15" r="4.5" fill="#ffffff"/>
     </g>`;
-
     svg+=`<g transform="translate(${vx.toFixed(1)},${vy.toFixed(1)})">
       <circle r="22" fill="rgba(66,133,244,.2)">
         <animate attributeName="r" values="18;26;18" dur="2s" repeatCount="indefinite"/>
-        <animate attributeName="opacity" values=".4;.14;.4" dur="2s" repeatCount="indefinite"/>
       </circle>
-      <circle r="16" fill="#ffffff" stroke="#c8c5bb" stroke-width="1"/>
+      <circle r="16" fill="#ffffff" stroke="#c8c5bb"/>
       <circle r="13" fill="#FFD400"/>
       <text y="5" text-anchor="middle" font-size="14" fill="#0A0A0F">${icon}</text>
     </g>`;
   }
-
-  /* ---- MODE: ARRIVING (driver → pickup, with real approach route) ---- */
   else if(mode==='arriving' && bName){
-    const dest = { x: W*0.5, y: H*0.5 };                       // pickup point
-    const startX = dest.x + W*0.30;                            // driver starts SE of pickup
-    const startY = dest.y + H*0.26;
-    const cx1 = (startX + dest.x)/2 - W*0.04;
-    const cy1 = (startY + dest.y)/2 - H*0.06;
+    const dest = { x: W*0.5, y: H*0.5 };
+    const startX = dest.x + W*0.30, startY = dest.y + H*0.26;
+    const cx1 = (startX + dest.x)/2 - W*0.04, cy1 = (startY + dest.y)/2 - H*0.06;
     const path = `M ${startX.toFixed(1)} ${startY.toFixed(1)} Q ${cx1.toFixed(1)} ${cy1.toFixed(1)} ${dest.x.toFixed(1)} ${dest.y.toFixed(1)}`;
-
-    // Route base (white outline) + blue line
     svg+=`<path d="${path}" fill="none" stroke="#ffffff" stroke-width="14" stroke-linecap="round"/>`;
     svg+=`<path d="${path}" fill="none" stroke="#4285F4" stroke-width="9" stroke-linecap="round"/>`;
-    // Travelled portion (darker blue)
     svg+=`<path d="${path}" fill="none" stroke="#1967d2" stroke-width="9" stroke-linecap="round" stroke-dasharray="1400" stroke-dashoffset="${1400*(1-progress)}"/>`;
-
-    // Driver start dot
     svg+=`<circle cx="${startX.toFixed(1)}" cy="${startY.toFixed(1)}" r="7" fill="#FF8A00" stroke="#ffffff" stroke-width="2.5"/>`;
-    svg+=`<text x="${startX.toFixed(1)}" y="${(startY+22).toFixed(1)}" font-family="Roboto,Arial" font-size="9.5" font-weight="700" fill="#a35a10" text-anchor="middle" paint-order="stroke" stroke="#ffffff" stroke-width="3" stroke-linejoin="round">Driver start</text>`;
-
-    // Compute marker position along quad bezier
     const t = progress;
     const mx = (1-t)*(1-t)*startX + 2*(1-t)*t*cx1 + t*t*dest.x;
     const my = (1-t)*(1-t)*startY + 2*(1-t)*t*cy1 + t*t*dest.y;
-
-    // Pickup pulse — animated concentric rings
     svg+=`<circle cx="${dest.x}" cy="${dest.y}" r="26" fill="none" stroke="rgba(15,157,88,.45)" stroke-width="3">
       <animate attributeName="r" values="14;34;14" dur="2s" repeatCount="indefinite"/>
-      <animate attributeName="opacity" values=".9;0;.9" dur="2s" repeatCount="indefinite"/>
-    </circle>`;
-    svg+=`<circle cx="${dest.x}" cy="${dest.y}" r="18" fill="none" stroke="rgba(15,157,88,.4)" stroke-width="3">
-      <animate attributeName="r" values="10;26;10" dur="2s" begin="0.5s" repeatCount="indefinite"/>
-      <animate attributeName="opacity" values=".85;0;.85" dur="2s" begin="0.5s" repeatCount="indefinite"/>
     </circle>`;
     svg+=`<circle cx="${dest.x}" cy="${dest.y}" r="10" fill="#0F9D58" stroke="#ffffff" stroke-width="3"/>`;
-    svg+=`<text x="${dest.x.toFixed(0)}" y="${(dest.y+34).toFixed(0)}" font-family="Roboto,Arial" font-size="11" font-weight="800" fill="#0f6b3d" text-anchor="middle" paint-order="stroke" stroke="#ffffff" stroke-width="3.5" stroke-linejoin="round">${bName}</text>`;
-
-    // Moving driver marker
+    svg+=`<text x="${dest.x.toFixed(0)}" y="${(dest.y+34).toFixed(0)}" font-family="Roboto,Arial" font-size="11" font-weight="800" fill="#0f6b3d" text-anchor="middle" paint-order="stroke" stroke="#ffffff" stroke-width="3.5">${bName}</text>`;
     svg+=`<g transform="translate(${mx.toFixed(1)},${my.toFixed(1)})">
-      <circle r="26" fill="rgba(66,133,244,.25)">
-        <animate attributeName="r" values="22;30;22" dur="2s" repeatCount="indefinite"/>
-        <animate attributeName="opacity" values=".55;.2;.55" dur="2s" repeatCount="indefinite"/>
-      </circle>
-      <circle r="18" fill="#ffffff" stroke="#c8c5bb" stroke-width="1"/>
+      <circle r="26" fill="rgba(66,133,244,.25)"><animate attributeName="r" values="22;30;22" dur="2s" repeatCount="indefinite"/></circle>
+      <circle r="18" fill="#ffffff" stroke="#c8c5bb"/>
       <circle r="14" fill="#FFD400"/>
       <text y="5" text-anchor="middle" font-size="15" fill="#0A0A0F">${icon}</text>
     </g>`;
   }
-
   return svg;
 }
 
@@ -2701,7 +3261,6 @@ const DRIVER_REQUESTS=[
   {name:'Rajesh P.',    from:'Lajpat Nagar',     to:'Noida Sector 62', km:19.4,fare:310},
   {name:'Deepa Menon',  from:'Chandni Chowk',    to:'Red Fort',        km:2.6, fare:72},
 ];
-
 function initDriver(){
   renderDriverBars('#drv-bars'); renderDriverBars('#drv-bars2');
   renderDriverTripLog();
@@ -2791,11 +3350,7 @@ function startDriverApproach(r){
       aName:null, bName:r.from,
       progress:p, icon:'🛺', mode:'arriving'
     });
-    if(p>=1){
-      clearInterval(state.timers.dappr);
-      $('#drv-approach-eta').textContent='0';
-      toast('🎉 You have arrived');
-    }
+    if(p>=1){ clearInterval(state.timers.dappr); toast('🎉 You have arrived'); }
   },90);
 }
 $('#btn-arrived').addEventListener('click',()=>{
@@ -2809,7 +3364,6 @@ $('#btn-arrived').addEventListener('click',()=>{
   goPane('drv-trip');
   startDriverTripAnimation(r);
 });
-
 function startDriverTripAnimation(r){
   const svg=document.getElementById('drv-map');
   const totalKm=r.km;
@@ -2826,8 +3380,7 @@ function startDriverTripAnimation(r){
     $('#drv-prog-fill').style.width=(p*100)+'%';
     $('#drv-prog-pct').textContent=Math.round(p*100)+'%';
     svg.innerHTML=buildDelhiMap({
-      W:720,H:480, seed,
-      aName:r.from, bName:r.to,
+      W:720,H:480, seed, aName:r.from, bName:r.to,
       progress:p, icon:'🛺', mode:'trip'
     });
     if(p>=1){clearInterval(state.timers.dtrip);toast('🏁 Trip done — show QR to rider')}
@@ -2843,7 +3396,6 @@ $('#btn-complete-trip').addEventListener('click',()=>{
   $('#drv-qr-rider').textContent=t.r.name;
   drawDriverQR(hashStr(t.r.name+f));
   goPane('drv-qr');
-  toast('💳 Show this QR to your rider');
 });
 function drawDriverQR(seed){
   const svg=$('#drv-qr-svg');
@@ -2854,9 +3406,7 @@ function drawDriverQR(seed){
     for(let x=0;x<size;x++){
       const isFinder=(x<7&&y<7)||(x>=size-7&&y<7)||(x<7&&y>=size-7);
       if(isFinder) continue;
-      if(rng()<0.48){
-        out+=`<rect x="${x*cell}" y="${y*cell}" width="${cell}" height="${cell}" fill="#0A0A0F"/>`;
-      }
+      if(rng()<0.48){ out+=`<rect x="${x*cell}" y="${y*cell}" width="${cell}" height="${cell}" fill="#0A0A0F"/>`; }
     }
   }
   const fp=(x,y)=>`
@@ -2918,6 +3468,8 @@ function initAdmin(){
     progress:0, icon:'🛺', mode:'none'
   });
   document.getElementById('ad-fleet-map').innerHTML=buildAdminFleetMap();
+  document.getElementById('ad-bus-map').innerHTML=buildAdminBusMap();
+  if(!state.buses.length) initBuses();
   initAdminFleet();
   initAdminBuses();
   initAdminParcels();
@@ -2925,6 +3477,7 @@ function initAdmin(){
   renderAdminDrivers();
   renderAdminFeedback();
   renderAdminFleetTable();
+  renderAdminBusesTable();
   if(state.timers.admVehicles) clearInterval(state.timers.admVehicles);
   state.timers.admVehicles=setInterval(()=>{
     animateAdminFleet();
@@ -2937,6 +3490,15 @@ function initAdmin(){
     const r=342+Math.floor(Math.random()*20-10);
     $('#ad-rides').textContent=r;
   },4000);
+  // Update bus map every second
+  if(state.timers.adminBuses){
+    clearInterval(state.timers.adminBuses);
+  }
+  state.timers.adminBuses = setInterval(()=>{
+    updateBusProgress();
+    drawAdminBusMap();
+    renderAdminBusesTable();
+  }, 1500);
 }
 $$('#admin-tabs .atab').forEach(btn=>{
   btn.addEventListener('click',()=>{
@@ -2952,6 +3514,13 @@ function buildAdminFleetMap(){
     W:1200,H:700, seed:hashStr('admin-delhi'),
     aName:null, bName:null, progress:0, icon:'🛺', mode:'none'
   }) + `<g id="ad-bike-layer"></g><g id="ad-scooter-layer"></g><g id="ad-auto-layer"></g><g id="ad-cab-layer"></g><g id="ad-bus-routes"></g><g id="ad-bus-layer"></g><g id="ad-parcel-layer"></g>`;
+}
+function buildAdminBusMap(){
+  // Full-screen bus-specific map
+  return buildDelhiMap({
+    W:1200,H:700, seed:hashStr('admin-bus-delhi'),
+    aName:null, bName:null, progress:0, icon:'🚌', mode:'none'
+  }) + `<g id="ad-bus-routes-2"></g><g id="ad-bus-layer-2"></g>`;
 }
 function renderAdminBars(){
   const data=[480,620,540,780,890,1020,740];
@@ -2976,10 +3545,8 @@ function initAdminFleet(){
     for(let i=0;i<k.count;i++){
       state.adminVehicles.push({
         type:k.type, color:k.color, icon:k.icon,
-        x: 250+Math.random()*700,
-        y: 120+Math.random()*460,
-        dx:(Math.random()-0.5)*1.4,
-        dy:(Math.random()-0.5)*0.9,
+        x: 250+Math.random()*700, y: 120+Math.random()*460,
+        dx:(Math.random()-0.5)*1.4, dy:(Math.random()-0.5)*0.9,
         status: Math.random()<0.6 ? 'idle' : 'on-trip'
       });
     }
@@ -2996,27 +3563,14 @@ function paintAdminFleet(){
   if(!layers.bike) return;
   Object.values(layers).forEach(l=>{if(l) l.innerHTML=''});
   state.adminVehicles.forEach(v=>{
-    const layer=layers[v.type];
-    if(!layer) return;
+    const layer=layers[v.type]; if(!layer) return;
     const r = v.type==='cab' ? 12 : 10;
-    const halo = document.createElementNS('http://www.w3.org/2000/svg','circle');
-    halo.setAttribute('cx', v.x.toFixed(1)); halo.setAttribute('cy', v.y.toFixed(1));
-    halo.setAttribute('r', (r*1.6).toFixed(1)); halo.setAttribute('fill', v.color);
-    halo.setAttribute('opacity','0.20'); layer.appendChild(halo);
-    const ring = document.createElementNS('http://www.w3.org/2000/svg','circle');
-    ring.setAttribute('cx', v.x.toFixed(1)); ring.setAttribute('cy', v.y.toFixed(1));
-    ring.setAttribute('r', (r*0.85).toFixed(1)); ring.setAttribute('fill','#ffffff');
-    ring.setAttribute('stroke','#c8c5bb'); ring.setAttribute('stroke-width','0.8');
-    layer.appendChild(ring);
-    const dot = document.createElementNS('http://www.w3.org/2000/svg','circle');
-    dot.setAttribute('cx', v.x.toFixed(1)); dot.setAttribute('cy', v.y.toFixed(1));
-    dot.setAttribute('r', (r*0.65).toFixed(1)); dot.setAttribute('fill', v.color);
-    layer.appendChild(dot);
-    const txt = document.createElementNS('http://www.w3.org/2000/svg','text');
-    txt.setAttribute('x', v.x.toFixed(1)); txt.setAttribute('y', (v.y+2.5).toFixed(1));
-    txt.setAttribute('text-anchor','middle'); txt.setAttribute('font-size','9');
-    txt.setAttribute('fill','#fff'); txt.textContent = v.icon;
-    layer.appendChild(txt);
+    layer.innerHTML += `
+      <circle cx="${v.x.toFixed(1)}" cy="${v.y.toFixed(1)}" r="${(r*1.6).toFixed(1)}" fill="${v.color}" opacity=".20"/>
+      <circle cx="${v.x.toFixed(1)}" cy="${v.y.toFixed(1)}" r="${(r*0.85).toFixed(1)}" fill="#ffffff" stroke="#c8c5bb" stroke-width="0.8"/>
+      <circle cx="${v.x.toFixed(1)}" cy="${v.y.toFixed(1)}" r="${(r*0.65).toFixed(1)}" fill="${v.color}"/>
+      <text x="${v.x.toFixed(1)}" y="${(v.y+2.5).toFixed(1)}" text-anchor="middle" font-size="9" fill="#fff">${v.icon}</text>
+    `;
   });
 }
 function animateAdminFleet(){
@@ -3051,7 +3605,7 @@ function renderAdminFleetTable(){
   if(!body) return;
   body.innerHTML = rows.map(r=>{
     let active, idle, trip;
-    if(r.key==='bus'){ active = state.adminBuses.length; trip = active; idle = 0; }
+    if(r.key==='bus'){ active = state.buses.length; trip = active; idle = 0; }
     else if(r.key==='parcel'){ active = state.adminParcels.length; trip = active; idle = 0; }
     else { active = counts[r.key].active; idle = counts[r.key].idle; trip = counts[r.key].trip; }
     const statusClass = active>0?'ok':'bad';
@@ -3067,65 +3621,77 @@ function renderAdminFleetTable(){
     </tr>`;
   }).join('');
 }
-function initAdminBuses(){
-  const routes=[
-    ['Connaught Place','India Gate'],['Karol Bagh','Rohini West'],
-    ['Hauz Khas','Saket'],['Lajpat Nagar','Noida Sector 62'],
-    ['Chandni Chowk','Red Fort'],['Dwarka Sector 21','IGI Airport T3'],
-    ['Pitampura','Red Fort'],['AIIMS','Lotus Temple'],
-    ['New Delhi Railway Stn','Karol Bagh'],['Gurugram Cyber City','Dilli Haat INA'],
-  ];
-  const B={minLat:28.35,maxLat:28.85,minLng:76.85,maxLng:77.55};
-  const proj=(lat,lng)=>({
+
+/* ==== Admin bus map — all buses ==== */
+function drawAdminBusMap(){
+  const layer = document.getElementById('ad-bus-layer-2');
+  const routeLayer = document.getElementById('ad-bus-routes-2');
+  if(!layer) return;
+  const B = {minLat:28.35,maxLat:28.85,minLng:76.85,maxLng:77.55};
+  const proj = (lat,lng)=>({
     x:(lng-B.minLng)/(B.maxLng-B.minLng)*1200,
     y:(B.maxLat-lat)/(B.maxLat-B.minLat)*700
   });
-  state.adminBuses = routes.map(r=>{
-    const a=placeByName(r[0]), b=placeByName(r[1]);
-    return {
-      route:r, A:proj(a.lat,a.lng), B:proj(b.lat,b.lng),
-      t: Math.random(), speed: 0.002 + Math.random()*0.0015,
-      dir: 1, plate: 'DL 1P' + (1000+Math.floor(Math.random()*8999)),
-    };
-  });
-  const lineLayer = document.getElementById('ad-bus-routes');
-  if(lineLayer){
-    lineLayer.innerHTML = state.adminBuses.map(b=>{
-      const cx=(b.A.x+b.B.x)/2+((hashStr(b.route[0]+b.route[1])%60)-30);
-      const cy=(b.A.y+b.B.y)/2+((hashStr(b.route[1]+b.route[0])%60)-30);
-      return `<path d="M ${b.A.x.toFixed(1)} ${b.A.y.toFixed(1)} Q ${cx.toFixed(1)} ${cy.toFixed(1)} ${b.B.x.toFixed(1)} ${b.B.y.toFixed(1)}"
-        fill="none" stroke="#0F9D58" stroke-width="3" stroke-dasharray="8 8" opacity="0.4"/>`;
+  // Draw route polylines once
+  if(routeLayer && routeLayer.childNodes.length === 0){
+    routeLayer.innerHTML = state.buses.map(b=>{
+      const pts = b.stops.map(s=>proj(s.lat,s.lng));
+      const d = pts.map((p,i)=> i===0?`M ${p.x.toFixed(1)} ${p.y.toFixed(1)}`:`L ${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(' ');
+      return `<path d="${d}" fill="none" stroke="#0F9D58" stroke-width="2" stroke-dasharray="6 6" opacity="0.35"/>`;
     }).join('');
   }
-  paintAdminBuses();
-}
-function paintAdminBuses(){
-  const layer=document.getElementById('ad-bus-layer');
-  if(!layer) return;
-  layer.innerHTML='';
-  state.adminBuses.forEach(b=>{
-    const t=b.t;
-    const cx=(b.A.x+b.B.x)/2+((hashStr(b.route[0]+b.route[1])%60)-30);
-    const cy=(b.A.y+b.B.y)/2+((hashStr(b.route[1]+b.route[0])%60)-30);
-    const x=(1-t)*(1-t)*b.A.x + 2*(1-t)*t*cx + t*t*b.B.x;
-    const y=(1-t)*(1-t)*b.A.y + 2*(1-t)*t*cy + t*t*b.B.y;
+  // Draw live buses
+  layer.innerHTML = '';
+  state.buses.forEach(b=>{
+    const pos = busPosition(b);
+    const pt = proj(pos.lat, pos.lng);
+    const stopIdx = pos.stopIdx;
+    // color based on status
+    const color = b.status==='ok' ? '#0F9D58' : b.status==='late' ? '#EA4335' : '#FBBC04';
+    const ns = b.stops[pos.nextIdx] ? b.stops[pos.nextIdx].name : '';
     layer.innerHTML += `
-      <circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="18" fill="#0F9D58" opacity=".22"/>
-      <circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="12" fill="#ffffff" stroke="#0a7a44" stroke-width="1.2"/>
-      <circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="9" fill="#0F9D58"/>
-      <text x="${x.toFixed(1)}" y="${(y+3).toFixed(1)}" text-anchor="middle" font-size="10">🚌</text>
-      <text x="${x.toFixed(1)}" y="${(y-15).toFixed(1)}" text-anchor="middle" font-size="8"
-        font-weight="700" fill="#0a5c38" paint-order="stroke" stroke="#fff" stroke-width="2.5">${b.route[0].slice(0,8)}</text>
+      <circle cx="${pt.x.toFixed(1)}" cy="${pt.y.toFixed(1)}" r="20" fill="${color}" opacity=".22"/>
+      <circle cx="${pt.x.toFixed(1)}" cy="${pt.y.toFixed(1)}" r="13" fill="#ffffff" stroke="${color}" stroke-width="1.8"/>
+      <circle cx="${pt.x.toFixed(1)}" cy="${pt.y.toFixed(1)}" r="10" fill="${color}"/>
+      <text x="${pt.x.toFixed(1)}" y="${(pt.y+3.5).toFixed(1)}" text-anchor="middle" font-size="11">🚌</text>
+      <text x="${pt.x.toFixed(1)}" y="${(pt.y-18).toFixed(1)}" text-anchor="middle"
+        font-size="9.5" font-weight="800" fill="#0a5c38"
+        paint-order="stroke" stroke="#fff" stroke-width="3">${b.rno}</text>
+      <text x="${pt.x.toFixed(1)}" y="${(pt.y+28).toFixed(1)}" text-anchor="middle"
+        font-size="8.5" font-weight="700" fill="#5f6368"
+        paint-order="stroke" stroke="#fff" stroke-width="2.5">→ ${ns.slice(0,14)}</text>
     `;
   });
 }
 function animateAdminBuses(){
-  state.adminBuses.forEach(b=>{
-    b.t += b.speed * b.dir;
-    if(b.t>1){ b.t=1; b.dir=-1; }
-    if(b.t<0){ b.t=0; b.dir=1; }
-  });
-  paintAdminBuses();
+  // placeholder — buses are updated by drawAdminBusMap every 1.5s
+}
+function renderAdminBusesTable(){
+  const body=$('#ad-buses-body');
+  if(!body) return;
+  body.innerHTML = state.buses.map(b=>{
+    const pos = busPosition(b);
+    const progressPct = Math.round(b.progress * 100);
+    const statusClass = b.status==='ok'?'ok':b.status==='late'?'bad':'pend';
+    const statusText = b.status==='ok'?'On time':b.status==='late'?`+${b.delayMins}m`:'Minor delay';
+    const nextName = b.stops[pos.nextIdx] ? b.stops[pos.nextIdx].name : b.to;
+    return `<tr>
+      <td style="font-family:ui-monospace,monospace;font-size:11px">${b.id}</td>
+      <td><b>${b.rno}</b><br><span style="font-size:10.5px;color:var(--muted)">${b.op}</span></td>
+      <td style="font-size:11px">${b.from} → ${b.to}</td>
+      <td><div style="width:80px;height:6px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden">
+        <div style="width:${progressPct}%;height:100%;background:#0F9D58"></div></div>
+        <span style="font-size:10px;color:var(--muted);margin-top:3px;display:block">${progressPct}% · next: ${nextName.slice(0,12)}</span>
+      </td>
+      <td>${b.speedKmh} km/h</td>
+      <td>${b.delayMins} min</td>
+      <td><span class="badge-s ${statusClass}">${statusText}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+function initAdminBuses(){
+  // Placeholder, buses are managed via state.buses
 }
 function initAdminParcels(){
   state.adminParcels=[];
@@ -3215,9 +3781,6 @@ function renderAdminFeedback(){
   `).join('');
 }
 
-/* ============================================================
-   CALL
-   ============================================================ */
 let callTimer=null, callSeconds=0;
 function openCallModal(){
   const d=state.booking?.driver||DRIVER_POOL[0];
@@ -3259,6 +3822,7 @@ state.distance=routeInfo().km;
 state.duration=tripDuration(state.vehicle);
 updateRoute();
 $('#prof-sched').textContent='0';
+initBuses();
 </script>
 </body>
 </html>
