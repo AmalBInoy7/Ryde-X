@@ -1,0 +1,3264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>RydeX — Rides · Parcels · Live Tracking</title>
+<style>
+:root{
+  --yellow:#FFD400; --yellow-2:#FF8A00; --yellow-soft:rgba(255,212,0,.12);
+  --black:#08080C; --black-3:#181822;
+  --violet:#7C3AED; --violet-royal:#5B21B6; --violet-light:#A78BFA;
+  --green:#0F9D58; --green-light:#6EE7A0; --red:#EA4335; --amber:#FBBC04;
+  --teal:#0d9488;
+  --text:#F6F6F8; --muted:#8B8B9A; --line:rgba(255,255,255,.08);
+  --r:18px;
+  --grad-violet:linear-gradient(135deg,#7C3AED 0%,#5B21B6 55%,#2E1065 100%);
+  --grad-yellow:linear-gradient(135deg,#FFD400 0%,#FF8A00 100%);
+  --grad-teal:linear-gradient(135deg,#0d9488,#065f56);
+  --grad-orange:linear-gradient(135deg,#FF8A00,#E5533D);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{font-family:'Inter','Segoe UI',system-ui,-apple-system,sans-serif;
+  background:var(--black); color:var(--text); overflow-x:hidden;-webkit-font-smoothing:antialiased}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(700px 500px at 12% -8%, rgba(124,58,237,.30), transparent 62%),
+    radial-gradient(600px 420px at 92% 4%, rgba(255,138,0,.12), transparent 60%),
+    radial-gradient(800px 600px at 50% 108%, rgba(13,148,136,.22), transparent 65%)}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,select,textarea{font-family:inherit}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-thumb{background:#2A2A38;border-radius:99px}
+.screen{display:none;position:relative;z-index:1;min-height:100vh}
+.screen.active{display:block}
+
+.notif-panel{position:fixed;top:12px;left:12px;right:12px;z-index:600;
+  max-width:440px;margin:0 auto;background:rgba(28,28,34,.94);
+  backdrop-filter:blur(22px);border:1px solid rgba(255,255,255,.13);
+  border-radius:20px;padding:13px 15px;display:flex;gap:12px;align-items:flex-start;
+  transform:translateY(-180%);transition:transform .55s cubic-bezier(.2,1.1,.35,1);
+  box-shadow:0 24px 48px -12px rgba(0,0,0,.9)}
+.notif-panel.show{transform:translateY(0)}
+.notif-panel.dismiss{transform:translateY(-180%)}
+.notif-panel .notif-icon{width:40px;height:40px;border-radius:11px;flex-shrink:0;
+  background:var(--grad-yellow);display:grid;place-items:center;font-size:20px}
+.notif-panel .notif-content{flex:1;min-width:0}
+.notif-panel .notif-header{display:flex;justify-content:space-between;align-items:center;
+  font-size:10px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;
+  color:var(--muted);margin-bottom:4px}
+.notif-panel .notif-title{font-size:13.5px;font-weight:800;margin-bottom:3px}
+.notif-panel .notif-body{font-size:12.5px;color:var(--muted);line-height:1.5}
+.notif-panel .notif-body b{color:var(--yellow);font-size:16px;font-weight:900;
+  letter-spacing:3px;font-family:ui-monospace,monospace}
+.notif-panel .notif-dismiss{width:22px;height:22px;border-radius:50%;flex-shrink:0;
+  background:rgba(255,255,255,.08);display:grid;place-items:center;
+  font-size:11px;color:var(--muted)}
+
+#screen-login{display:none;place-items:center;padding:24px}
+#screen-login.active{display:grid}
+.login-wrap{width:100%;max-width:440px}
+.brand{text-align:center;margin-bottom:26px}
+.brand-mark{width:80px;height:80px;border-radius:26px;margin:0 auto 16px;
+  background:var(--grad-yellow); display:grid;place-items:center;font-size:42px;
+  box-shadow:0 14px 40px -10px rgba(255,212,0,.55);animation:floaty 3.4s ease-in-out infinite}
+@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.brand h1{font-size:40px;font-weight:900;letter-spacing:-2px;line-height:1}
+.brand h1 span{background:var(--grad-yellow);-webkit-background-clip:text;background-clip:text;color:transparent}
+.brand p{color:var(--muted);font-size:13px;margin-top:8px}
+.brand .tags{display:flex;gap:6px;justify-content:center;margin-top:12px;flex-wrap:wrap}
+.brand .tags span{font-size:10.5px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;
+  padding:5px 10px;border-radius:99px;background:rgba(13,148,136,.2);
+  border:1px solid rgba(13,148,136,.45);color:#5eead4}
+.card{background:linear-gradient(180deg,rgba(24,24,34,.92),rgba(16,16,24,.92));
+  border:1px solid var(--line);border-radius:var(--r);
+  backdrop-filter:blur(14px);box-shadow:0 18px 40px -18px rgba(0,0,0,.9)}
+.pad{padding:22px}
+.role-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.role{border:1.5px solid var(--line);border-radius:14px;padding:14px 8px;text-align:center;
+  background:rgba(255,255,255,.02);transition:.22s}
+.role.on{border-color:var(--yellow);background:var(--yellow-soft);box-shadow:0 0 0 3px rgba(255,212,0,.10)}
+.role .ic{font-size:24px;display:block;margin-bottom:6px}
+.role .lb{font-size:11.5px;font-weight:800}
+.role .sb{font-size:9.5px;color:var(--muted);margin-top:2px}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:11px;font-weight:700;letter-spacing:.6px;
+  text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+.inp{width:100%;padding:14px 16px;border-radius:13px;font-size:15px;
+  background:rgba(255,255,255,.045);border:1.5px solid var(--line);
+  color:var(--text);outline:none;transition:.2s}
+.inp:focus{border-color:var(--violet);background:rgba(124,58,237,.08)}
+.phone-row{display:flex;gap:8px}
+.cc{padding:14px;border-radius:13px;background:rgba(255,255,255,.045);
+  border:1.5px solid var(--line);font-size:15px;font-weight:700;color:var(--muted);
+  display:grid;place-items:center}
+.btn{width:100%;padding:15px;border-radius:14px;font-size:15px;font-weight:800;
+  transition:.2s;display:flex;align-items:center;justify-content:center;gap:9px}
+.btn-primary{background:var(--grad-yellow);color:#0A0A0F}
+.btn-violet{background:var(--grad-violet);color:#fff}
+.btn-teal{background:var(--grad-teal);color:#fff}
+.btn-orange{background:var(--grad-orange);color:#fff}
+.btn-ghost{background:rgba(255,255,255,.05);border:1.5px solid var(--line);color:var(--text)}
+.btn-danger{background:rgba(239,68,68,.14);border:1.5px solid rgba(239,68,68,.45);color:#FCA5A5}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn.sm{padding:11px;font-size:13px;border-radius:11px}
+.hint{font-size:11.5px;color:var(--muted);text-align:center;margin-top:14px;line-height:1.6}
+.hint b{color:var(--yellow)}
+.otp-boxes{display:flex;gap:9px;justify-content:center;margin:6px 0 14px}
+.otp-boxes input{width:52px;height:60px;text-align:center;font-size:23px;font-weight:800;
+  border-radius:13px;background:rgba(255,255,255,.045);
+  border:1.5px solid var(--line);color:var(--yellow);outline:none;transition:.2s}
+.otp-boxes input:focus{border-color:var(--yellow);background:var(--yellow-soft)}
+.otp-resend{display:flex;align-items:center;justify-content:center;gap:10px;
+  margin-top:14px;font-size:12.5px;color:var(--muted);font-weight:600}
+.otp-resend .resend-btn{padding:6px 14px;border-radius:99px;font-size:12px;font-weight:800;
+  background:rgba(255,212,0,.12);color:var(--yellow);
+  border:1px solid rgba(255,212,0,.35)}
+.otp-resend .resend-btn:disabled{opacity:.4}
+.otp-resend b{color:var(--yellow)}
+
+.shell{max-width:560px;margin:0 auto;padding-bottom:92px;min-height:100vh}
+.topbar{position:sticky;top:0;z-index:40;
+  background:rgba(8,8,12,.86);backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--line);padding:14px 16px;display:flex;align-items:center;gap:11px}
+.topbar .t{flex:1;min-width:0}
+.topbar .t h2{font-size:17px;font-weight:900;letter-spacing:-.3px}
+.topbar .t h2 span{background:var(--grad-yellow);-webkit-background-clip:text;background-clip:text;color:transparent}
+.topbar .t p{font-size:10.5px;color:var(--muted);margin-top:1px}
+.pill{font-size:10px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;
+  padding:6px 11px;border-radius:99px}
+.pill.cust{background:var(--yellow-soft);color:var(--yellow);border:1px solid rgba(255,212,0,.35)}
+.pill.driv{background:rgba(124,58,237,.2);color:var(--violet-light);border:1px solid rgba(124,58,237,.45)}
+.pill.adm{background:rgba(34,197,94,.14);color:#6EE7A0;border:1px solid rgba(34,197,94,.4)}
+.pane{display:none;padding:16px}
+.pane.active{display:block;animation:fadeUp .3s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.tabbar{position:fixed;bottom:0;left:0;right:0;z-index:50;
+  background:rgba(12,12,18,.95);backdrop-filter:blur(20px);
+  border-top:1px solid var(--line);display:flex;justify-content:space-around;
+  padding:9px 6px calc(9px + env(safe-area-inset-bottom));max-width:560px;margin:0 auto}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
+  padding:7px 2px;border-radius:12px;color:var(--muted);
+  font-size:9.5px;font-weight:700;transition:.2s}
+.tab .i{font-size:19px;line-height:1;filter:grayscale(1) opacity(.65);transition:.2s}
+.tab.on{color:var(--yellow);background:var(--yellow-soft)}
+.tab.on .i{filter:none;transform:translateY(-1px)}
+.sec-title{font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;
+  color:var(--muted);margin:20px 0 11px;display:flex;align-items:center;justify-content:space-between}
+.sec-title:first-child{margin-top:0}
+.sec-title .cnt{color:var(--violet-light);font-size:10px}
+
+.promo{border-radius:16px;padding:15px 17px;margin-bottom:15px;position:relative;overflow:hidden;
+  background:var(--grad-teal);border:1px solid rgba(94,234,212,.3);
+  display:flex;align-items:center;gap:13px}
+.promo .em{font-size:29px}
+.promo .tx{flex:1}
+.promo .tx h4{font-size:14.5px;font-weight:900}
+.promo .tx p{font-size:11px;opacity:.85;margin-top:3px}
+
+.route-card{padding:15px;border-radius:var(--r);background:var(--black-3);
+  border:1px solid var(--line);margin-bottom:15px}
+.route-row{display:flex;align-items:center;gap:12px}
+.dotcol{display:flex;flex-direction:column;align-items:center;gap:3px;padding:3px 0}
+.dot{width:11px;height:11px;border-radius:50%;flex-shrink:0}
+.dot.g{background:var(--green);box-shadow:0 0 0 4px rgba(15,157,88,.2)}
+.dot.r{background:var(--yellow);border-radius:3px;box-shadow:0 0 0 4px rgba(255,212,0,.16)}
+.vline{width:2px;height:26px;background:repeating-linear-gradient(180deg,
+  rgba(255,255,255,.28) 0 3px,transparent 3px 6px)}
+.route-fields{flex:1;display:flex;flex-direction:column;gap:7px}
+.route-fields select{width:100%;padding:10px 34px 10px 12px;border-radius:11px;font-size:13.5px;font-weight:600;
+  background-color:#101018;border:1.5px solid var(--line);
+  color:var(--text);outline:none;appearance:none;-webkit-appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238B8B9A' stroke-width='3'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 12px center}
+.route-fields select option{background:#101018;color:var(--text)}
+.swap{width:38px;height:38px;border-radius:50%;background:rgba(124,58,237,.18);
+  border:1px solid rgba(124,58,237,.45);display:grid;place-items:center;
+  font-size:15px;flex-shrink:0}
+.route-meta{display:flex;gap:14px;margin-top:12px;padding-top:11px;
+  border-top:1px dashed rgba(255,255,255,.1);font-size:11.5px;color:var(--muted)}
+.route-meta b{color:var(--text);font-weight:800}
+
+.mode-toggle{display:flex;gap:6px;padding:4px;background:rgba(255,255,255,.04);
+  border:1px solid var(--line);border-radius:14px;margin-bottom:15px}
+.mode-toggle button{flex:1;padding:12px 10px;border-radius:11px;
+  font-size:12.5px;font-weight:800;color:var(--muted);transition:.2s;
+  display:flex;align-items:center;justify-content:center;gap:6px}
+.mode-toggle button.on{background:var(--grad-yellow);color:#0A0A0F}
+.mode-hint{font-size:11px;color:var(--muted);text-align:center;
+  padding:10px 12px;border-radius:11px;background:rgba(124,58,237,.08);
+  border:1px dashed rgba(124,58,237,.3);margin-bottom:15px;line-height:1.5}
+.mode-hint b{color:var(--violet-light)}
+
+.fare-fixed{padding:16px 18px;border-radius:16px;margin-bottom:15px;
+  background:linear-gradient(135deg,rgba(13,148,136,.20),rgba(24,24,34,.9));
+  border:1.5px solid rgba(94,234,212,.4)}
+.fare-fixed .row{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.fare-fixed .lbl{font-size:10px;font-weight:800;letter-spacing:1px;
+  text-transform:uppercase;color:#5eead4}
+.fare-fixed .amt{font-size:30px;font-weight:900;color:var(--yellow);letter-spacing:-1.2px;line-height:1}
+.fare-fixed .note{font-size:11px;color:var(--muted);margin-top:9px;line-height:1.5}
+.fare-fixed .note b{color:#5eead4}
+.fare-fixed .eta-line{font-size:11.5px;color:var(--muted);margin-top:8px;
+  padding-top:9px;border-top:1px dashed rgba(94,234,212,.22)}
+.fare-fixed .eta-line b{color:var(--text)}
+
+.veh-selector{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:15px}
+.veh-opt{padding:12px 6px;border-radius:14px;text-align:center;cursor:pointer;
+  background:var(--black-3);border:1.5px solid var(--line);transition:.2s;position:relative}
+.veh-opt.on{border-color:var(--yellow);
+  background:linear-gradient(135deg,rgba(255,212,0,.12),rgba(24,24,34,1))}
+.veh-opt.on::before{content:'';position:absolute;top:0;left:20%;right:20%;height:2px;
+  background:var(--yellow);border-radius:0 0 4px 4px}
+.veh-opt .em{font-size:26px;display:block;margin-bottom:5px}
+.veh-opt .nm{font-size:10.5px;font-weight:800;letter-spacing:-.2px}
+.veh-opt .pr{font-size:10px;color:var(--yellow);font-weight:800;margin-top:3px}
+
+.auto-card{display:flex;align-items:center;gap:15px;padding:18px;border-radius:16px;
+  background:linear-gradient(135deg,rgba(255,212,0,.10),rgba(24,24,34,1));
+  border:1.5px solid var(--yellow);position:relative;overflow:hidden}
+.auto-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--yellow)}
+.auto-card .ic{width:64px;height:64px;border-radius:18px;flex-shrink:0;
+  background:var(--yellow-soft);display:grid;place-items:center;font-size:34px;
+  border:1px solid rgba(255,212,0,.35)}
+.auto-card .info{flex:1;min-width:0}
+.auto-card .info h4{font-size:16px;font-weight:900;display:flex;align-items:center;gap:7px}
+.auto-card .info .badge{font-size:9px;font-weight:800;letter-spacing:.5px;
+  text-transform:uppercase;padding:3px 7px;border-radius:5px;
+  background:var(--yellow-soft);color:var(--yellow);border:1px solid rgba(255,212,0,.4)}
+.auto-card .info p{font-size:11.5px;color:var(--muted);margin-top:5px}
+.auto-card .info .feats{display:flex;gap:6px;margin-top:9px;flex-wrap:wrap}
+.auto-card .info .feat{font-size:10px;font-weight:700;padding:3px 8px;
+  border-radius:6px;background:rgba(255,255,255,.05);
+  border:1px solid var(--line);color:var(--muted)}
+.auto-card .price{text-align:right;flex-shrink:0}
+.auto-card .price .now{font-size:22px;font-weight:900;color:var(--yellow);letter-spacing:-.8px}
+.auto-card .price .lbl{font-size:9.5px;color:var(--muted);text-transform:uppercase;
+  letter-spacing:.5px;font-weight:700;margin-top:3px}
+
+.chips{display:flex;gap:7px;overflow-x:auto;padding-bottom:4px;margin-bottom:4px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{white-space:nowrap;padding:8px 13px;border-radius:99px;font-size:11.5px;font-weight:700;
+  background:rgba(255,255,255,.045);border:1px solid var(--line);color:var(--muted);
+  transition:.2s;flex-shrink:0}
+.chip.on{background:var(--yellow-soft);border-color:rgba(255,212,0,.5);color:var(--yellow)}
+
+.pkg-types{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:15px}
+.pkg-type{padding:12px 6px;border-radius:13px;text-align:center;cursor:pointer;
+  background:var(--black-3);border:1.5px solid var(--line);transition:.2s}
+.pkg-type.on{border-color:var(--yellow);
+  background:linear-gradient(135deg,rgba(255,212,0,.12),rgba(24,24,34,1))}
+.pkg-type .em{font-size:22px;display:block;margin-bottom:5px}
+.pkg-type .nm{font-size:10.5px;font-weight:800}
+.pkg-type .sub{font-size:9px;color:var(--muted);margin-top:2px}
+
+.weight-opts{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:15px}
+.weight-opt{padding:11px 4px;border-radius:12px;text-align:center;cursor:pointer;
+  background:rgba(255,255,255,.04);border:1.5px solid var(--line);transition:.2s;
+  font-size:11px;font-weight:800}
+.weight-opt.on{border-color:var(--yellow);background:var(--yellow-soft);color:var(--yellow)}
+.weight-opt small{display:block;font-size:9px;color:var(--muted);font-weight:600;margin-top:2px}
+
+.parcel-hero{border-radius:16px;padding:16px;margin-bottom:15px;
+  background:var(--grad-orange);border:1px solid rgba(255,180,120,.3);
+  display:flex;align-items:center;gap:14px}
+.parcel-hero .em{font-size:34px}
+.parcel-hero .tx{flex:1}
+.parcel-hero .tx h4{font-size:15.5px;font-weight:900}
+.parcel-hero .tx p{font-size:11.5px;opacity:.9;margin-top:3px;line-height:1.5}
+
+.driver-card{padding:16px;border-radius:16px;background:var(--black-3);
+  border:1.5px solid var(--line);margin-bottom:12px;cursor:pointer;transition:.22s;
+  position:relative;overflow:hidden}
+.driver-card.on{border-color:var(--yellow);
+  background:linear-gradient(135deg,rgba(255,212,0,.08),rgba(24,24,34,1))}
+.driver-card.on::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--yellow)}
+.dc-top{display:flex;align-items:center;gap:13px;margin-bottom:13px}
+.dc-avatar{width:58px;height:58px;border-radius:17px;flex-shrink:0;
+  background:var(--grad-violet);display:grid;place-items:center;font-size:26px;
+  border:2px solid rgba(167,139,250,.4);position:relative}
+.dc-avatar .online-dot{position:absolute;bottom:-2px;right:-2px;width:15px;height:15px;
+  border-radius:50%;background:var(--green);border:2px solid var(--black-3)}
+.dc-info{flex:1;min-width:0}
+.dc-info h4{font-size:15.5px;font-weight:900;display:flex;align-items:center;gap:7px}
+.dc-info h4 .verified{font-size:10px;color:var(--green-light);font-weight:700}
+.dc-info .rating-line{display:flex;align-items:center;gap:9px;margin-top:5px;font-size:12px;flex-wrap:wrap}
+.dc-info .rating-line .rating{color:var(--yellow);font-weight:900;
+  background:var(--yellow-soft);padding:3px 8px;border-radius:7px;
+  border:1px solid rgba(255,212,0,.3)}
+.dc-info .rating-line .exp{color:var(--muted);font-weight:600}
+.dc-eta{text-align:right;flex-shrink:0;padding-left:8px}
+.dc-eta .num{font-size:22px;font-weight:900;color:var(--yellow);letter-spacing:-.7px;line-height:1}
+.dc-eta .lbl{font-size:9.5px;color:var(--muted);text-transform:uppercase;
+  letter-spacing:.5px;font-weight:700;margin-top:3px}
+.dc-details{display:flex;gap:7px;margin-bottom:12px;flex-wrap:wrap}
+.detail-chip{font-size:10.5px;font-weight:700;padding:5px 10px;border-radius:7px;
+  display:flex;align-items:center;gap:5px}
+.lang-chip{background:rgba(13,148,136,.15);color:#5eead4;border:1px solid rgba(94,234,212,.3)}
+.veh-chip{background:rgba(255,255,255,.05);color:var(--muted);
+  border:1px solid var(--line);font-family:ui-monospace,monospace;letter-spacing:.6px}
+.dc-bottom{display:flex;align-items:center;justify-content:space-between;
+  padding-top:12px;border-top:1px dashed rgba(255,255,255,.1)}
+.dc-bottom .fare{display:flex;align-items:baseline;gap:6px}
+.dc-bottom .fare .amt{font-size:19px;font-weight:900;color:var(--yellow);letter-spacing:-.5px}
+.dc-bottom .fare .sub{font-size:10.5px;color:var(--muted);font-weight:600}
+.dc-bottom .select-btn{padding:10px 20px;border-radius:11px;font-size:12.5px;font-weight:800;
+  background:var(--grad-yellow);color:#0A0A0F}
+.driver-card.on .dc-bottom .select-btn{background:var(--green);color:#fff}
+
+.sticky-bot{position:fixed;bottom:78px;left:0;right:0;z-index:48;
+  max-width:560px;margin:0 auto;padding:0 16px}
+.sticky-inner{background:linear-gradient(180deg,rgba(24,24,34,.97),rgba(16,16,24,.97));
+  border:1px solid var(--line);border-radius:16px;padding:13px 15px;
+  backdrop-filter:blur(18px);display:flex;align-items:center;gap:13px}
+.sticky-inner .l{flex:1;min-width:0}
+.sticky-inner .l .a{font-size:10px;color:var(--muted);font-weight:700;
+  letter-spacing:.5px;text-transform:uppercase}
+.sticky-inner .l .b{font-size:20px;font-weight:900;color:var(--yellow);
+  letter-spacing:-.6px;margin-top:2px}
+.sticky-inner .btn{width:auto;padding:13px 26px;flex-shrink:0}
+
+.search-stage{display:flex;flex-direction:column;align-items:center;
+  justify-content:center;min-height:74vh;text-align:center;padding:20px}
+.radar{position:relative;width:190px;height:190px;margin-bottom:34px}
+.radar .ring{position:absolute;inset:0;border-radius:50%;border:2px solid rgba(255,212,0,.32);
+  animation:radarPulse 2.4s cubic-bezier(.2,.7,.4,1) infinite}
+.radar .ring:nth-child(2){animation-delay:.8s}
+.radar .ring:nth-child(3){animation-delay:1.6s}
+@keyframes radarPulse{0%{transform:scale(.28);opacity:0}22%{opacity:1}100%{transform:scale(1);opacity:0}}
+.radar .core{position:absolute;inset:0;margin:auto;width:76px;height:76px;border-radius:50%;
+  background:var(--grad-yellow);display:grid;place-items:center;font-size:33px;
+  box-shadow:0 0 46px rgba(255,212,0,.6)}
+.search-stage h3{font-size:20px;font-weight:900}
+.search-stage p{color:var(--muted);font-size:13px;margin-top:8px;max-width:280px;line-height:1.6}
+.search-stage .dots::after{content:'';animation:dots 1.5s steps(4,end) infinite}
+@keyframes dots{0%{content:''}25%{content:'.'}50%{content:'..'}75%{content:'...'}}
+
+.gmap{position:relative;border-radius:var(--r);overflow:hidden;
+  border:1px solid var(--line);margin-bottom:15px;background:#f2efe9}
+.gmap svg{display:block;width:100%;height:auto}
+.gmap .gmap-overlay{position:absolute;top:10px;left:10px;display:flex;gap:6px;flex-wrap:wrap;z-index:3}
+.gmap .tag{font-size:9.5px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;
+  padding:5px 9px;border-radius:7px;background:rgba(255,255,255,.94);
+  border:1px solid rgba(0,0,0,.08);color:#3c4043}
+.gmap .tag.live{color:#137333;border-color:rgba(19,115,51,.25)}
+.gmap .tag.live::before{content:'●';margin-right:4px;animation:blink 1.1s infinite}
+@keyframes blink{50%{opacity:.2}}
+.gmap .tag.v{color:#5B21B6}
+
+.arriving-hero{text-align:center;padding:16px 12px 6px}
+.arriving-hero .ttl{font-size:11px;font-weight:800;letter-spacing:1px;
+  text-transform:uppercase;color:var(--violet-light)}
+.arriving-hero .eta{font-size:44px;font-weight:900;color:var(--yellow);letter-spacing:-2px;
+  line-height:1;margin:8px 0 4px;display:flex;align-items:baseline;justify-content:center;gap:6px}
+.arriving-hero .eta small{font-size:15px;color:var(--muted);font-weight:700}
+.arriving-hero .sub{font-size:12.5px;color:var(--muted);margin-top:4px}
+.arriving-hero .sub b{color:var(--text)}
+.arriving-steps{display:flex;justify-content:center;gap:6px;margin-top:16px}
+.arriving-steps .st{flex:1;max-width:120px;padding:9px 6px;border-radius:11px;
+  background:rgba(255,255,255,.04);border:1px solid var(--line);
+  font-size:9.5px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;
+  color:var(--muted);display:flex;align-items:center;justify-content:center;gap:5px}
+.arriving-steps .st.on{background:var(--yellow-soft);border-color:rgba(255,212,0,.45);color:var(--yellow)}
+.arriving-steps .st.done{background:rgba(34,197,94,.14);border-color:rgba(34,197,94,.4);color:#6EE7A0}
+.arriving-steps .st .dotmini{width:7px;height:7px;border-radius:50%;background:currentColor;flex-shrink:0}
+
+.drv-card{padding:15px;border-radius:var(--r);background:var(--black-3);
+  border:1px solid var(--line);margin-bottom:15px}
+.drv-top{display:flex;align-items:center;gap:13px}
+.avatar{width:56px;height:56px;border-radius:16px;display:grid;place-items:center;
+  font-size:25px;background:var(--grad-violet);flex-shrink:0;
+  border:2px solid rgba(167,139,250,.4);position:relative}
+.avatar .online-dot{position:absolute;bottom:-2px;right:-2px;width:14px;height:14px;
+  border-radius:50%;background:var(--green);border:2px solid var(--black-3)}
+.drv-top .n{flex:1;min-width:0}
+.drv-top .n h4{font-size:15.5px;font-weight:900;display:flex;align-items:center;gap:7px}
+.verified{font-size:10px;color:var(--green-light)}
+.drv-top .n p{font-size:11.5px;color:var(--muted);margin-top:3px}
+.rating{display:flex;align-items:center;gap:4px;font-size:12.5px;font-weight:800;
+  background:var(--yellow-soft);color:var(--yellow);padding:6px 10px;border-radius:9px}
+.plate{display:inline-block;font-family:ui-monospace,monospace;font-size:12px;font-weight:800;
+  letter-spacing:1.2px;background:#fff;color:#000;padding:5px 11px;
+  border-radius:6px;border:2px solid #000;margin-top:9px}
+.drv-actions{display:flex;gap:9px;margin-top:13px}
+.drv-actions .btn{flex:1;padding:11px;font-size:12.5px}
+
+.prog-wrap{padding:16px;border-radius:var(--r);background:var(--black-3);
+  border:1px solid var(--line);margin-bottom:15px}
+.prog-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:15px}
+.stat{padding:13px;border-radius:13px;background:rgba(255,255,255,.04);border:1px solid var(--line)}
+.stat .k{font-size:9.5px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;
+  color:var(--muted);margin-bottom:6px}
+.stat .v{font-size:21px;font-weight:900;letter-spacing:-.7px;color:var(--yellow)}
+.stat .v small{font-size:11px;color:var(--muted);font-weight:600}
+.stat.violet .v{color:var(--violet-light)}
+.bar{height:8px;border-radius:99px;background:rgba(255,255,255,.07);overflow:hidden}
+.bar .fill{height:100%;border-radius:99px;background:var(--grad-yellow)}
+.bar.violet .fill{background:var(--grad-violet)}
+.bar-lbl{display:flex;justify-content:space-between;font-size:10.5px;
+  color:var(--muted);margin-top:8px;font-weight:700}
+
+.share-box{padding:16px;border-radius:var(--r);
+  background:linear-gradient(135deg,rgba(13,148,136,.18),rgba(24,24,34,.9));
+  border:1.5px solid rgba(94,234,212,.35);margin-bottom:15px}
+.share-box .sb-title{font-size:12.5px;font-weight:900;display:flex;align-items:center;gap:8px;margin-bottom:5px}
+.share-box .sb-desc{font-size:11.5px;color:var(--muted);line-height:1.5;margin-bottom:13px}
+.share-link-row{display:flex;gap:8px;align-items:center;margin-bottom:11px}
+.share-link{flex:1;padding:11px 13px;border-radius:10px;background:rgba(0,0,0,.35);
+  border:1px solid var(--line);font-family:ui-monospace,monospace;font-size:11.5px;
+  color:#5eead4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700}
+.copy-btn{padding:11px 16px;border-radius:10px;font-size:11.5px;font-weight:800;
+  background:var(--grad-yellow);color:#0A0A0F;flex-shrink:0}
+.share-actions{display:flex;gap:9px;flex-wrap:wrap}
+.share-actions .btn{width:auto;padding:10px 15px;font-size:12px;border-radius:10px;flex:1;min-width:100px}
+
+.fare-box{padding:16px;border-radius:var(--r);background:var(--black-3);
+  border:1px solid var(--line);margin-bottom:15px}
+.fare-line{display:flex;justify-content:space-between;font-size:13px;padding:9px 0;color:var(--muted)}
+.fare-line b{color:var(--text);font-weight:700}
+.fare-line.total{border-top:1px dashed rgba(255,255,255,.14);margin-top:8px;padding-top:14px;
+  font-size:16px;color:var(--text);font-weight:900}
+.fare-line.total b{font-size:23px;color:var(--yellow);letter-spacing:-.7px}
+
+.pay-option{padding:18px 16px;border-radius:14px;background:var(--black-3);
+  border:1.5px solid var(--line);transition:.2s;margin-bottom:10px;
+  display:flex;align-items:center;gap:14px;cursor:pointer}
+.pay-option .ic{width:48px;height:48px;border-radius:13px;flex-shrink:0;
+  display:grid;place-items:center;font-size:24px;background:rgba(255,255,255,.05)}
+.pay-option .tx{flex:1;min-width:0}
+.pay-option .tx h4{font-size:14.5px;font-weight:800;margin-bottom:3px}
+.pay-option .tx p{font-size:11.5px;color:var(--muted);line-height:1.4}
+.pay-option .arrow{font-size:20px;color:var(--muted);flex-shrink:0}
+
+.upi-apps-list{display:flex;flex-direction:column;gap:10px;margin-bottom:15px}
+.upi-app-item{padding:14px 16px;border-radius:14px;background:var(--black-3);
+  border:1.5px solid var(--line);display:flex;align-items:center;gap:14px;
+  transition:.2s;cursor:pointer}
+.upi-app-item .app-logo{width:46px;height:46px;border-radius:12px;flex-shrink:0;
+  display:grid;place-items:center;font-size:24px;font-weight:900;
+  background:rgba(255,255,255,.06);border:1.5px solid var(--line)}
+.upi-app-item .app-info{flex:1;min-width:0}
+.upi-app-item .app-info h4{font-size:14px;font-weight:800}
+.upi-app-item .app-info p{font-size:11px;color:var(--muted);margin-top:2px}
+
+.upi-pin-sheet{padding:20px 0;
+  background:linear-gradient(180deg,rgba(24,24,34,.6),rgba(16,16,24,.9));
+  border-radius:20px;border:1px solid var(--line);margin-bottom:15px}
+.upi-pin-head{display:flex;align-items:center;gap:12px;padding:0 20px 18px;
+  border-bottom:1px solid var(--line);margin-bottom:18px}
+.upi-pin-head .app-logo{width:48px;height:48px;border-radius:14px;flex-shrink:0;
+  display:grid;place-items:center;font-size:24px;font-weight:900;
+  background:rgba(255,255,255,.06);border:1.5px solid var(--line)}
+.upi-pin-head .tx h4{font-size:15px;font-weight:900}
+.upi-pin-head .tx p{font-size:11px;color:var(--muted);margin-top:2px}
+.upi-pin-amt{text-align:center;margin-bottom:22px;padding:0 20px}
+.upi-pin-amt .k{font-size:10px;font-weight:800;letter-spacing:1px;
+  text-transform:uppercase;color:var(--violet-light);margin-bottom:6px}
+.upi-pin-amt .v{font-size:32px;font-weight:900;color:var(--yellow);letter-spacing:-1.2px;line-height:1}
+.upi-pin-amt .to{font-size:11.5px;color:var(--muted);margin-top:8px}
+.upi-pin-amt .to b{color:var(--text)}
+.upi-pin-lbl{text-align:center;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:14px}
+.upi-pin-lbl b{color:var(--yellow)}
+.upi-dots{display:flex;justify-content:center;gap:18px;margin-bottom:22px;padding:6px 0}
+.upi-dots span{width:16px;height:16px;border-radius:50%;
+  background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.2);transition:.2s}
+.upi-dots span.filled{background:var(--yellow);border-color:var(--yellow);transform:scale(1.08)}
+.upi-keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:0 18px 14px}
+.upi-keypad button{padding:16px 6px;border-radius:13px;
+  background:rgba(255,255,255,.05);border:1px solid var(--line);
+  font-size:22px;font-weight:800;color:var(--text);user-select:none}
+.upi-keypad button.fn{font-size:16px;color:var(--muted)}
+.upi-secure{display:flex;align-items:center;justify-content:center;gap:7px;
+  font-size:10.5px;color:var(--muted);font-weight:600}
+.upi-secure b{color:#6EE7A0}
+
+.qr-driver-box{padding:20px;border-radius:var(--r);
+  background:linear-gradient(135deg,rgba(13,148,136,.18),rgba(24,24,34,.95));
+  border:1.5px solid rgba(94,234,212,.4);margin-bottom:15px;text-align:center}
+.qr-driver-box .qr-hd{font-size:11px;font-weight:800;letter-spacing:1px;
+  text-transform:uppercase;color:#5eead4;margin-bottom:6px}
+.qr-driver-box .qr-amt{font-size:30px;font-weight:900;color:var(--yellow);
+  letter-spacing:-1px;margin-bottom:16px}
+.qr-driver-box .qr-canvas{width:210px;height:210px;margin:0 auto 14px;padding:10px;
+  background:#fff;border-radius:14px}
+.qr-driver-box .qr-canvas svg{width:100%;height:100%;display:block}
+.qr-driver-box .qr-instr{font-size:12px;color:var(--muted);line-height:1.6;max-width:300px;margin:0 auto}
+.qr-driver-box .qr-instr b{color:var(--text)}
+
+.success-stage{display:flex;flex-direction:column;align-items:center;
+  justify-content:center;min-height:74vh;text-align:center;padding:20px}
+.checkmark{width:104px;height:104px;border-radius:50%;background:var(--grad-yellow);
+  display:grid;place-items:center;font-size:50px;margin-bottom:24px;
+  animation:pop .5s cubic-bezier(.2,1.4,.4,1)}
+@keyframes pop{0%{transform:scale(.3);opacity:0}100%{transform:scale(1);opacity:1}}
+.success-stage h3{font-size:25px;font-weight:900}
+.success-stage .amt{font-size:40px;font-weight:900;color:var(--yellow);
+  letter-spacing:-1.5px;margin:10px 0 5px}
+.success-stage p{color:var(--muted);font-size:13px}
+.receipt{width:100%;max-width:330px;margin-top:22px;padding:15px;border-radius:15px;
+  background:var(--black-3);border:1px dashed rgba(255,212,0,.35);text-align:left}
+.receipt .r{display:flex;justify-content:space-between;font-size:12px;padding:6px 0;color:var(--muted)}
+.receipt .r b{color:var(--text)}
+
+.feedback-wrap{padding:20px;border-radius:var(--r);
+  background:var(--black-3);border:1px solid var(--line);margin-bottom:15px}
+.fb-title{font-size:17px;font-weight:900;text-align:center;margin-bottom:6px}
+.fb-sub{font-size:12px;color:var(--muted);text-align:center;margin-bottom:20px;line-height:1.5}
+.stars-row{display:flex;gap:12px;justify-content:center;margin:8px 0 20px}
+.star{font-size:38px;filter:grayscale(1) opacity(.35);transition:.2s;cursor:pointer}
+.star:hover,.star.on{filter:none;transform:scale(1.15)}
+.fb-cats{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:20px}
+.fb-cat{padding:8px 14px;border-radius:99px;font-size:11.5px;font-weight:700;
+  background:rgba(255,255,255,.04);border:1px solid var(--line);color:var(--muted);cursor:pointer}
+.fb-cat.on{background:rgba(239,68,68,.14);border-color:rgba(239,68,68,.5);color:#FCA5A5}
+.fb-textarea{width:100%;padding:14px 16px;border-radius:13px;font-size:13.5px;
+  background:rgba(255,255,255,.045);border:1.5px solid var(--line);
+  color:var(--text);outline:none;resize:vertical;min-height:90px;font-family:inherit;line-height:1.5}
+.fb-note{font-size:11px;color:var(--muted);text-align:center;margin-top:11px;line-height:1.5}
+
+.return-modal{position:fixed;inset:0;z-index:320;display:none;
+  background:rgba(4,4,8,.82);backdrop-filter:blur(6px);
+  align-items:center;justify-content:center;padding:20px}
+.return-modal.show{display:flex;animation:fadeIn .25s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.return-sheet{width:100%;max-width:440px;
+  background:linear-gradient(180deg,#131320,#0A0A12);
+  border-radius:24px;border:1px solid var(--line);
+  padding:24px 22px;animation:pop .4s cubic-bezier(.2,1.1,.4,1);
+  max-height:92vh;overflow-y:auto}
+.return-sheet .rm-hero{font-size:44px;text-align:center;margin-bottom:10px}
+.return-sheet h3{font-size:20px;font-weight:900;text-align:center;margin-bottom:6px}
+.return-sheet .sub{font-size:12.5px;color:var(--muted);text-align:center;line-height:1.6;margin-bottom:20px}
+.return-sheet .sub b{color:var(--text)}
+.route-preview{padding:14px;border-radius:13px;background:rgba(255,255,255,.03);
+  border:1px solid var(--line);margin-bottom:18px}
+.route-preview .rr{display:flex;align-items:center;gap:10px;font-size:13px;padding:6px 0}
+.route-preview .rr .d{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.route-preview .rr .d.g{background:var(--green)}
+.route-preview .rr .d.r{background:var(--yellow);border-radius:2px}
+.route-preview .rr b{color:var(--text);font-weight:700}
+.schedule-lbl{font-size:11px;font-weight:800;letter-spacing:.6px;
+  text-transform:uppercase;color:var(--muted);margin-bottom:9px}
+.preset-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:16px}
+.preset-btn{padding:12px 10px;border-radius:12px;text-align:center;cursor:pointer;
+  background:rgba(255,255,255,.04);border:1.5px solid var(--line);transition:.2s}
+.preset-btn.on{border-color:var(--yellow);background:var(--yellow-soft)}
+.preset-btn .t{font-size:12.5px;font-weight:800}
+.preset-btn .s{font-size:10px;color:var(--muted);margin-top:3px}
+.custom-row{display:flex;gap:8px;margin-bottom:18px}
+.custom-row input{flex:1;padding:12px 14px;border-radius:11px;font-size:13px;
+  background:rgba(255,255,255,.045);border:1.5px solid var(--line);
+  color:var(--text);outline:none;font-family:inherit}
+.return-actions{display:flex;gap:10px}
+.return-actions .btn{flex:1}
+
+.ride-card{padding:15px;border-radius:15px;background:var(--black-3);
+  border:1px solid var(--line);margin-bottom:11px}
+.ride-card .rc-top{display:flex;justify-content:space-between;align-items:flex-start;
+  margin-bottom:11px;padding-bottom:11px;border-bottom:1px dashed rgba(255,255,255,.08)}
+.ride-card .rc-id{font-family:ui-monospace,monospace;font-size:11px;
+  color:var(--muted);font-weight:700}
+.ride-card .rc-status{font-size:9.5px;font-weight:800;letter-spacing:.4px;
+  text-transform:uppercase;padding:3px 8px;border-radius:5px;
+  background:rgba(34,197,94,.14);color:#6EE7A0;border:1px solid rgba(34,197,94,.3)}
+.ride-card .rc-route{font-size:13px;font-weight:700;margin-bottom:5px}
+.ride-card .rc-meta{font-size:11px;color:var(--muted);display:flex;gap:14px;flex-wrap:wrap;margin-bottom:10px}
+.ride-card .rc-bottom{display:flex;justify-content:space-between;align-items:center}
+.ride-card .rc-fare{font-size:16px;font-weight:900;color:var(--yellow)}
+
+.online-card{padding:19px;border-radius:var(--r);margin-bottom:15px;
+  background:var(--grad-violet);border:1px solid rgba(167,139,250,.35);
+  display:flex;align-items:center;gap:15px}
+.online-card.off{background:linear-gradient(135deg,#22222F,#181822);border-color:var(--line)}
+.online-card .tx{flex:1}
+.online-card .tx h3{font-size:17px;font-weight:900}
+.online-card .tx p{font-size:11.5px;opacity:.85;margin-top:4px}
+.switch{width:60px;height:33px;border-radius:99px;background:rgba(0,0,0,.4);
+  border:1.5px solid rgba(255,255,255,.25);position:relative;transition:.28s;flex-shrink:0}
+.switch::after{content:'';position:absolute;top:3.5px;left:4px;width:23px;height:23px;
+  border-radius:50%;background:#fff;transition:.28s}
+.switch.on{background:var(--yellow);border-color:var(--yellow)}
+.switch.on::after{left:31px;background:#0A0A0F}
+.kpi-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:15px}
+.kpi{padding:15px;border-radius:15px;background:var(--black-3);
+  border:1px solid var(--line)}
+.kpi .k{font-size:9.5px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;
+  color:var(--muted);margin-bottom:7px}
+.kpi .v{font-size:24px;font-weight:900;letter-spacing:-1px;color:var(--yellow)}
+.kpi .v small{font-size:11px;color:var(--muted)}
+.kpi.v .v{color:var(--violet-light)}
+.kpi.g .v{color:#6EE7A0}
+.req-card{padding:17px;border-radius:var(--r);
+  background:linear-gradient(135deg,rgba(124,58,237,.22),rgba(24,24,34,1));
+  border:1.5px solid rgba(124,58,237,.5);margin-bottom:12px}
+.req-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px}
+.req-head .fare{font-size:26px;font-weight:900;color:var(--yellow);letter-spacing:-1px}
+.req-head .fare small{display:block;font-size:9.5px;color:var(--muted);
+  font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+.timer{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;
+  font-size:15px;font-weight:900;color:var(--yellow);
+  border:3px solid rgba(255,212,0,.28)}
+.req-route{font-size:12px;color:var(--muted);line-height:1.9;margin-bottom:14px}
+.req-route b{color:var(--text);font-weight:700}
+.req-actions{display:flex;gap:9px}
+.req-actions .btn{flex:1}
+.bars{display:flex;align-items:flex-end;gap:11px;height:160px;padding:14px 0}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;height:100%;justify-content:flex-end}
+.bar-col .b{width:100%;border-radius:8px 8px 3px 3px;
+  background:linear-gradient(180deg,var(--violet),var(--violet-royal));min-height:5px}
+.bar-col .b.y{background:linear-gradient(180deg,var(--yellow),var(--yellow-2))}
+.bar-col .lb{font-size:9.5px;color:var(--muted);font-weight:700}
+.bar-col .vl{font-size:10px;font-weight:800;color:var(--violet-light)}
+
+#screen-admin .admin-shell{max-width:1280px;margin:0 auto;padding:0 20px 60px}
+.admin-head{position:sticky;top:0;z-index:40;
+  background:rgba(8,8,12,.9);backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--line);padding:14px 20px;display:flex;align-items:center;gap:13px;flex-wrap:wrap}
+.admin-head h2{font-size:16px;font-weight:900}
+.admin-head p{font-size:10.5px;color:var(--muted);margin-top:2px}
+.admin-head .sp{flex:1}
+.admin-tabs{display:flex;gap:7px;overflow-x:auto;padding:15px 0;scrollbar-width:none}
+.admin-tabs::-webkit-scrollbar{display:none}
+.atab{white-space:nowrap;padding:9px 16px;border-radius:11px;font-size:12.5px;font-weight:700;
+  background:rgba(255,255,255,.045);border:1px solid var(--line);color:var(--muted);
+  transition:.2s;flex-shrink:0}
+.atab.on{background:var(--grad-yellow);color:#0A0A0F;border-color:transparent;font-weight:800}
+.apane{display:none}
+.apane.active{display:block;animation:fadeUp .3s ease}
+.a-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-bottom:22px}
+.a-card{padding:18px;border-radius:16px;
+  background:linear-gradient(180deg,rgba(24,24,34,.9),rgba(16,16,24,.9));
+  border:1px solid var(--line);position:relative;overflow:hidden}
+.a-card::after{content:'';position:absolute;right:-24px;top:-24px;width:88px;height:88px;
+  border-radius:50%;background:rgba(124,58,237,.14)}
+.a-card.y::after{background:rgba(255,212,0,.12)}
+.a-card.g::after{background:rgba(15,157,88,.16)}
+.a-card .k{font-size:10px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;
+  color:var(--muted);margin-bottom:9px;position:relative;z-index:1}
+.a-card .v{font-size:30px;font-weight:900;letter-spacing:-1.3px;color:var(--yellow);
+  position:relative;z-index:1}
+.a-card.v .v{color:var(--violet-light)}
+.a-card.g .v{color:#6EE7A0}
+.a-card .d{font-size:10.5px;color:var(--muted);margin-top:6px;position:relative;z-index:1}
+.a-card .d b{color:#6EE7A0}
+.panel{padding:20px;border-radius:18px;
+  background:linear-gradient(180deg,rgba(24,24,34,.85),rgba(16,16,24,.85));
+  border:1px solid var(--line);margin-bottom:20px}
+.panel h3{font-size:14px;font-weight:900;margin-bottom:15px;display:flex;
+  align-items:center;justify-content:space-between;gap:10px}
+.panel h3 .sub{font-size:10.5px;color:var(--muted);font-weight:600}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th{text-align:left;padding:11px 12px;font-size:9.5px;font-weight:800;
+  letter-spacing:.8px;text-transform:uppercase;color:var(--muted);
+  border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:12px;border-bottom:1px solid rgba(255,255,255,.045);vertical-align:middle}
+.tbl-wrap{overflow-x:auto;margin:0 -20px;padding:0 20px}
+.badge-s{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:800;
+  letter-spacing:.4px;text-transform:uppercase;padding:4px 9px;border-radius:6px}
+.badge-s.ok{background:rgba(34,197,94,.14);color:#6EE7A0;border:1px solid rgba(34,197,94,.32)}
+.badge-s.pend{background:rgba(245,158,11,.14);color:#FCD34D;border:1px solid rgba(245,158,11,.32)}
+.badge-s.bad{background:rgba(239,68,68,.14);color:#FCA5A5;border:1px solid rgba(239,68,68,.32)}
+.mini-btn{padding:6px 12px;border-radius:8px;font-size:11px;font-weight:800;
+  background:rgba(255,255,255,.06);border:1px solid var(--line);color:var(--text)}
+
+.map-legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:13px;font-size:11px;
+  color:var(--muted);font-weight:700}
+.map-legend span{display:flex;align-items:center;gap:6px}
+.map-legend i{width:10px;height:10px;border-radius:50%;display:block}
+
+.fb-item{padding:16px;border-radius:14px;background:var(--black-3);
+  border:1px solid var(--line);margin-bottom:12px}
+.fb-item .fi-top{display:flex;align-items:flex-start;gap:12px;margin-bottom:11px}
+.fb-item .fi-avatar{width:40px;height:40px;border-radius:11px;
+  background:var(--grad-violet);display:grid;place-items:center;font-size:18px;flex-shrink:0}
+.fb-item .fi-who{flex:1;min-width:0}
+.fb-item .fi-who h4{font-size:13.5px;font-weight:800}
+.fb-item .fi-who p{font-size:10.5px;color:var(--muted);margin-top:3px}
+.fb-item .fi-stars{font-size:14px;color:var(--yellow);letter-spacing:1px}
+.fb-item .fi-body{font-size:12.5px;color:var(--muted);line-height:1.6;
+  padding:11px 13px;border-radius:10px;background:rgba(255,255,255,.03);
+  border:1px solid var(--line);margin-bottom:11px}
+.fb-item .fi-cats{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:11px}
+.fb-item .fi-cats span{font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;
+  background:rgba(239,68,68,.14);color:#FCA5A5;border:1px solid rgba(239,68,68,.3)}
+.fb-item .fi-actions{display:flex;gap:8px;flex-wrap:wrap}
+
+.call-modal{position:fixed;inset:0;z-index:320;display:none;
+  background:linear-gradient(160deg,#0A0A12,#1a0a2e 60%,#0A0A12);
+  flex-direction:column;align-items:center;justify-content:space-between;
+  padding:60px 24px 50px;text-align:center}
+.call-modal.show{display:flex}
+.call-modal .call-status{font-size:12px;font-weight:800;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--violet-light);margin-bottom:12px}
+.call-modal .call-timer{font-size:19px;font-weight:900;color:var(--yellow);
+  margin-bottom:26px;font-family:ui-monospace,monospace}
+.call-modal .call-avatar{width:130px;height:130px;border-radius:50%;display:grid;place-items:center;
+  font-size:60px;background:var(--grad-violet);margin:0 auto 26px;
+  border:3px solid rgba(167,139,250,.5)}
+.call-modal .call-name{font-size:24px;font-weight:900}
+.call-modal .call-sub{font-size:13px;color:var(--muted);margin-top:8px}
+.call-modal .call-sub b{color:var(--text)}
+.call-actions{display:flex;gap:34px;align-items:flex-start;justify-content:center}
+.call-act{display:flex;flex-direction:column;align-items:center;gap:9px;font-size:11px;
+  font-weight:700;color:var(--muted);letter-spacing:.4px;text-transform:uppercase}
+.call-act .rnd{width:64px;height:64px;border-radius:50%;
+  background:rgba(255,255,255,.09);border:1px solid var(--line);
+  display:grid;place-items:center;font-size:26px;transition:.2s}
+.call-act .rnd.on{background:var(--yellow-soft);border-color:rgba(255,212,0,.5);color:var(--yellow)}
+.call-act .rnd.end{background:var(--red);border-color:var(--red);color:#fff}
+
+#toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(28px);
+  z-index:400;padding:13px 22px;border-radius:13px;font-size:13px;font-weight:700;
+  background:rgba(24,24,34,.98);border:1px solid var(--yellow);
+  color:var(--yellow);box-shadow:0 18px 40px -14px rgba(0,0,0,.9);
+  opacity:0;pointer-events:none;transition:.32s;max-width:88vw;text-align:center}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.empty{text-align:center;padding:48px 20px;color:var(--muted)}
+.empty .e{font-size:44px;display:block;margin-bottom:13px;opacity:.55}
+.empty p{font-size:12.5px;line-height:1.7}
+@media(max-width:520px){
+  .sticky-inner .btn{padding:13px 18px;font-size:13.5px}
+  .otp-boxes input{width:46px;height:54px;font-size:20px}
+  .arriving-hero .eta{font-size:38px}
+  .veh-selector{grid-template-columns:repeat(4,1fr);gap:6px}
+  .veh-opt{padding:10px 4px}
+  .veh-opt .em{font-size:22px}
+  .veh-opt .nm{font-size:9.5px}
+}
+</style>
+</head>
+<body>
+
+<div class="notif-panel" id="otp-notif">
+  <div class="notif-icon">🛺</div>
+  <div class="notif-content">
+    <div class="notif-header"><span>RydeX</span><span class="t">now</span></div>
+    <div class="notif-title">Verification code</div>
+    <div class="notif-body">Your OTP is <b id="notif-otp">0000</b>. Do not share with anyone.</div>
+  </div>
+  <button class="notif-dismiss" id="notif-dismiss">✕</button>
+</div>
+
+<section class="screen active" id="screen-login">
+  <div class="login-wrap">
+    <div class="brand">
+      <div class="brand-mark">🛺</div>
+      <h1><span>RydeX</span></h1>
+      <p>Rides · Parcels · Live Tracking — Delhi NCR</p>
+      <div class="tags"><span>Bike</span><span>Scooter</span><span>Auto</span><span>Cab</span><span>Parcel</span></div>
+    </div>
+    <div class="card pad">
+      <div class="sec-title" style="margin-top:0">Choose your role</div>
+      <div class="role-grid">
+        <button class="role on" data-role="customer"><span class="ic">🧍</span><span class="lb">Rider</span><span class="sb">Book ride</span></button>
+        <button class="role" data-role="driver"><span class="ic">🧑‍✈️</span><span class="lb">Driver</span><span class="sb">Earn money</span></button>
+        <button class="role" data-role="admin"><span class="ic">🛡️</span><span class="lb">Admin</span><span class="sb">Control</span></button>
+      </div>
+      <div id="login-step1">
+        <div class="field">
+          <label>Mobile Number</label>
+          <div class="phone-row">
+            <div class="cc">+91</div>
+            <input class="inp" id="inp-phone" type="tel" maxlength="10" placeholder="98765 43210" value="9876543210" />
+          </div>
+        </div>
+        <button class="btn btn-primary" id="btn-send-otp">Send OTP →</button>
+        <p class="hint">By continuing you agree to our <b>Terms</b> & <b>Privacy Policy</b></p>
+      </div>
+      <div id="login-step2" style="display:none">
+        <p class="hint" style="margin:0 0 14px;text-align:left">Enter the 4-digit code sent to <b id="otp-phone">+91 98765 43210</b></p>
+        <div class="otp-boxes" id="otp-boxes">
+          <input maxlength="1" inputmode="numeric" /><input maxlength="1" inputmode="numeric" />
+          <input maxlength="1" inputmode="numeric" /><input maxlength="1" inputmode="numeric" />
+        </div>
+        <button class="btn btn-primary" id="btn-verify">Verify & Continue</button>
+        <div class="otp-resend">
+          <span>Didn't get the code?</span>
+          <button class="resend-btn" id="btn-resend" disabled>Resend in <b id="resend-timer">30</b>s</button>
+        </div>
+        <button class="btn btn-ghost sm" style="margin-top:14px" id="btn-back-login">← Change number</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="screen" id="screen-customer">
+  <div class="shell">
+    <header class="topbar">
+      <div class="t"><h2><span>RydeX</span></h2><p id="cust-greet">Welcome, Rider 👋</p></div>
+      <span class="pill cust">Rider</span>
+      <button class="mini-btn" onclick="logout()">Exit</button>
+    </header>
+
+    <div class="pane active" id="pane-book">
+      <div class="promo">
+        <div class="em">⚡</div>
+        <div class="tx">
+          <h4>All vehicles in one app</h4>
+          <p>Bike · Scooter · Auto · Cab · Fixed fares</p>
+        </div>
+      </div>
+
+      <div class="route-card">
+        <div class="route-row">
+          <div class="dotcol"><div class="dot g"></div><div class="vline"></div><div class="dot r"></div></div>
+          <div class="route-fields">
+            <select id="sel-pickup"></select>
+            <select id="sel-drop"></select>
+          </div>
+          <button class="swap" id="btn-swap">⇅</button>
+        </div>
+        <div class="route-meta">
+          <span>📏 <b id="meta-dist">0 km</b></span>
+          <span>⏱️ <b id="meta-time">~0 min</b></span>
+        </div>
+      </div>
+
+      <div class="sec-title">Quick picks in Delhi</div>
+      <div class="chips" id="quick-chips"></div>
+
+      <div class="fare-fixed">
+        <div class="row">
+          <div>
+            <div class="lbl">Fixed fare</div>
+            <div class="amt" id="fare-amt">₹0</div>
+          </div>
+        </div>
+        <div class="eta-line">🕐 Pickup in <b id="fare-eta">3–5 min</b> · Trip takes <b id="fare-trip">~12 min</b></div>
+        <div class="note">Cash is exact — <b>no change needed</b>. UPI also accepted.</div>
+      </div>
+
+      <div class="sec-title">Choose vehicle</div>
+      <div class="veh-selector" id="veh-selector"></div>
+
+      <div class="sec-title">Booking mode</div>
+      <div class="mode-toggle" id="mode-toggle">
+        <button data-mode="fastest" class="on"><span class="em">⚡</span>Fastest match</button>
+        <button data-mode="choose"><span class="em">👀</span>Choose driver</button>
+      </div>
+      <div class="mode-hint" id="mode-hint">
+        <b>Fastest match:</b> nearest driver assigned automatically (2–4 min away).
+      </div>
+
+      <div class="sec-title">Your ride</div>
+      <div class="auto-card" id="auto-card"></div>
+
+      <div id="inline-driver-list"></div>
+      <div style="height:110px"></div>
+    </div>
+
+    <div class="pane" id="pane-parcel">
+      <div class="parcel-hero">
+        <div class="em">📦</div>
+        <div class="tx">
+          <h4>Send Anything, Anywhere</h4>
+          <p>Same-day delivery across Delhi NCR · Bikes for small, cabs for bulk</p>
+        </div>
+      </div>
+
+      <div class="sec-title">Package type</div>
+      <div class="pkg-types" id="pkg-types"></div>
+
+      <div class="sec-title">Approx weight</div>
+      <div class="weight-opts" id="weight-opts"></div>
+
+      <div class="route-card">
+        <div class="route-row">
+          <div class="dotcol"><div class="dot g"></div><div class="vline"></div><div class="dot r"></div></div>
+          <div class="route-fields">
+            <select id="par-pickup"></select>
+            <select id="par-drop"></select>
+          </div>
+          <button class="swap" id="par-swap">⇅</button>
+        </div>
+        <div class="route-meta">
+          <span>📏 <b id="par-dist">0 km</b></span>
+          <span>⏱️ <b id="par-time">~0 min</b></span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Receiver Name</label>
+        <input class="inp" id="par-receiver" placeholder="e.g. Anjali Gupta" value="Anjali Gupta" />
+      </div>
+      <div class="field">
+        <label>Receiver Phone</label>
+        <input class="inp" id="par-phone" type="tel" maxlength="10" placeholder="98765 43210" value="9811122233" />
+      </div>
+
+      <div class="fare-fixed" id="parcel-fare-box">
+        <div class="row">
+          <div>
+            <div class="lbl">Parcel fare</div>
+            <div class="amt" id="parcel-fare-amt">₹0</div>
+          </div>
+        </div>
+        <div class="eta-line">🕐 Pickup in <b>4–7 min</b> · Delivery in <b id="parcel-eta">~30 min</b></div>
+        <div class="note">Price includes pickup, drop & packaging fee.</div>
+      </div>
+
+      <button class="btn btn-orange" id="btn-send-parcel">Send parcel →</button>
+      <div style="height:110px"></div>
+    </div>
+
+    <div class="pane" id="pane-searching">
+      <div class="search-stage">
+        <div class="radar">
+          <div class="ring"></div><div class="ring"></div><div class="ring"></div>
+          <div class="core" id="search-icon">🛺</div>
+        </div>
+        <h3 id="search-title">Finding your driver<span class="dots"></span></h3>
+        <p id="search-sub">Connecting you with nearby drivers</p>
+        <button class="btn btn-danger sm" style="margin-top:28px;max-width:180px" onclick="cancelSearch()">Cancel</button>
+      </div>
+    </div>
+
+    <div class="pane" id="pane-arriving">
+      <div class="gmap">
+        <svg viewBox="0 0 720 480" id="arrive-map"></svg>
+        <div class="gmap-overlay"><span class="tag live">Driver on the way</span><span class="tag v" id="arrive-tag-veh">Auto</span></div>
+      </div>
+      <div class="arriving-hero">
+        <div class="ttl">Driver arriving in</div>
+        <div class="eta"><span id="arrive-eta">4</span><small>min</small></div>
+        <div class="sub" id="arrive-sub">Heading to <b>Connaught Place</b></div>
+        <div class="arriving-steps">
+          <div class="st done"><span class="dotmini"></span>Assigned</div>
+          <div class="st on"><span class="dotmini"></span>Arriving</div>
+          <div class="st"><span class="dotmini"></span>Trip</div>
+        </div>
+      </div>
+      <div class="drv-card">
+        <div class="drv-top">
+          <div class="avatar" id="arrive-drv-avatar">🧑‍✈️<span class="online-dot"></span></div>
+          <div class="n">
+            <h4><span id="arrive-drv-name">Ramesh Yadav</span> <span class="verified">✔ Verified</span></h4>
+            <p id="arrive-drv-veh">Auto · DL 1R AB 1234</p>
+            <div class="plate" id="arrive-drv-plate">DL 1R AB 1234</div>
+          </div>
+          <div class="rating">⭐ <span id="arrive-drv-rating">4.9</span></div>
+        </div>
+        <div class="drv-actions">
+          <button class="btn btn-ghost sm" id="btn-arrive-call">📞 Call</button>
+          <button class="btn btn-ghost sm" onclick="toast('💬 Message sent')">💬 Message</button>
+          <button class="btn btn-danger sm" onclick="cancelRide()">✕ Cancel</button>
+        </div>
+      </div>
+      <div style="height:100px"></div>
+    </div>
+
+    <div class="pane" id="pane-trip">
+      <div class="gmap">
+        <svg viewBox="0 0 720 480" id="trip-map"></svg>
+        <div class="gmap-overlay"><span class="tag live">Live trip</span><span class="tag v" id="trip-tag-veh">Auto</span></div>
+      </div>
+      <div class="share-box">
+        <div class="sb-title"><span class="ic">🔗</span>Share your live location</div>
+        <div class="sb-desc">Send this link to family. They can track your ride in real-time — no app needed.</div>
+        <div class="share-link-row">
+          <div class="share-link" id="share-link">rydex.in/t/ABC123</div>
+          <button class="copy-btn" id="btn-copy">Copy</button>
+        </div>
+        <div class="share-actions">
+          <button class="btn btn-teal sm" id="btn-share-wa">📱 WhatsApp</button>
+          <button class="btn btn-ghost sm" id="btn-share-sms">💬 SMS</button>
+        </div>
+      </div>
+      <div class="prog-wrap">
+        <div class="prog-stats">
+          <div class="stat"><div class="k">Distance left</div><div class="v" id="prog-dist">0 <small>km</small></div></div>
+          <div class="stat violet"><div class="k">Time left</div><div class="v" id="prog-time">0 <small>min</small></div></div>
+        </div>
+        <div class="bar"><div class="fill" id="prog-fill" style="width:0%"></div></div>
+        <div class="bar-lbl"><span id="prog-from">Pickup</span><span id="prog-pct">0%</span><span id="prog-to">Drop</span></div>
+      </div>
+      <div class="fare-box">
+        <div class="fare-line"><span id="trip-veh-label">Auto Rickshaw</span><b id="trip-veh-name">Auto</b></div>
+        <div class="fare-line total"><span>Fixed fare</span><b id="trip-fare">₹0</b></div>
+      </div>
+      <button class="btn btn-ghost" onclick="toast('⚠️ Cancellation may affect your rating')">Cancel</button>
+      <div style="height:110px"></div>
+    </div>
+
+    <div class="pane" id="pane-pay">
+      <div class="sec-title" style="margin-top:0">Trip completed</div>
+      <div class="fare-box">
+        <div class="fare-line"><span>Base fare</span><b id="pb-base">₹0</b></div>
+        <div class="fare-line"><span>Distance <span id="pb-km-lbl"></span></span><b id="pb-km">₹0</b></div>
+        <div class="fare-line"><span>Time <span id="pb-min-lbl"></span></span><b id="pb-min">₹0</b></div>
+        <div class="fare-line"><span>Booking fee</span><b>₹5</b></div>
+        <div class="fare-line total"><span>Total</span><b id="pb-total">₹0</b></div>
+      </div>
+      <div class="sec-title">Choose payment method</div>
+      <div class="pay-option" id="pay-upi">
+        <div class="ic">📱</div>
+        <div class="tx"><h4>Pay via UPI</h4><p>GPay · PhonePe · Paytm · BHIM · Amazon Pay</p></div>
+        <div class="arrow">›</div>
+      </div>
+      <div class="pay-option" id="pay-cash">
+        <div class="ic">💵</div>
+        <div class="tx"><h4>Cash to driver</h4><p>Pay ₹<span id="cash-hint">0</span> exactly — no change needed</p></div>
+        <div class="arrow">›</div>
+      </div>
+      <div style="height:100px"></div>
+    </div>
+
+    <div class="pane" id="pane-upi-apps">
+      <div style="display:flex;align-items:center;gap:11px;margin-bottom:16px">
+        <button class="mini-btn" onclick="goPane('pay')">← Back</button>
+        <div style="flex:1">
+          <div style="font-size:15px;font-weight:900">Choose UPI app</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px">You'll enter your UPI PIN next</div>
+        </div>
+      </div>
+      <div class="upi-apps-list" id="upi-apps-list"></div>
+    </div>
+
+    <div class="pane" id="pane-upi-pin">
+      <div style="display:flex;align-items:center;gap:11px;margin-bottom:16px">
+        <button class="mini-btn" onclick="goPane('upi-apps')">← Back</button>
+        <div style="flex:1">
+          <div style="font-size:15px;font-weight:900">Enter UPI PIN</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px">Secure payment via UPI</div>
+        </div>
+      </div>
+      <div class="upi-pin-sheet">
+        <div class="upi-pin-head">
+          <div class="app-logo" id="upi-pin-logo">🟢</div>
+          <div class="tx"><h4 id="upi-pin-app">Google Pay</h4><p>Verified by NPCI</p></div>
+        </div>
+        <div class="upi-pin-amt">
+          <div class="k">Paying RydeX</div>
+          <div class="v" id="upi-pin-amt">₹0</div>
+          <div class="to">To <b>rydex@upi</b> · Delhi NCR</div>
+        </div>
+        <div class="upi-pin-lbl">Enter your <b>4-digit UPI PIN</b></div>
+        <div class="upi-dots" id="upi-dots"><span></span><span></span><span></span><span></span></div>
+        <div class="upi-keypad" id="upi-keypad">
+          <button data-k="1">1</button><button data-k="2">2</button><button data-k="3">3</button>
+          <button data-k="4">4</button><button data-k="5">5</button><button data-k="6">6</button>
+          <button data-k="7">7</button><button data-k="8">8</button><button data-k="9">9</button>
+          <button class="fn" data-k="skip">Skip</button><button data-k="0">0</button><button class="fn" data-k="del">⌫</button>
+        </div>
+        <div class="upi-secure">🔒 <b>256-bit encrypted</b> · NPCI certified</div>
+      </div>
+      <div id="upi-pin-loading" style="display:none;text-align:center;padding:30px 0">
+        <div style="width:60px;height:60px;border-radius:50%;
+          border:4px solid rgba(255,212,0,.18);border-top-color:var(--yellow);
+          animation:spin .9s linear infinite;margin:0 auto 18px"></div>
+        <h4 style="font-size:16px;font-weight:900">Processing payment…</h4>
+      </div>
+      <div style="height:60px"></div>
+    </div>
+
+    <div class="pane" id="pane-success">
+      <div class="success-stage">
+        <div class="checkmark">✓</div>
+        <h3 id="succ-title">Ride completed!</h3>
+        <div class="amt" id="succ-amt">₹0</div>
+        <p id="succ-sub">Paid via UPI</p>
+        <div class="receipt">
+          <div class="r"><span>Trip ID</span><b id="succ-txn">—</b></div>
+          <div class="r"><span>Distance</span><b id="succ-dist">—</b></div>
+          <div class="r"><span>Duration</span><b id="succ-dur">—</b></div>
+          <div class="r"><span>Driver</span><b id="succ-drv">—</b></div>
+        </div>
+        <div style="display:flex;gap:10px;max-width:340px;width:100%;margin-top:22px">
+          <button class="btn btn-ghost" onclick="goPane('feedback')">Give feedback</button>
+          <button class="btn btn-primary" onclick="showReturnAsk()">Book return →</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="pane" id="pane-feedback">
+      <div class="feedback-wrap">
+        <div class="fb-title">How was your ride?</div>
+        <div class="fb-sub">Your feedback reaches a real person within 24 hours.</div>
+        <div class="stars-row" id="fb-stars">
+          <span class="star" data-v="1">★</span><span class="star" data-v="2">★</span>
+          <span class="star" data-v="3">★</span><span class="star" data-v="4">★</span>
+          <span class="star" data-v="5">★</span>
+        </div>
+        <div class="sec-title" style="margin-top:0;justify-content:center">Anything wrong? (optional)</div>
+        <div class="fb-cats" id="fb-cats">
+          <div class="fb-cat" data-c="Rude behaviour">Rude behaviour</div>
+          <div class="fb-cat" data-c="Late arrival">Late arrival</div>
+          <div class="fb-cat" data-c="Wrong route">Wrong route</div>
+          <div class="fb-cat" data-c="Overcharge">Overcharge</div>
+          <div class="fb-cat" data-c="Unsafe driving">Unsafe driving</div>
+        </div>
+        <textarea class="fb-textarea" id="fb-text" placeholder="Tell us what happened (optional)"></textarea>
+        <button class="btn btn-primary" id="btn-submit-feedback" style="margin-top:16px">Submit feedback</button>
+        <p class="fb-note">Reference: <b id="fb-ref">#RYDEX000</b></p>
+      </div>
+      <div style="height:100px"></div>
+    </div>
+
+    <div class="pane" id="pane-rides">
+      <div class="sec-title" style="margin-top:0">Your rides <span class="cnt" id="rides-count">0</span></div>
+      <div id="rides-list"></div>
+      <div style="height:100px"></div>
+    </div>
+
+    <div class="pane" id="pane-profile">
+      <div class="drv-card">
+        <div class="drv-top">
+          <div class="avatar">🧍</div>
+          <div class="n"><h4 id="prof-name">RydeX Rider</h4><p id="prof-phone">+91 98765 43210</p></div>
+        </div>
+      </div>
+      <div class="kpi-grid">
+        <div class="kpi"><div class="k">Total rides</div><div class="v" id="prof-rides">0</div></div>
+        <div class="kpi v"><div class="k">Total spent</div><div class="v" id="prof-spent">₹0</div></div>
+        <div class="kpi g"><div class="k">Scheduled</div><div class="v" id="prof-sched">0</div></div>
+        <div class="kpi"><div class="k">Rating</div><div class="v">4.9</div></div>
+      </div>
+      <div style="height:100px"></div>
+    </div>
+
+    <nav class="tabbar" id="cust-tabs">
+      <button class="tab on" data-pane="book"><span class="i">🚕</span>Ride</button>
+      <button class="tab" data-pane="parcel"><span class="i">📦</span>Parcel</button>
+      <button class="tab" data-pane="rides"><span class="i">📋</span>Rides</button>
+      <button class="tab" data-pane="profile"><span class="i">👤</span>Profile</button>
+    </nav>
+  </div>
+
+  <div class="sticky-bot" id="book-sticky">
+    <div class="sticky-inner">
+      <div class="l">
+        <div class="a" id="sticky-label">Auto · 0 km</div>
+        <div class="b" id="sticky-amt">₹0</div>
+      </div>
+      <button class="btn btn-primary" id="btn-book">Book ride</button>
+    </div>
+  </div>
+</section>
+
+<section class="screen" id="screen-driver">
+  <div class="shell">
+    <header class="topbar">
+      <div class="t"><h2>RydeX <span style="font-size:11px;color:var(--violet-light);font-weight:700;margin-left:6px">Driver</span></h2><p id="drv-hdr-sub">Auto · DL 1R AB 1234</p></div>
+      <span class="pill driv">Driver</span>
+      <button class="mini-btn" onclick="logout()">Exit</button>
+    </header>
+
+    <div class="pane active" id="pane-drv-home">
+      <div class="online-card off" id="online-card">
+        <div class="tx">
+          <h3 id="online-title">You're offline</h3>
+          <p id="online-sub">Go online to start receiving ride requests</p>
+        </div>
+        <button class="switch" id="online-switch"></button>
+      </div>
+      <div class="kpi-grid">
+        <div class="kpi"><div class="k">Today's earnings</div><div class="v" id="drv-earn">₹0</div></div>
+        <div class="kpi v"><div class="k">Trips done</div><div class="v" id="drv-trips">0</div></div>
+        <div class="kpi g"><div class="k">Acceptance</div><div class="v" id="drv-acc">96<small>%</small></div></div>
+        <div class="kpi"><div class="k">Rating</div><div class="v" id="drv-rate">4.9</div></div>
+      </div>
+      <div class="sec-title">This week</div>
+      <div class="panel" style="padding:14px"><div class="bars" id="drv-bars"></div></div>
+      <div class="sec-title">Incoming requests</div>
+      <div id="drv-req-list"><div class="empty"><span class="e">📡</span><p>You're offline. Go online to see live requests.</p></div></div>
+      <div style="height:100px"></div>
+    </div>
+
+    <div class="pane" id="pane-drv-approach">
+      <div class="gmap">
+        <svg viewBox="0 0 720 480" id="drv-approach-map"></svg>
+        <div class="gmap-overlay"><span class="tag live">Approaching rider</span><span class="tag v">Auto</span></div>
+      </div>
+      <div class="arriving-hero">
+        <div class="ttl">You'll reach rider in</div>
+        <div class="eta"><span id="drv-approach-eta">4</span><small>min</small></div>
+        <div class="sub" id="drv-approach-sub">Heading to <b>Connaught Place</b></div>
+        <div class="arriving-steps">
+          <div class="st done"><span class="dotmini"></span>Accepted</div>
+          <div class="st on"><span class="dotmini"></span>Approaching</div>
+          <div class="st"><span class="dotmini"></span>Pickup</div>
+        </div>
+      </div>
+      <div class="drv-card">
+        <div class="drv-top">
+          <div class="avatar" style="background:linear-gradient(135deg,#FFD400,#FF8A00);color:#0A0A0F">🧍</div>
+          <div class="n">
+            <h4 id="drv-cust-name">Priya Sharma</h4>
+            <p id="drv-cust-phone">+91 98111 22334</p>
+            <div class="plate" style="background:#FFD400">OTP 4821</div>
+          </div>
+        </div>
+        <div class="drv-actions">
+          <button class="btn btn-ghost sm" onclick="toast('📞 Calling rider…')">📞 Call</button>
+          <button class="btn btn-ghost sm" onclick="toast('🧭 Navigation opened')">🧭 Navigate</button>
+        </div>
+      </div>
+      <div class="prog-wrap">
+        <div class="prog-stats">
+          <div class="stat"><div class="k">Distance</div><div class="v" id="drv-appr-dist">0 <small>km</small></div></div>
+          <div class="stat violet"><div class="k">Time</div><div class="v" id="drv-appr-time">0 <small>min</small></div></div>
+        </div>
+        <div class="bar violet"><div class="fill" id="drv-appr-fill" style="width:0%"></div></div>
+      </div>
+      <button class="btn btn-primary" id="btn-arrived">I've arrived at pickup ✓</button>
+      <div style="height:100px"></div>
+    </div>
+
+    <div class="pane" id="pane-drv-trip">
+      <div class="gmap">
+        <svg viewBox="0 0 720 480" id="drv-map"></svg>
+        <div class="gmap-overlay"><span class="tag live">On trip</span><span class="tag v">Auto</span></div>
+      </div>
+      <div class="drv-card">
+        <div class="drv-top">
+          <div class="avatar" style="background:linear-gradient(135deg,#FFD400,#FF8A00);color:#0A0A0F">🧍</div>
+          <div class="n"><h4 id="drv-trip-cust">Priya Sharma</h4><p id="drv-trip-phone">+91 98111 22334</p></div>
+        </div>
+        <div class="drv-actions">
+          <button class="btn btn-ghost sm" onclick="toast('📞 Calling rider…')">📞 Call</button>
+          <button class="btn btn-ghost sm" onclick="toast('🧭 Navigation opened')">🧭 Navigate</button>
+        </div>
+      </div>
+      <div class="prog-wrap">
+        <div class="prog-stats">
+          <div class="stat"><div class="k">Distance left</div><div class="v" id="drv-prog-dist">0 <small>km</small></div></div>
+          <div class="stat violet"><div class="k">Time left</div><div class="v" id="drv-prog-time">0 <small>min</small></div></div>
+        </div>
+        <div class="bar violet"><div class="fill" id="drv-prog-fill" style="width:0%"></div></div>
+        <div class="bar-lbl"><span id="drv-prog-from">Pickup</span><span id="drv-prog-pct">0%</span><span id="drv-prog-to">Drop</span></div>
+      </div>
+      <div class="fare-box">
+        <div class="fare-line"><span>Rider pays</span><b id="drv-trip-fare">₹0</b></div>
+        <div class="fare-line"><span>Platform fee (3%)</span><b id="drv-trip-fee">−₹0</b></div>
+        <div class="fare-line total"><span>You earn</span><b id="drv-trip-earn">₹0</b></div>
+      </div>
+      <button class="btn btn-violet" id="btn-complete-trip">Complete trip →</button>
+      <div style="height:100px"></div>
+    </div>
+
+    <div class="pane" id="pane-drv-qr">
+      <div style="display:flex;align-items:center;gap:11px;margin-bottom:16px">
+        <button class="mini-btn" onclick="goPane('drv-home')">← Home</button>
+        <div style="flex:1">
+          <div style="font-size:15px;font-weight:900">Show QR to rider</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px">Rider scans with any UPI app</div>
+        </div>
+      </div>
+      <div class="qr-driver-box">
+        <div class="qr-hd">Show this QR</div>
+        <div class="qr-amt" id="drv-qr-amt">₹0</div>
+        <div class="qr-canvas"><svg viewBox="0 0 200 200" id="drv-qr-svg"></svg></div>
+        <div class="qr-instr"><b>UPI ID:</b> rydex@upi<br>Rider scans with GPay / PhonePe / Paytm.</div>
+      </div>
+      <div class="fare-box">
+        <div class="fare-line"><span>Rider</span><b id="drv-qr-rider">Priya Sharma</b></div>
+        <div class="fare-line total"><span>Amount</span><b id="drv-qr-total">₹0</b></div>
+      </div>
+      <button class="btn btn-primary" id="btn-qr-paid">Rider has paid ✓</button>
+      <div style="height:100px"></div>
+    </div>
+
+    <div class="pane" id="pane-drv-earn">
+      <div class="panel"><h3>Earnings this week</h3><div class="bars" id="drv-bars2"></div></div>
+      <div class="kpi-grid">
+        <div class="kpi"><div class="k">Today</div><div class="v" id="earn-today">₹0</div></div>
+        <div class="kpi v"><div class="k">This week</div><div class="v">₹4,240</div></div>
+        <div class="kpi g"><div class="k">Incentives</div><div class="v">₹400</div></div>
+        <div class="kpi"><div class="k">Next payout</div><div class="v">Mon</div></div>
+      </div>
+      <div class="sec-title">Recent trips</div>
+      <div id="drv-trip-log"></div>
+      <div style="height:100px"></div>
+    </div>
+
+    <nav class="tabbar" id="drv-tabs">
+      <button class="tab on" data-pane="drv-home"><span class="i">🏠</span>Home</button>
+      <button class="tab" data-pane="drv-earn"><span class="i">💰</span>Earnings</button>
+    </nav>
+  </div>
+</section>
+
+<section class="screen" id="screen-admin">
+  <div class="admin-head">
+    <div style="width:38px;height:38px;border-radius:12px;background:var(--grad-yellow);
+      display:grid;place-items:center;font-size:20px">🛡️</div>
+    <div><h2>RydeX Control Centre</h2><p>Delhi NCR · Live fleet tracking</p></div>
+    <div class="sp"></div>
+    <span class="pill adm">Admin</span>
+    <button class="mini-btn" onclick="logout()">Sign out</button>
+  </div>
+  <div class="admin-shell">
+    <div class="admin-tabs" id="admin-tabs">
+      <button class="atab on" data-apane="a-overview">📊 Overview</button>
+      <button class="atab" data-apane="a-fleet">🛰️ Live Fleet</button>
+      <button class="atab" data-apane="a-drivers">🧑‍✈️ Drivers</button>
+      <button class="atab" data-apane="a-feedback">📣 Feedback</button>
+    </div>
+
+    <div class="apane active" id="a-overview">
+      <div class="a-grid">
+        <div class="a-card y"><div class="k">Rides today</div><div class="v" id="ad-rides">342</div><div class="d"><b>▲ 14%</b> vs yesterday</div></div>
+        <div class="a-card v"><div class="k">Revenue today</div><div class="v" id="ad-rev">₹28,410</div><div class="d"><b>▲ 9%</b> vs yesterday</div></div>
+        <div class="a-card"><div class="k">Active vehicles</div><div class="v" id="ad-drv">142</div><div class="d">of 180 onboarded</div></div>
+        <div class="a-card g"><div class="k">Buses tracked</div><div class="v" id="ad-bus">1,284</div><div class="d"><b>98%</b> GPS online</div></div>
+      </div>
+      <div class="panel">
+        <h3>Fleet composition <span class="sub">Today</span></h3>
+        <div class="bars" id="ad-bars"></div>
+      </div>
+      <div class="panel">
+        <h3>Live tracking preview <span class="sub">Delhi NCR</span></h3>
+        <div style="position:relative;border-radius:14px;overflow:hidden;
+          background:#f2efe9;border:1px solid var(--line);height:300px">
+          <svg viewBox="0 0 720 480" preserveAspectRatio="xMidYMid slice" id="ad-preview-map" style="width:100%;height:100%;display:block"></svg>
+        </div>
+        <div class="map-legend">
+          <span><i style="background:#FF8A00"></i>Bikes</span>
+          <span><i style="background:#A78BFA"></i>Scooters</span>
+          <span><i style="background:#FFD400"></i>Autos</span>
+          <span><i style="background:#4285F4"></i>Cabs</span>
+          <span><i style="background:#0F9D58"></i>Buses</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="apane" id="a-fleet">
+      <div class="panel">
+        <h3>Live vehicle tracking <span class="sub">All vehicle types · Real-time GPS</span></h3>
+        <div style="position:relative;border-radius:14px;overflow:hidden;
+          background:#f2efe9;border:1px solid var(--line);height:520px">
+          <svg viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice" id="ad-fleet-map" style="width:100%;height:100%;display:block"></svg>
+          <div style="position:absolute;top:12px;right:12px;font-size:10px;font-weight:800;
+            letter-spacing:.6px;text-transform:uppercase;color:#137333;
+            background:rgba(255,255,255,.94);padding:6px 11px;border-radius:8px;
+            border:1px solid rgba(19,115,51,.3);display:flex;align-items:center;gap:6px">
+            <span style="width:7px;height:7px;border-radius:50%;background:#137333;
+              box-shadow:0 0 0 4px rgba(19,115,51,.2)"></span>Live · Updated every 5s
+          </div>
+        </div>
+        <div class="map-legend">
+          <span><i style="background:#FF8A00"></i>Bike (🏍️)</span>
+          <span><i style="background:#A78BFA"></i>Scooter (🛵)</span>
+          <span><i style="background:#FFD400"></i>Auto (🛺)</span>
+          <span><i style="background:#4285F4"></i>Cab (🚗)</span>
+          <span><i style="background:#0F9D58"></i>Bus (🚌)</span>
+          <span><i style="background:#C77B4A"></i>Parcel (📦)</span>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>Active fleet by type <span class="sub">Live count</span></h3>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Vehicle type</th><th>Active</th><th>Idle</th><th>On trip</th><th>Status</th></tr></thead>
+            <tbody id="ad-fleet-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="apane" id="a-drivers">
+      <div class="panel">
+        <h3>Driver registry <span class="sub">KYC & languages</span></h3>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Driver</th><th>Vehicle</th><th>Plate</th><th>Languages</th><th>Exp</th><th>Rating</th><th>Trips</th><th>Status</th></tr></thead>
+            <tbody id="ad-drivers-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="apane" id="a-feedback">
+      <div class="panel">
+        <h3>Feedback inbox <span class="sub" id="fb-inbox-count">0 open</span></h3>
+        <div id="ad-feedback-body"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="return-modal" id="return-modal">
+  <div class="return-sheet">
+    <div class="rm-hero">🔁</div>
+    <h3>Book return ride?</h3>
+    <div class="sub">Schedule your return trip now and we'll have a driver waiting for you.</div>
+    <div class="route-preview">
+      <div class="rr"><div class="d g"></div><b id="ret-from">India Gate</b></div>
+      <div class="rr"><div class="d r"></div><b id="ret-to">Connaught Place</b></div>
+    </div>
+    <div class="schedule-lbl">When do you need the ride?</div>
+    <div class="preset-grid" id="preset-grid">
+      <div class="preset-btn on" data-mins="30"><div class="t">In 30 min</div><div class="s">Quick return</div></div>
+      <div class="preset-btn" data-mins="60"><div class="t">In 1 hour</div><div class="s">Short visit</div></div>
+      <div class="preset-btn" data-mins="120"><div class="t">In 2 hours</div><div class="s">Typical</div></div>
+      <div class="preset-btn" data-mins="240"><div class="t">In 4 hours</div><div class="s">Longer stay</div></div>
+    </div>
+    <div class="schedule-lbl">Or pick a custom time</div>
+    <div class="custom-row">
+      <input type="date" id="ret-date" />
+      <input type="time" id="ret-time" />
+    </div>
+    <div class="return-actions">
+      <button class="btn btn-ghost" id="btn-return-no">Not now</button>
+      <button class="btn btn-primary" id="btn-return-yes">Schedule ride</button>
+    </div>
+  </div>
+</div>
+
+<div class="call-modal" id="call-modal">
+  <div>
+    <div class="call-status" id="call-status">Calling…</div>
+    <div class="call-timer" id="call-timer">00:00</div>
+    <div class="call-avatar" id="call-avatar">🧑‍✈️</div>
+    <div class="call-name" id="call-name">Ramesh Yadav</div>
+    <div class="call-sub">📞 <b id="call-phone">+91 98765 43210</b></div>
+  </div>
+  <div class="call-actions">
+    <div class="call-act"><button class="rnd" id="call-mute">🎤</button><span>Mute</span></div>
+    <div class="call-act"><button class="rnd" id="call-speaker">🔊</button><span>Speaker</span></div>
+    <div class="call-act"><button class="rnd end" id="call-end">📞</button><span>End</span></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+/* ============================================================
+   DATA
+   ============================================================ */
+const PLACES = [
+  {n:"Connaught Place",       lat:28.6315, lng:77.2167},
+  {n:"India Gate",            lat:28.6129, lng:77.2295},
+  {n:"New Delhi Railway Stn", lat:28.6431, lng:77.2197},
+  {n:"Chandni Chowk",         lat:28.6506, lng:77.2303},
+  {n:"Karol Bagh",            lat:28.6519, lng:77.1909},
+  {n:"Lajpat Nagar",          lat:28.5677, lng:77.2433},
+  {n:"Hauz Khas",             lat:28.5494, lng:77.2001},
+  {n:"Saket",                 lat:28.5245, lng:77.2066},
+  {n:"Janakpuri",             lat:28.6219, lng:77.0878},
+  {n:"Dwarka Sector 21",      lat:28.5523, lng:77.0582},
+  {n:"Rohini West",           lat:28.7156, lng:77.0697},
+  {n:"Pitampura",             lat:28.6940, lng:77.1310},
+  {n:"IGI Airport T3",        lat:28.5562, lng:77.1000},
+  {n:"AIIMS",                 lat:28.5672, lng:77.2100},
+  {n:"Lotus Temple",          lat:28.5535, lng:77.2588},
+  {n:"Red Fort",              lat:28.6562, lng:77.2410},
+  {n:"Dilli Haat INA",        lat:28.5731, lng:77.2090},
+  {n:"Noida Sector 62",       lat:28.6270, lng:77.3720},
+  {n:"Gurugram Cyber City",   lat:28.4949, lng:77.0880},
+  {n:"Ghaziabad Vaishali",    lat:28.6500, lng:77.3400},
+  {n:"Faridabad Sector 15",   lat:28.4089, lng:77.3178},
+];
+
+const VEHICLES = [
+  {id:'bike',    name:'Bike',         icon:'🏍️', desc:'Beat the traffic · 1 rider',
+   base:15, perKm:7,  perMin:1.0, speed:28, badge:'FASTEST', color:'#FF8A00',
+   plate:`DL ${1+Math.floor(Math.random()*9)}S`},
+  {id:'scooter', name:'Scooter',      icon:'🛵', desc:'Budget 2-wheeler · 1 rider',
+   base:20, perKm:8,  perMin:1.2, speed:27, badge:'CHEAPEST', color:'#A78BFA',
+   plate:`DL ${1+Math.floor(Math.random()*9)}S`},
+  {id:'auto',    name:'Auto Rickshaw',icon:'🛺', desc:'Metered 3-wheeler · up to 3',
+   base:25, perKm:14, perMin:1.5, speed:22, badge:'POPULAR', color:'#FFD400',
+   plate:`DL ${1+Math.floor(Math.random()*9)}R`},
+  {id:'cab',     name:'Cab Mini',     icon:'🚗', desc:'AC hatchback · up to 4',
+   base:50, perKm:14, perMin:2.0, speed:25, badge:'AC', color:'#4285F4',
+   plate:`DL ${1+Math.floor(Math.random()*9)}C`},
+];
+
+const PKG_TYPES = [
+  {id:'doc',  em:'📄', nm:'Document', sub:'Papers, ID'},
+  {id:'food', em:'🍱', nm:'Food',     sub:'Sealed bag'},
+  {id:'elec', em:'📱', nm:'Electronics', sub:'Phone, laptop'},
+  {id:'cloth',em:'👕', nm:'Clothing', sub:'Apparel, shoes'},
+  {id:'gift', em:'🎁', nm:'Gift',     sub:'Gift box'},
+  {id:'other',em:'📦', nm:'Other',    sub:'Anything else'},
+];
+const WEIGHT_OPTS = [
+  {id:'xs', label:'<500g',  surcharge:0,  veh:'bike'},
+  {id:'sm', label:'0.5–2kg',surcharge:15, veh:'bike'},
+  {id:'md', label:'2–5kg',  surcharge:30, veh:'scooter'},
+  {id:'lg', label:'5–20kg', surcharge:70, veh:'cab'},
+];
+
+const DRIVER_POOL = [
+  {n:'Ramesh Yadav',  ic:'🧑‍✈️', r:4.9, langs:['Hindi','English'],           exp:8,  trips:2450, phone:'+91 98110 11111'},
+  {n:'Suresh Kumar',  ic:'👨‍✈️', r:4.8, langs:['Hindi','Punjabi'],           exp:6,  trips:1890, phone:'+91 98110 22222'},
+  {n:'Anil Sharma',   ic:'🧔',   r:4.9, langs:['Hindi','English','Urdu'],    exp:12, trips:3820, phone:'+91 98110 33333'},
+  {n:'Sanjay Singh',  ic:'🧑',   r:5.0, langs:['Hindi','English','Punjabi'], exp:3,  trips:410,  phone:'+91 98110 55555'},
+  {n:'Krishna Murthy',ic:'👴',   r:4.8, langs:['Hindi','English'],           exp:15, trips:5100, phone:'+91 98110 66666'},
+  {n:'Vinod Chauhan', ic:'👨‍🦱', r:4.7, langs:['Hindi','Punjabi'],           exp:7,  trips:1980, phone:'+91 98110 77777'},
+  {n:'Rajesh Verma',  ic:'🧑‍🦱', r:4.9, langs:['Hindi','English','Urdu'],    exp:9,  trips:2720, phone:'+91 98110 88888'},
+  {n:'Deepak Joshi',  ic:'👨',   r:4.8, langs:['Hindi','English'],           exp:5,  trips:1240, phone:'+91 98110 99999'},
+  {n:'Manoj Tiwari',  ic:'🧑‍🦱', r:4.9, langs:['Hindi','English'],           exp:10, trips:3120, phone:'+91 98110 12121'},
+];
+
+const state = {
+  role:'customer',
+  phone:'9876543210',
+  pickup:'Connaught Place',
+  drop:'India Gate',
+  distance:0, duration:0,
+  vehicle:'auto',
+  mode:'fastest',
+  booking:null,
+  availableDrivers:null,
+  chosenDriver:null,
+  payMethod:'upi',
+  selectedUpiApp:null,
+  shareLink:'',
+  driverOnline:false,
+  driverEarnings:0, driverTrips:0,
+  tripLog:[], history:[],
+  totalSpent:0, feedback:[],
+  scheduledRides:[],
+  upiPin:'',
+  currentOTP:'',
+  resendTimer:null, resendSeconds:30,
+  parcel:{type:'doc', weight:'sm', vehicle:'bike', pickup:'Connaught Place', drop:'Hauz Khas'},
+  timers:{},
+  adminVehicles:[], adminBuses:[], adminParcels:[],
+};
+
+/* ============================================================
+   UTILS
+   ============================================================ */
+function $(s,r=document){return r.querySelector(s)}
+function $$(s,r=document){return [...r.querySelectorAll(s)]}
+function money(n){return '₹'+Math.round(n).toLocaleString('en-IN')}
+function haversine(a,b){
+  const R=6371,t=d=>d*Math.PI/180;
+  const dLat=t(b.lat-a.lat),dLng=t(b.lng-a.lng);
+  const x=Math.sin(dLat/2)**2+Math.cos(t(a.lat))*Math.cos(t(b.lat))*Math.sin(dLng/2)**2;
+  return 2*R*Math.asin(Math.sqrt(x));
+}
+function placeByName(n){return PLACES.find(p=>p.n===n)||PLACES[0]}
+function routeInfo(){
+  const a=placeByName(state.pickup),b=placeByName(state.drop);
+  return {km:+Math.max(0.8, haversine(a,b)*1.35).toFixed(1)};
+}
+function parcelRouteInfo(){
+  const a=placeByName(state.parcel.pickup),b=placeByName(state.parcel.drop);
+  return {km:+Math.max(0.8, haversine(a,b)*1.35).toFixed(1)};
+}
+function currentVeh(){return VEHICLES.find(v=>v.id===state.vehicle)||VEHICLES[2]}
+function fareFor(vehId){
+  const v = VEHICLES.find(x=>x.id===vehId) || currentVeh();
+  const {km}=routeInfo();
+  const min=(km/v.speed)*60;
+  return {
+    base:v.base,
+    distCharge:v.perKm*km,
+    timeCharge:v.perMin*min,
+    booking:5,
+    total: Math.round(v.base + v.perKm*km + v.perMin*min + 5)
+  };
+}
+function tripDuration(vehId){
+  const v = VEHICLES.find(x=>x.id===vehId) || currentVeh();
+  return Math.max(4, Math.round((routeInfo().km/v.speed)*60));
+}
+function parcelFare(vehId, weightId){
+  const w = WEIGHT_OPTS.find(x=>x.id===weightId) || WEIGHT_OPTS[0];
+  const {km} = parcelRouteInfo();
+  const base = vehId==='cab' ? 60 : 25;
+  const perKm = vehId==='cab' ? 12 : 8;
+  const pre = base + perKm*km + w.surcharge + 5;
+  return {base, kmCharge:perKm*km, weightSur:w.surcharge, bookingFee:5, total:Math.round(pre)};
+}
+function toast(msg){
+  const t=$('#toast'); t.textContent=msg; t.classList.add('show');
+  clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),2600);
+}
+function hashStr(s){let h=0;for(let i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))|0;return Math.abs(h)}
+function makeRng(seed){let s=seed>>>0;return function(){s=(s*1664525+1013904223)>>>0;return s/4294967296}}
+function randomPlate(veh){
+  const letters=['AB','CD','EF','GH','JK','KL','MN','PQ'];
+  return `${veh.plate} ${letters[Math.floor(Math.random()*8)]} ${1000+Math.floor(Math.random()*8999)}`;
+}
+
+/* ============================================================
+   PAYMENT SUCCESS SOUND (Paytm/GPay style chime)
+   ============================================================ */
+let audioCtx = null;
+function getAudioContext(){
+  if(!audioCtx){
+    try {
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      if(!Ctx) return null;
+      audioCtx = new Ctx();
+    } catch(e){ return null; }
+  }
+  if(audioCtx.state === 'suspended'){
+    try { audioCtx.resume(); } catch(e){}
+  }
+  return audioCtx;
+}
+function playNote(ctx, startTime, freq, duration, type, gainVal){
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = type || 'sine';
+  osc.frequency.value = freq;
+  gain.gain.setValueAtTime(0.0001, startTime);
+  gain.gain.linearRampToValueAtTime(gainVal, startTime + 0.02);
+  gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  osc.start(startTime);
+  osc.stop(startTime + duration + 0.05);
+}
+function playPaymentSuccessSound(){
+  const ctx = getAudioContext();
+  if(!ctx) return;
+  const now = ctx.currentTime + 0.02;
+  // Three-note ascending chime (like GPay / Paytm):
+  // A5 → D6 → G6 (a nice major arpeggio)
+  playNote(ctx, now,        880,  0.32, 'sine',     0.32);
+  playNote(ctx, now + 0.12, 1174, 0.34, 'sine',     0.34);
+  playNote(ctx, now + 0.24, 1568, 0.55, 'sine',     0.30);
+  // Warm subharmonic layer
+  playNote(ctx, now,        440,  0.55, 'triangle', 0.12);
+  // Light shimmer on the top note
+  playNote(ctx, now + 0.24, 3136, 0.35, 'sine',     0.06);
+}
+
+/* ============================================================
+   LOGIN
+   ============================================================ */
+$$('.role').forEach(el=>{
+  el.addEventListener('click',()=>{
+    $$('.role').forEach(r=>r.classList.remove('on'));
+    el.classList.add('on');
+    state.role=el.dataset.role;
+  });
+});
+function showOtpNotification(otp){
+  const n=$('#otp-notif'); $('#notif-otp').textContent=otp;
+  n.classList.remove('dismiss'); n.classList.add('show');
+  clearTimeout(n._t); n._t=setTimeout(()=>n.classList.remove('show'),9000);
+}
+$('#notif-dismiss').addEventListener('click',()=>{
+  const n=$('#otp-notif'); n.classList.remove('show'); n.classList.add('dismiss');
+  setTimeout(()=>n.classList.remove('dismiss'),500);
+});
+function generateOTP(){return String(Math.floor(1000+Math.random()*9000))}
+$('#btn-send-otp').addEventListener('click',()=>{
+  const phone=$('#inp-phone').value.replace(/\D/g,'');
+  if(phone.length!==10){toast('⚠️ Enter a valid 10-digit number');return}
+  state.phone=phone;
+  $('#otp-phone').textContent='+91 '+phone.slice(0,5)+' '+phone.slice(5);
+  $('#login-step1').style.display='none';
+  $('#login-step2').style.display='block';
+  sendOTP();
+  setTimeout(()=>$('#otp-boxes input')[0].focus(),150);
+});
+function sendOTP(){
+  state.currentOTP=generateOTP();
+  showOtpNotification(state.currentOTP);
+  toast('📩 OTP sent');
+  startResendTimer(30);
+}
+function startResendTimer(seconds){
+  state.resendSeconds=seconds;
+  clearInterval(state.resendTimer); updateResendUI();
+  state.resendTimer=setInterval(()=>{
+    state.resendSeconds--; updateResendUI();
+    if(state.resendSeconds<=0){clearInterval(state.resendTimer); updateResendUI()}
+  },1000);
+}
+function updateResendUI(){
+  const btn=$('#btn-resend');
+  if(state.resendSeconds>0){btn.disabled=true;btn.innerHTML=`Resend in <b>${state.resendSeconds}</b>s`}
+  else{btn.disabled=false;btn.textContent='Resend OTP'}
+}
+$('#btn-resend').addEventListener('click',()=>{
+  if(state.resendSeconds>0)return;
+  otpInputs.forEach(i=>i.value=''); otpInputs[0].focus(); sendOTP();
+});
+$('#btn-back-login').addEventListener('click',()=>{
+  clearInterval(state.resendTimer);
+  $('#login-step1').style.display='block';
+  $('#login-step2').style.display='none';
+  otpInputs.forEach(i=>i.value='');
+  $('#otp-notif').classList.remove('show');
+});
+const otpInputs=$$('#otp-boxes input');
+otpInputs.forEach((inp,i)=>{
+  inp.addEventListener('input',e=>{
+    e.target.value=e.target.value.replace(/\D/g,'').slice(0,1);
+    if(e.target.value&&i<otpInputs.length-1)otpInputs[i+1].focus();
+    if(otpInputs.every(x=>x.value))setTimeout(()=>$('#btn-verify').click(),200);
+  });
+  inp.addEventListener('keydown',e=>{if(e.key==='Backspace'&&!e.target.value&&i>0)otpInputs[i-1].focus()});
+});
+$('#btn-verify').addEventListener('click',()=>{
+  const entered=otpInputs.map(i=>i.value).join('');
+  if(entered.length!==4){toast('⚠️ Enter the 4-digit OTP');return}
+  if(entered!==state.currentOTP){ toast('❌ Incorrect OTP'); return; }
+  toast('✅ Verified');
+  clearInterval(state.resendTimer);
+  $('#otp-notif').classList.remove('show');
+  setTimeout(()=>enterApp(state.role),400);
+});
+function enterApp(role){
+  $$('.screen').forEach(s=>s.classList.remove('active'));
+  if(role==='customer'){
+    $('#screen-customer').classList.add('active');
+    $('#cust-greet').textContent=`Welcome, Rider 👋 · +91 ${state.phone.slice(0,5)} ${state.phone.slice(5)}`;
+    initCustomer();
+  } else if(role==='driver'){
+    $('#screen-driver').classList.add('active');
+    initDriver();
+  } else {
+    $('#screen-admin').classList.add('active');
+    initAdmin();
+  }
+  window.scrollTo(0,0);
+}
+function logout(){
+  Object.values(state.timers).forEach(t=>clearInterval(t));
+  clearInterval(state.resendTimer); clearInterval(callTimer);
+  state.timers={}; state.booking=null; state.driverOnline=false;
+  state.availableDrivers=null; state.chosenDriver=null;
+  $$('.screen').forEach(s=>s.classList.remove('active'));
+  $('#screen-login').classList.add('active');
+  $('#login-step1').style.display='block';
+  $('#login-step2').style.display='none';
+  otpInputs.forEach(i=>i.value='');
+  $('#otp-notif').classList.remove('show');
+  window.scrollTo(0,0);
+}
+
+function bindTabs(sel){
+  $$(sel+' .tab').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      $$(sel+' .tab').forEach(b=>b.classList.remove('on'));
+      btn.classList.add('on');
+      goPane(btn.dataset.pane);
+    });
+  });
+}
+function goPane(name){
+  const ids=['book','parcel','searching','arriving','trip','pay','upi-apps','upi-pin','success','feedback','rides','profile',
+             'drv-home','drv-approach','drv-trip','drv-qr','drv-earn'];
+  ids.forEach(id=>{
+    const el=document.getElementById('pane-'+id);
+    if(el) el.classList.remove('active');
+  });
+  const target=document.getElementById('pane-'+name);
+  if(target) target.classList.add('active');
+  const bs=$('#book-sticky');
+  if(bs) bs.style.display=(name==='book'&&state.role==='customer'&&state.mode==='fastest')?'block':'none';
+  const map={book:'book',parcel:'parcel',rides:'rides',profile:'profile','drv-home':'drv-home','drv-earn':'drv-earn'};
+  if(map[name]){
+    const bar=state.role==='customer'?'#cust-tabs':'#drv-tabs';
+    $$(bar+' .tab').forEach(t=>t.classList.toggle('on',t.dataset.pane===map[name]));
+  }
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function initCustomer(){
+  buildSelects();
+  buildQuickChips();
+  buildVehicleSelector();
+  buildParcelUI();
+  updateRoute();
+  renderHistory();
+  updateInlineDriverList();
+}
+function buildSelects(){
+  const pu=$('#sel-pickup'), dr=$('#sel-drop');
+  const opts=PLACES.map(p=>`<option value="${p.n}">${p.n}</option>`).join('');
+  pu.innerHTML=opts; dr.innerHTML=opts;
+  pu.value=state.pickup; dr.value=state.drop;
+  pu.onchange=()=>{state.pickup=pu.value; updateRoute()};
+  dr.onchange=()=>{state.drop=dr.value; updateRoute()};
+  $('#btn-swap').onclick=()=>{
+    [state.pickup,state.drop]=[state.drop,state.pickup];
+    pu.value=state.pickup; dr.value=state.drop;
+    updateRoute(); toast('⇅ Pickup & drop swapped');
+  };
+}
+function buildQuickChips(){
+  const picks=['India Gate','New Delhi Railway Stn','Karol Bagh','Hauz Khas','Saket','IGI Airport T3','Noida Sector 62','Gurugram Cyber City'];
+  const wrap=$('#quick-chips');
+  wrap.innerHTML=picks.map(p=>`<button class="chip" data-p="${p}">${p}</button>`).join('');
+  $$('.chip',wrap).forEach(c=>c.onclick=()=>{
+    state.drop=c.dataset.p; $('#sel-drop').value=c.dataset.p;
+    updateRoute(); toast(`📍 Drop set to ${c.dataset.p}`);
+  });
+}
+function buildVehicleSelector(){
+  const wrap=$('#veh-selector');
+  wrap.innerHTML=VEHICLES.map(v=>{
+    const f=fareFor(v.id);
+    const on=state.vehicle===v.id;
+    return `<div class="veh-opt ${on?'on':''}" data-v="${v.id}">
+      <span class="em">${v.icon}</span>
+      <div class="nm">${v.name.split(' ')[0]}</div>
+      <div class="pr">${money(f.total)}</div>
+    </div>`;
+  }).join('');
+  $$('.veh-opt',wrap).forEach(el=>el.onclick=()=>{
+    state.vehicle=el.dataset.v;
+    state.availableDrivers=null;
+    state.chosenDriver=null;
+    buildVehicleSelector();
+    updateAutoCard();
+    updateInlineDriverList();
+    updateRoute();
+  });
+  updateAutoCard();
+}
+function updateAutoCard(){
+  const v=currentVeh();
+  const f=fareFor(v.id);
+  $('#auto-card').innerHTML=`
+    <div class="ic">${v.icon}</div>
+    <div class="info">
+      <h4>${v.name} <span class="badge">${v.badge}</span></h4>
+      <p>${v.desc}</p>
+      <div class="feats">
+        <span class="feat">📍 Live GPS</span>
+        <span class="feat">🔒 Verified</span>
+        <span class="feat">💵 Cash / UPI</span>
+      </div>
+    </div>
+    <div class="price">
+      <div class="now">${money(f.total)}</div>
+      <div class="lbl">fixed</div>
+    </div>
+  `;
+}
+function updateRoute(){
+  const {km}=routeInfo();
+  state.distance=km;
+  state.duration=tripDuration(state.vehicle);
+  $('#meta-dist').textContent=km+' km';
+  $('#meta-time').textContent='~'+Math.round((km/currentVeh().speed)*60)+' min';
+  const f=fareFor(state.vehicle);
+  $('#fare-amt').textContent=money(f.total);
+  $('#fare-trip').textContent='~'+Math.round((km/currentVeh().speed)*60)+' min';
+  if(state.mode==='fastest'){
+    $('#sticky-label').textContent=`${currentVeh().name} · ${km} km`;
+    $('#sticky-amt').textContent=money(f.total);
+  } else {
+    updateInlineDriverList();
+  }
+}
+
+$$('#mode-toggle button').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    $$('#mode-toggle button').forEach(b=>b.classList.remove('on'));
+    btn.classList.add('on');
+    state.mode=btn.dataset.mode;
+    state.availableDrivers=null;
+    state.chosenDriver=null;
+    const hint=$('#mode-hint');
+    if(state.mode==='fastest'){
+      hint.innerHTML='<b>Fastest match:</b> nearest driver assigned automatically (2–4 min away).';
+    } else {
+      hint.innerHTML='<b>Choose driver:</b> pick from drivers by rating, language, experience. ETA 3–9 min.';
+    }
+    updateInlineDriverList();
+  });
+});
+
+function updateInlineDriverList(){
+  const wrap=$('#inline-driver-list');
+  const sticky=$('#book-sticky');
+  if(state.mode==='fastest'){
+    wrap.innerHTML='';
+    sticky.style.display=(state.role==='customer')?'block':'none';
+    const f=fareFor(state.vehicle);
+    $('#sticky-label').textContent=`${currentVeh().name} · ${state.distance} km`;
+    $('#sticky-amt').textContent=money(f.total);
+    $('#btn-book').textContent=`Book ${currentVeh().name.toLowerCase()}`;
+    return;
+  }
+  sticky.style.display='none';
+  if(!state.availableDrivers){
+    const v=currentVeh();
+    const picked=[...DRIVER_POOL].sort(()=>Math.random()-0.5).slice(0,6);
+    state.availableDrivers=picked.map((d,i)=>({
+      ...d, plate:randomPlate(v),
+      eta: 3 + i + Math.floor(Math.random()*2),
+      veh:v
+    })).sort((a,b)=>a.eta-b.eta);
+  }
+  const drivers=state.availableDrivers;
+  const f=fareFor(state.vehicle);
+  const v=currentVeh();
+  wrap.innerHTML=`
+    <div class="sec-title" style="margin-top:24px">Available ${v.name}s <span class="cnt">${drivers.length} nearby</span></div>
+    ${drivers.map((d,i)=>`
+      <div class="driver-card" data-idx="${i}">
+        <div class="dc-top">
+          <div class="dc-avatar">${d.ic}<span class="online-dot"></span></div>
+          <div class="dc-info">
+            <h4>${d.n} <span class="verified">✔</span></h4>
+            <div class="rating-line">
+              <span class="rating">⭐ ${d.r.toFixed(1)}</span>
+              <span class="exp">${d.exp} yrs · ${d.trips.toLocaleString('en-IN')} trips</span>
+            </div>
+          </div>
+          <div class="dc-eta">
+            <div class="num">${d.eta}</div>
+            <div class="lbl">min away</div>
+          </div>
+        </div>
+        <div class="dc-details">
+          <span class="detail-chip veh-chip">${v.icon} ${d.plate}</span>
+          ${d.langs.map(l=>`<span class="detail-chip lang-chip">🗣️ ${l}</span>`).join('')}
+        </div>
+        <div class="dc-bottom">
+          <div class="fare">
+            <div class="amt">${money(f.total)}</div>
+            <div class="sub">fixed fare</div>
+          </div>
+          <button class="select-btn">Book →</button>
+        </div>
+      </div>
+    `).join('')}
+  `;
+  $$('.driver-card',wrap).forEach(card=>{
+    card.onclick=()=>{
+      $$('.driver-card',wrap).forEach(c=>c.classList.remove('on'));
+      card.classList.add('on');
+      const driver=drivers[+card.dataset.idx];
+      state.chosenDriver=driver;
+      selectDriver(driver);
+    };
+  });
+}
+
+function selectDriver(driver){
+  const f=fareFor(state.vehicle);
+  const v=currentVeh();
+  state.booking={
+    id:'RX'+Math.floor(100000+Math.random()*900000),
+    fare:f, km:state.distance, duration:state.duration,
+    pickup:state.pickup, drop:state.drop, mode:'choose',
+    driver, veh:v
+  };
+  toast(`✅ ${driver.n} selected`);
+  setTimeout(()=>{
+    goPane('arriving');
+    showArriving();
+  },400);
+}
+
+$('#btn-book').addEventListener('click',()=>{
+  if(state.mode!=='fastest') return;
+  const f=fareFor(state.vehicle);
+  const v=currentVeh();
+  state.booking={
+    id:'RX'+Math.floor(100000+Math.random()*900000),
+    fare:f, km:state.distance, duration:state.duration,
+    pickup:state.pickup, drop:state.drop, mode:'fastest',
+    veh:v
+  };
+  startFastestMatch();
+});
+
+function startFastestMatch(){
+  const v=currentVeh();
+  $('#search-icon').textContent=v.icon;
+  $('#search-title').innerHTML=`Finding nearest ${v.name.toLowerCase()}<span class="dots"></span>`;
+  $('#search-sub').textContent=`Searching ${v.name}s around ${state.pickup}`;
+  goPane('searching');
+  state.timers.search=setTimeout(()=>{
+    const d=DRIVER_POOL[Math.floor(Math.random()*DRIVER_POOL.length)];
+    const eta=2+Math.floor(Math.random()*2);
+    state.booking.driver={...d, plate:randomPlate(v), eta, veh:v};
+    toast(`✅ ${d.n} accepted`);
+    goPane('arriving');
+    showArriving();
+  },3000);
+}
+
+function cancelSearch(){
+  clearTimeout(state.timers.search);
+  state.booking=null;
+  goPane('book');
+  toast('❌ Search cancelled');
+}
+
+function showArriving(){
+  const b=state.booking;
+  const d=b.driver;
+  const v=b.veh;
+  $('#arrive-tag-veh').textContent=v.name;
+  $('#arrive-drv-avatar').innerHTML=d.ic+'<span class="online-dot"></span>';
+  $('#arrive-drv-name').textContent=d.n;
+  $('#arrive-drv-veh').textContent=`${v.name} · ${d.plate}`;
+  $('#arrive-drv-plate').textContent=d.plate;
+  $('#arrive-drv-rating').textContent=d.r.toFixed(1);
+  $('#arrive-sub').innerHTML=`Heading to <b>${b.pickup}</b>`;
+
+  const svg=document.getElementById('arrive-map');
+  const totalSeconds=12;
+  let prog=0;
+  const render=()=>{
+    svg.innerHTML=buildDelhiMap({
+      W:720,H:480, seed:hashStr(b.id+'arrive'),
+      aName:null, bName:b.pickup,
+      progress:prog, icon:v.icon, mode:'arriving'
+    });
+  };
+  render();
+  const start=performance.now();
+  clearInterval(state.timers.arrive);
+  state.timers.arrive=setInterval(()=>{
+    const elapsed=(performance.now()-start)/1000;
+    prog=Math.min(1,elapsed/totalSeconds);
+    const remain=Math.max(0,totalSeconds-elapsed);
+    $('#arrive-eta').textContent=Math.ceil(remain);
+    render();
+    if(prog>=1){
+      clearInterval(state.timers.arrive);
+      $('#arrive-eta').textContent='0';
+      $('#arrive-sub').innerHTML=`Driver arrived at <b>${b.pickup}</b>`;
+      toast('🎉 Driver arrived');
+      setTimeout(()=>startTrip(),1400);
+    }
+  },140);
+}
+
+function cancelRide(){
+  clearInterval(state.timers.arrive);
+  clearInterval(state.timers.trip);
+  clearTimeout(state.timers.search);
+  state.booking=null;
+  goPane('book');
+  toast('❌ Ride cancelled');
+}
+
+function startTrip(){
+  const b=state.booking;
+  goPane('trip');
+  state.shareLink=`rydex.in/t/${b.id.slice(-6)}`;
+  $('#share-link').textContent=state.shareLink;
+  $('#trip-tag-veh').textContent=b.veh.name;
+  $('#trip-veh-label').textContent=b.veh.name;
+  $('#trip-veh-name').textContent=b.veh.icon+' '+b.veh.name;
+
+  const totalKm=b.km, totalMin=b.duration;
+  const DURATION_MS=24000;
+  $('#trip-fare').textContent=money(b.fare.total);
+  $('#prog-from').textContent=b.pickup;
+  $('#prog-to').textContent=b.drop;
+
+  const svg=document.getElementById('trip-map');
+  const seed=hashStr(b.pickup+b.drop+b.id);
+  const start=performance.now();
+  clearInterval(state.timers.trip);
+  state.timers.trip=setInterval(()=>{
+    const p=Math.min(1,(performance.now()-start)/DURATION_MS);
+    const kmLeft=totalKm*(1-p), minLeft=totalMin*(1-p);
+    $('#prog-dist').innerHTML=kmLeft<1?`${Math.round(kmLeft*1000)} <small>m</small>`:`${kmLeft.toFixed(1)} <small>km</small>`;
+    $('#prog-time').innerHTML=minLeft<1?`${Math.round(minLeft*60)} <small>sec</small>`:`${Math.floor(minLeft)} <small>min</small>`;
+    $('#prog-fill').style.width=(p*100)+'%';
+    $('#prog-pct').textContent=Math.round(p*100)+'%';
+    svg.innerHTML=buildDelhiMap({
+      W:720,H:480, seed,
+      aName:b.pickup, bName:b.drop,
+      progress:p, icon:b.veh.icon, mode:'trip'
+    });
+    if(p>=1){
+      clearInterval(state.timers.trip);
+      setTimeout(showPayment,600);
+    }
+  },90);
+}
+
+$('#btn-copy').addEventListener('click',()=>{
+  const link='https://'+state.shareLink;
+  navigator.clipboard?.writeText(link).then(()=>toast('📋 Link copied')).catch(()=>toast('📋 '+link));
+});
+$('#btn-share-wa').addEventListener('click',()=>{
+  const link='https://'+state.shareLink;
+  window.open(`https://wa.me/?text=${encodeURIComponent(`I'm on a RydeX ${state.booking.veh.name}. Track my ride: ${link}`)}`,'_blank');
+});
+$('#btn-share-sms').addEventListener('click',()=>{
+  const link='https://'+state.shareLink;
+  window.open(`sms:?body=${encodeURIComponent(`Track my RydeX ride: ${link}`)}`,'_blank');
+});
+
+function buildParcelUI(){
+  const ptWrap=$('#pkg-types');
+  ptWrap.innerHTML=PKG_TYPES.map(p=>
+    `<div class="pkg-type ${state.parcel.type===p.id?'on':''}" data-t="${p.id}">
+      <span class="em">${p.em}</span><div class="nm">${p.nm}</div><div class="sub">${p.sub}</div>
+    </div>`).join('');
+  $$('.pkg-type',ptWrap).forEach(el=>el.onclick=()=>{
+    state.parcel.type=el.dataset.t; buildParcelUI();
+  });
+
+  const wWrap=$('#weight-opts');
+  wWrap.innerHTML=WEIGHT_OPTS.map(w=>
+    `<div class="weight-opt ${state.parcel.weight===w.id?'on':''}" data-w="${w.id}">
+      ${w.label}${w.surcharge?`<small>+₹${w.surcharge}</small>`:`<small>free</small>`}
+    </div>`).join('');
+  $$('.weight-opt',wWrap).forEach(el=>el.onclick=()=>{
+    state.parcel.weight=el.dataset.w;
+    const w=WEIGHT_OPTS.find(x=>x.id===el.dataset.w);
+    state.parcel.vehicle=w.veh;
+    buildParcelUI();
+  });
+
+  const pp=$('#par-pickup'), pd=$('#par-drop');
+  if(!pp.options.length){
+    const opts=PLACES.map(p=>`<option value="${p.n}">${p.n}</option>`).join('');
+    pp.innerHTML=opts; pd.innerHTML=opts;
+    pp.value=state.parcel.pickup; pd.value=state.parcel.drop;
+    pp.onchange=()=>{state.parcel.pickup=pp.value; updateParcelMeta()};
+    pd.onchange=()=>{state.parcel.drop=pd.value; updateParcelMeta()};
+    $('#par-swap').onclick=()=>{
+      [state.parcel.pickup,state.parcel.drop]=[state.parcel.drop,state.parcel.pickup];
+      pp.value=state.parcel.pickup; pd.value=state.parcel.drop;
+      updateParcelMeta();
+      toast('⇅ Swapped');
+    };
+  }
+  updateParcelMeta();
+}
+function updateParcelMeta(){
+  const d=parcelRouteInfo().km;
+  $('#par-dist').textContent=d+' km';
+  $('#par-time').textContent='~'+Math.max(20, Math.round((d/22)*60))+' min';
+  const f=parcelFare(state.parcel.vehicle, state.parcel.weight);
+  $('#parcel-fare-amt').textContent=money(f.total);
+  $('#parcel-eta').textContent='~'+Math.max(20, Math.round((d/22)*60))+' min';
+}
+$('#btn-send-parcel').addEventListener('click',()=>{
+  const rec=$('#par-receiver').value.trim();
+  const ph=$('#par-phone').value.replace(/\D/g,'');
+  if(!rec){toast('⚠️ Enter receiver name');return}
+  if(ph.length!==10){toast('⚠️ Enter valid phone');return}
+  const f=parcelFare(state.parcel.vehicle, state.parcel.weight);
+  const km=parcelRouteInfo().km;
+  const v = state.parcel.vehicle==='cab' ? VEHICLES[3] : state.parcel.vehicle==='scooter' ? VEHICLES[1] : VEHICLES[0];
+  state.booking={
+    id:'RXP'+Math.floor(100000+Math.random()*900000),
+    fare:f, km, duration:Math.max(20, Math.round(km/22*60)),
+    pickup:state.parcel.pickup, drop:state.parcel.drop, mode:'fastest',
+    veh:v, isParcel:true, receiver:rec, receiverPhone:ph,
+    pkgType:state.parcel.type, weight:state.parcel.weight
+  };
+  $('#search-icon').textContent='📦';
+  $('#search-title').innerHTML='Finding courier<span class="dots"></span>';
+  $('#search-sub').textContent=`Searching ${v.name}s near ${state.parcel.pickup}`;
+  goPane('searching');
+  state.timers.search=setTimeout(()=>{
+    const d=DRIVER_POOL[Math.floor(Math.random()*DRIVER_POOL.length)];
+    state.booking.driver={...d, plate:randomPlate(v), eta:4+Math.floor(Math.random()*3), veh:v};
+    toast(`✅ ${d.n} accepted for delivery`);
+    goPane('arriving');
+    showArriving();
+  },3000);
+});
+
+function showPayment(){
+  const b=state.booking, f=b.fare;
+  const v=b.veh;
+  $('#pb-base').textContent=money(f.base);
+  $('#pb-km-lbl').textContent=`(${b.km} km × ₹${v.perKm})`;
+  $('#pb-km').textContent=money(f.kmCharge!==undefined?f.kmCharge:f.distCharge||v.perKm*b.km);
+  $('#pb-min-lbl').textContent=f.timeCharge!==undefined?`(${b.duration} min × ₹${v.perMin})`:`(weight surcharge)`;
+  $('#pb-min').textContent=money(f.timeCharge!==undefined?f.timeCharge:f.weightSur||0);
+  $('#pb-total').textContent=money(f.total);
+  $('#cash-hint').textContent=f.total;
+  goPane('pay');
+  window.scrollTo({top:0,behavior:'auto'});
+  toast(b.isParcel?'📦 Parcel delivered — please pay':'🏁 Trip completed — please pay');
+}
+
+$('#pay-upi').addEventListener('click',()=>{ state.payMethod='upi'; renderUpiApps(); goPane('upi-apps'); });
+$('#pay-cash').addEventListener('click',()=>{ state.payMethod='cash'; completePayment('cash'); });
+
+const UPI_APPS = [
+  {id:'gpay',   ic:'🟢', name:'Google Pay',   sub:'Instant UPI'},
+  {id:'phonepe',ic:'🟣', name:'PhonePe',      sub:'Instant UPI'},
+  {id:'paytm',  ic:'🔵', name:'Paytm',        sub:'UPI / Wallet'},
+  {id:'bhim',   ic:'🇮🇳', name:'BHIM UPI',    sub:'NPCI certified'},
+  {id:'amazon', ic:'🟠', name:'Amazon Pay',   sub:'UPI linked'},
+];
+function renderUpiApps(){
+  const wrap=$('#upi-apps-list');
+  wrap.innerHTML=UPI_APPS.map(a=>`
+    <div class="upi-app-item" data-id="${a.id}">
+      <div class="app-logo">${a.ic}</div>
+      <div class="app-info"><h4>${a.name}</h4><p>${a.sub}</p></div>
+    </div>
+  `).join('');
+  $$('.upi-app-item',wrap).forEach(el=>{
+    el.onclick=()=>{
+      state.selectedUpiApp=UPI_APPS.find(a=>a.id===el.dataset.id);
+      openUpiPin();
+    };
+  });
+}
+function openUpiPin(){
+  const app=state.selectedUpiApp;
+  const f=state.booking.fare;
+  $('#upi-pin-logo').textContent=app.ic;
+  $('#upi-pin-app').textContent=app.name;
+  $('#upi-pin-amt').textContent=money(f.total);
+  state.upiPin='';
+  updatePinDots();
+  $('#upi-pin-loading').style.display='none';
+  $('#upi-keypad').style.display='grid';
+  $('#upi-dots').style.display='flex';
+  goPane('upi-pin');
+}
+function updatePinDots(){
+  $$('#upi-dots span').forEach((d,i)=>d.classList.toggle('filled',i<state.upiPin.length));
+}
+$('#upi-keypad').addEventListener('click',(e)=>{
+  // Prime audio context on first user gesture so the success chime can play later
+  getAudioContext();
+  const btn=e.target.closest('button'); if(!btn)return;
+  const k=btn.dataset.k;
+  if(k==='del'){state.upiPin=state.upiPin.slice(0,-1);updatePinDots();return}
+  if(k==='skip'){state.upiPin='0000';updatePinDots();setTimeout(submitPin,200);return}
+  if(/^[0-9]$/.test(k)&&state.upiPin.length<4){
+    state.upiPin+=k;updatePinDots();
+    if(state.upiPin.length===4)setTimeout(submitPin,260);
+  }
+});
+function submitPin(){
+  if(state.upiPin.length!==4){toast('⚠️ Enter your 4-digit PIN');return}
+  $('#upi-keypad').style.display='none';
+  $('#upi-dots').style.display='none';
+  $('#upi-pin-loading').style.display='block';
+  setTimeout(()=>{
+    // PLAY SUCCESS CHIME — like Paytm/GPay
+    playPaymentSuccessSound();
+    completePayment('upi');
+  },1800);
+}
+
+function completePayment(method){
+  const b=state.booking, f=b.fare;
+  const v=b.veh;
+  $('#succ-title').textContent=b.isParcel?'Parcel delivered!':'Ride completed!';
+  $('#succ-amt').textContent=money(f.total);
+  $('#succ-sub').textContent = method==='cash'
+    ? `Cash paid · ${money(f.total)}`
+    : `Paid via ${state.selectedUpiApp?.name||'UPI'}`;
+  $('#succ-txn').textContent=b.id;
+  $('#succ-dist').textContent=b.km+' km';
+  $('#succ-dur').textContent=b.duration+' min';
+  $('#succ-drv').textContent=b.driver.n;
+
+  state.totalSpent+=f.total;
+  state.history.unshift({
+    id:b.id, from:b.pickup, to:b.drop,
+    fare:f.total, km:b.km, dur:b.duration,
+    driver:b.driver.n, date:'Just now', method,
+    veh:v.name, vehIcon:v.icon, isParcel:!!b.isParcel
+  });
+  state.feedbackRef='#RYDEX'+Math.floor(1000+Math.random()*9000);
+  $('#fb-ref').textContent=state.feedbackRef;
+
+  renderHistory();
+  goPane('success');
+  toast('🎉 Payment confirmed');
+}
+
+let fbRating=0;
+$$('#fb-stars .star').forEach(s=>{
+  s.addEventListener('click',()=>{
+    fbRating=+s.dataset.v;
+    $$('#fb-stars .star').forEach(x=>x.classList.toggle('on',+x.dataset.v<=fbRating));
+  });
+});
+$$('#fb-cats .fb-cat').forEach(el=>el.addEventListener('click',()=>el.classList.toggle('on')));
+$('#btn-submit-feedback').addEventListener('click',()=>{
+  const cats=$$('#fb-cats .fb-cat.on').map(c=>c.dataset.c);
+  const text=$('#fb-text').value.trim();
+  if(fbRating===0 && cats.length===0 && !text){ toast('⚠️ Add a rating or comment'); return; }
+  state.feedback.unshift({
+    id: state.feedbackRef, rating: fbRating, cats, text,
+    driver: state.booking.driver.n, tripId: state.booking.id,
+    status: 'open', time: 'just now',
+  });
+  toast('✅ Feedback submitted');
+  setTimeout(showReturnAsk, 600);
+});
+
+function showReturnAsk(){
+  const b=state.booking;
+  $('#ret-from').textContent=b.drop;
+  $('#ret-to').textContent=b.pickup;
+  $$('#preset-grid .preset-btn').forEach((el,i)=>el.classList.toggle('on',i===0));
+  const d=new Date(); d.setMinutes(d.getMinutes()+30);
+  const pad=n=>String(n).padStart(2,'0');
+  $('#ret-date').value=`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+  $('#ret-time').value=`${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  $('#return-modal').classList.add('show');
+}
+$$('#preset-grid .preset-btn').forEach(el=>{
+  el.addEventListener('click',()=>{
+    $$('#preset-grid .preset-btn').forEach(x=>x.classList.remove('on'));
+    el.classList.add('on');
+    const mins=+el.dataset.mins;
+    const d=new Date(); d.setMinutes(d.getMinutes()+mins);
+    const pad=n=>String(n).padStart(2,'0');
+    $('#ret-date').value=`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+    $('#ret-time').value=`${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  });
+});
+$('#btn-return-no').addEventListener('click',()=>{
+  $('#return-modal').classList.remove('show');
+  finishRide();
+});
+$('#btn-return-yes').addEventListener('click',()=>{
+  const b=state.booking;
+  const date=$('#ret-date').value, time=$('#ret-time').value;
+  if(!date||!time){ toast('⚠️ Pick a date and time'); return; }
+  state.scheduledRides.push({from:b.drop, to:b.pickup, date, time, fare:b.fare.total});
+  $('#prof-sched').textContent=state.scheduledRides.length;
+  toast(`⏰ Return ride scheduled · ${date} ${time}`);
+  $('#return-modal').classList.remove('show');
+  finishRide();
+});
+function finishRide(){
+  state.booking=null; state.chosenDriver=null; state.selectedUpiApp=null;
+  state.availableDrivers=null;
+  goPane('book');
+}
+
+function renderHistory(){
+  const wrap=$('#rides-list');
+  $('#rides-count').textContent=state.history.length+' rides';
+  $('#prof-rides').textContent=state.history.length;
+  $('#prof-spent').textContent=money(state.totalSpent);
+  $('#prof-phone').textContent='+91 '+state.phone.slice(0,5)+' '+state.phone.slice(5);
+  if(!state.history.length){
+    wrap.innerHTML=`<div class="empty"><span class="e">🚕</span><p>No rides yet. Book your first ride!</p></div>`;
+    return;
+  }
+  wrap.innerHTML=state.history.map(h=>`
+    <div class="ride-card">
+      <div class="rc-top">
+        <div class="rc-id">${h.id}</div>
+        <div class="rc-status">${h.isParcel?'Delivered':'Completed'}</div>
+      </div>
+      <div class="rc-route">${h.from} → ${h.to}</div>
+      <div class="rc-meta">
+        <span>${h.vehIcon} ${h.veh}</span><span>📏 ${h.km} km</span>
+        <span>⏱️ ${h.dur} min</span><span>👤 ${h.driver}</span>
+      </div>
+      <div class="rc-bottom"><div class="rc-fare">${money(h.fare)}</div></div>
+    </div>
+  `).join('');
+}
+
+/* ============================================================
+   DELHI MAP  (arriving mode now shows driver approaching rider)
+   ============================================================ */
+function buildDelhiMap(cfg){
+  const { W, H, seed, aName, bName, progress, icon, mode } = cfg;
+  const rng=makeRng(seed||1);
+
+  let svg='';
+  svg+=`<rect width="${W}" height="${H}" fill="#f2efe9"/>`;
+
+  /* FIELDS */
+  const fieldColors=['#e5dfa8','#ddd7a0','#e8e4b5','#d6d4a2','#e2dfae','#dcd9a4'];
+  for(let x=0;x<W;x+=W*0.055){
+    const fw=W*0.045+rng()*W*0.02;
+    const fh=H*0.035+rng()*H*0.02;
+    const c=fieldColors[Math.floor(rng()*fieldColors.length)];
+    svg+=`<rect x="${x.toFixed(1)}" y="0" width="${fw.toFixed(1)}" height="${fh.toFixed(1)}" fill="${c}" opacity="0.7"/>`;
+  }
+  for(let x=0;x<W;x+=W*0.06){
+    const fw=W*0.05+rng()*W*0.02;
+    const fh=H*0.03+rng()*H*0.015;
+    const c=fieldColors[Math.floor(rng()*fieldColors.length)];
+    svg+=`<rect x="${x.toFixed(1)}" y="${(H-fh).toFixed(1)}" width="${fw.toFixed(1)}" height="${fh.toFixed(1)}" fill="${c}" opacity="0.65"/>`;
+  }
+
+  /* RIDGE FOREST */
+  const forestPath=`M ${W*0.02} ${H*0.05} Q ${W*0.10} ${H*0.01} ${W*0.19} ${H*0.04}
+    Q ${W*0.27} ${H*0.08} ${W*0.29} ${H*0.16} Q ${W*0.30} ${H*0.25} ${W*0.24} ${H*0.30}
+    Q ${W*0.16} ${H*0.33} ${W*0.08} ${H*0.30} Q ${W*0.02} ${H*0.25} ${W*0.02} ${H*0.16} Z`;
+  svg+=`<path d="${forestPath}" fill="#b4d4a2"/>`;
+  svg+=`<path d="${forestPath}" fill="#a4c890" opacity="0.55"/>`;
+  const forestCX=W*0.15, forestCY=H*0.16;
+  for(let i=0;i<70;i++){
+    const ang=rng()*Math.PI*2;
+    const rad=Math.sqrt(rng())*W*0.11;
+    const tx=forestCX+Math.cos(ang)*rad*1.4;
+    const ty=forestCY+Math.sin(ang)*rad*0.9;
+    const tr=2+rng()*2.5;
+    const shades=['#7ba86a','#8ab877','#6d9c5d','#94c083'];
+    svg+=`<circle cx="${tx.toFixed(1)}" cy="${ty.toFixed(1)}" r="${tr.toFixed(1)}" fill="${shades[Math.floor(rng()*4)]}" opacity="0.85"/>`;
+  }
+  svg+=`<text x="${forestCX.toFixed(0)}" y="${forestCY.toFixed(0)}" font-family="Roboto,Arial" font-size="10" font-style="italic" fill="#3d5a2f" font-weight="600" text-anchor="middle" paint-order="stroke" stroke="#f2efe9" stroke-width="2.5" stroke-linejoin="round">Ridge Forest</text>`;
+
+  /* PARKS */
+  const parkCenters=[
+    {x:W*0.24,y:H*0.55,r:W*0.06},
+    {x:W*0.55,y:H*0.78,r:W*0.055},
+    {x:W*0.42,y:H*0.30,r:W*0.05},
+    {x:W*0.78,y:H*0.62,r:W*0.05}
+  ];
+  parkCenters.forEach((p,i)=>{
+    let path=`M ${p.x-p.r} ${p.y}`;
+    const steps=8;
+    for(let s=1;s<=steps;s++){
+      const ang=(s/steps)*Math.PI*2;
+      const r=p.r*(0.85+rng()*0.35);
+      path+=` L ${(p.x+Math.cos(ang)*r*1.2).toFixed(1)} ${(p.y+Math.sin(ang)*r*0.8).toFixed(1)}`;
+    }
+    path+=' Z';
+    svg+=`<path d="${path}" fill="#c9e7c0" stroke="#a8d29c" stroke-width="0.9"/>`;
+    svg+=`<path d="M ${p.x-p.r*0.7} ${p.y} Q ${p.x} ${p.y-p.r*0.4} ${p.x+p.r*0.7} ${p.y}" fill="none" stroke="#e8f0d8" stroke-width="2.2"/>`;
+    for(let t=0;t<8;t++){
+      const ang=rng()*Math.PI*2;
+      const rad=rng()*p.r*0.75;
+      const tx=p.x+Math.cos(ang)*rad*1.15;
+      const ty=p.y+Math.sin(ang)*rad*0.8;
+      svg+=`<circle cx="${tx.toFixed(1)}" cy="${ty.toFixed(1)}" r="${(2.2+rng()*1.5).toFixed(1)}" fill="#8ab877" opacity="0.85"/>`;
+    }
+    const parkNames=['Lodhi Garden','Deer Park','Nehru Park','Mughal Garden'];
+    svg+=`<text x="${p.x.toFixed(0)}" y="${(p.y-p.r*0.9).toFixed(0)}" font-family="Roboto,Arial" font-size="8.5" fill="#3d5a2f" font-weight="600" text-anchor="middle" paint-order="stroke" stroke="#f2efe9" stroke-width="2.2" stroke-linejoin="round">${parkNames[i]}</text>`;
+  });
+
+  /* YAMUNA */
+  const riverX=W*0.86;
+  const riverPath=`M ${riverX+10} -10 Q ${riverX-15} ${H*0.2} ${riverX-5} ${H*0.35}
+    Q ${riverX+15} ${H*0.5} ${riverX-10} ${H*0.65}
+    Q ${riverX-25} ${H*0.8} ${riverX-5} ${H+10}`;
+  svg+=`<path d="${riverPath}" fill="none" stroke="#c9e7c0" stroke-width="52" stroke-linecap="round" opacity="0.85"/>`;
+  svg+=`<path d="${riverPath}" fill="none" stroke="#f0e6c8" stroke-width="46" stroke-linecap="round" opacity="0.6"/>`;
+  svg+=`<path d="${riverPath}" fill="none" stroke="#8fbde0" stroke-width="34" stroke-linecap="round"/>`;
+  svg+=`<path d="${riverPath}" fill="none" stroke="#a6cdf0" stroke-width="28" stroke-linecap="round"/>`;
+  svg+=`<path d="${riverPath}" fill="none" stroke="#c5dff5" stroke-width="14" stroke-linecap="round" opacity="0.55"/>`;
+  svg+=`<text x="${riverX}" y="${(H*0.45).toFixed(0)}" font-family="Roboto,Arial" font-size="10" font-style="italic" fill="#3d6f9e" font-weight="600" text-anchor="middle" transform="rotate(82 ${riverX} ${H*0.45})" paint-order="stroke" stroke="#f2efe9" stroke-width="2.8" stroke-linejoin="round">Yamuna River</text>`;
+
+  const tribPath=`M ${riverX-15} ${H*0.55} Q ${W*0.7} ${H*0.6} ${W*0.55} ${H*0.65} Q ${W*0.42} ${H*0.7} ${W*0.32} ${H*0.72}`;
+  svg+=`<path d="${tribPath}" fill="none" stroke="#8fbde0" stroke-width="12" stroke-linecap="round" opacity="0.75"/>`;
+  svg+=`<path d="${tribPath}" fill="none" stroke="#a6cdf0" stroke-width="8" stroke-linecap="round"/>`;
+
+  /* LAKES */
+  const lakes=[
+    {x:W*0.36,y:H*0.48,rx:W*0.045,ry:H*0.035},
+    {x:W*0.62,y:H*0.15,rx:W*0.032,ry:H*0.022},
+    {x:W*0.18,y:H*0.78,rx:W*0.038,ry:H*0.025}
+  ];
+  lakes.forEach(lk=>{
+    svg+=`<ellipse cx="${lk.x}" cy="${lk.y}" rx="${(lk.rx*1.25).toFixed(1)}" ry="${(lk.ry*1.25).toFixed(1)}" fill="#c9e7c0" opacity="0.75"/>`;
+    svg+=`<ellipse cx="${lk.x}" cy="${lk.y}" rx="${lk.rx.toFixed(1)}" ry="${lk.ry.toFixed(1)}" fill="#a6cdf0"/>`;
+    svg+=`<ellipse cx="${lk.x}" cy="${lk.y}" rx="${(lk.rx*0.55).toFixed(1)}" ry="${(lk.ry*0.5).toFixed(1)}" fill="#c5dff5" opacity="0.6"/>`;
+  });
+
+  /* RAILWAY */
+  const railPath=`M -10 ${H*0.88} Q ${W*0.25} ${H*0.84} ${W*0.5} ${H*0.82} Q ${W*0.75} ${H*0.80} ${W+10} ${H*0.76}`;
+  svg+=`<path d="${railPath}" fill="none" stroke="#5a5a5a" stroke-width="4"/>`;
+  svg+=`<path d="${railPath}" fill="none" stroke="#f2efe9" stroke-width="1" stroke-dasharray="3 5"/>`;
+  svg+=`<path d="${railPath}" fill="none" stroke="#3a3a3a" stroke-width="6" stroke-dasharray="2 12" opacity="0.7"/>`;
+  const stX=W*0.42, stY=H*0.82;
+  svg+=`<rect x="${stX-14}" y="${stY-6}" width="28" height="12" fill="#d6cfc0" stroke="#8a8478" stroke-width="0.8" rx="1"/>`;
+  svg+=`<text x="${stX}" y="${(stY-10).toFixed(0)}" font-family="Roboto,Arial" font-size="8" fill="#5f6368" font-weight="600" text-anchor="middle" paint-order="stroke" stroke="#f2efe9" stroke-width="2.2">New Delhi Rly Stn</text>`;
+
+  /* AIRPORT */
+  const apX=W*0.06, apY=H*0.86, apW=W*0.15, apH=H*0.035;
+  svg+=`<rect x="${apX}" y="${apY}" width="${apW}" height="${apH}" fill="#b8b5ae" rx="2"/>`;
+  svg+=`<rect x="${apX}" y="${(apY+apH/2-0.6).toFixed(1)}" width="${apW}" height="1.2" fill="#ffffff" opacity="0.9"/>`;
+  svg+=`<rect x="${apX}" y="${(apY-apH*0.6).toFixed(1)}" width="${apW*0.4}" height="${(apH*0.5).toFixed(1)}" fill="#d6cfc0" stroke="#8a8478" stroke-width="0.6"/>`;
+  svg+=`<text x="${(apX+apW/2).toFixed(0)}" y="${(apY-4).toFixed(0)}" font-family="Roboto,Arial" font-size="8" fill="#5f6368" font-weight="600" text-anchor="middle" paint-order="stroke" stroke="#f2efe9" stroke-width="2">IGI Airport</text>`;
+
+  /* ROADS */
+  const vMain=[W*0.16,W*0.34,W*0.53,W*0.72].map(Math.round);
+  const hMain=[H*0.20,H*0.45,H*0.68].map(Math.round);
+  const vLocal=[], hLocal=[];
+  for(let x=W*0.06;x<W;x+=W*0.055){
+    if(!vMain.some(m=>Math.abs(m-x)<W*0.035)) vLocal.push(Math.round(x));
+  }
+  for(let y=H*0.08;y<H;y+=H*0.075){
+    if(!hMain.some(m=>Math.abs(m-y)<H*0.055)) hLocal.push(Math.round(y));
+  }
+  hLocal.forEach(y=>{
+    svg+=`<line x1="0" y1="${y}" x2="${W}" y2="${y}" stroke="#c8c5bb" stroke-width="5" opacity="0.55"/>`;
+    svg+=`<line x1="0" y1="${y}" x2="${W}" y2="${y}" stroke="#ffffff" stroke-width="3.2"/>`;
+  });
+  vLocal.forEach(x=>{
+    svg+=`<line x1="${x}" y1="0" x2="${x}" y2="${H}" stroke="#c8c5bb" stroke-width="5" opacity="0.55"/>`;
+    svg+=`<line x1="${x}" y1="0" x2="${x}" y2="${H}" stroke="#ffffff" stroke-width="3.2"/>`;
+  });
+  hMain.forEach(y=>{
+    svg+=`<line x1="0" y1="${y}" x2="${W}" y2="${y}" stroke="#c8c5bb" stroke-width="11"/>`;
+    svg+=`<line x1="0" y1="${y}" x2="${W}" y2="${y}" stroke="#ffffff" stroke-width="7.5"/>`;
+    svg+=`<line x1="0" y1="${y}" x2="${W}" y2="${y}" stroke="#ffe7a0" stroke-width="1" stroke-dasharray="14 12" opacity="0.7"/>`;
+  });
+  vMain.forEach(x=>{
+    svg+=`<line x1="${x}" y1="0" x2="${x}" y2="${H}" stroke="#c8c5bb" stroke-width="11"/>`;
+    svg+=`<line x1="${x}" y1="0" x2="${x}" y2="${H}" stroke="#ffffff" stroke-width="7.5"/>`;
+    svg+=`<line x1="${x}" y1="0" x2="${x}" y2="${H}" stroke="#ffe7a0" stroke-width="1" stroke-dasharray="14 12" opacity="0.7"/>`;
+  });
+  const hwy1=`M -10 ${H*0.94} Q ${W*0.2} ${H*0.82} ${W*0.38} ${H*0.62} Q ${W*0.55} ${H*0.42} ${W*0.7} ${H*0.32} Q ${W*0.85} ${H*0.22} ${W+10} ${H*0.12}`;
+  svg+=`<path d="${hwy1}" fill="none" stroke="#d49a10" stroke-width="18" stroke-linecap="round"/>`;
+  svg+=`<path d="${hwy1}" fill="none" stroke="#fdc644" stroke-width="12" stroke-linecap="round"/>`;
+
+  /* BUILDINGS */
+  const allV=[...vMain,...vLocal].sort((a,b)=>a-b);
+  const allH=[...hMain,...hLocal].sort((a,b)=>a-b);
+  const cx=W/2, cy=H/2, maxDist=Math.hypot(W/2,H/2);
+  const shades=['#e8e5df','#dcd8ce','#e6e3dc','#eae7e0','#dedad1','#e2dfd7'];
+  for(let vi=0;vi<allV.length-1;vi++){
+    for(let hi=0;hi<allH.length-1;hi++){
+      const bx0=allV[vi]+6, bx1=allV[vi+1]-6;
+      const by0=allH[hi]+6, by1=allH[hi+1]-6;
+      const bW=bx1-bx0, bH=by1-by0;
+      if(bW<12||bH<12) continue;
+      const cxc=(bx0+bx1)/2, cyc=(by0+by1)/2;
+      const dist=Math.hypot(cxc-cx,cyc-cy)/maxDist;
+      let skip=false;
+      for(const p of parkCenters){if(Math.hypot(cxc-p.x,cyc-p.y)<p.r*1.1){skip=true;break}}
+      if(!skip && cxc<W*0.28 && cyc<H*0.3) skip=true;
+      if(!skip && cxc>W*0.78) skip=true;
+      if(!skip){for(const lk of lakes){if(Math.abs(cxc-lk.x)<lk.rx*1.3 && Math.abs(cyc-lk.y)<lk.ry*1.3){skip=true;break}}}
+      if(!skip && cyc>H*0.76 && cyc<H*0.9) skip=true;
+      if(!skip && cxc<W*0.24 && cyc>H*0.82) skip=true;
+      if(skip) continue;
+      const density=1-dist*0.75;
+      const count=Math.floor(1+density*4);
+      for(let b=0;b<count;b++){
+        const w=bW*(0.22+rng()*0.35);
+        const h=bH*(0.22+rng()*0.35);
+        const x=bx0+rng()*Math.max(0,bW-w);
+        const y=by0+rng()*Math.max(0,bH-h);
+        svg+=`<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${w.toFixed(1)}" height="${h.toFixed(1)}" fill="${shades[Math.floor(rng()*shades.length)]}"/>`;
+        svg+=`<rect x="${x.toFixed(1)}" y="${(y+h-0.9).toFixed(1)}" width="${w.toFixed(1)}" height="0.9" fill="rgba(0,0,0,.07)"/>`;
+      }
+    }
+  }
+
+  /* BRIDGES */
+  [H*0.32,H*0.68].forEach(y=>{
+    const bx1=riverX-40, bx2=riverX+40;
+    svg+=`<rect x="${bx1}" y="${y-5}" width="${bx2-bx1}" height="10" fill="#c9c5be" stroke="#8a8478" stroke-width="0.8"/>`;
+  });
+
+  /* LABELS */
+  const labels=[
+    {x:W*0.08,y:H*0.14,t:'Pitampura'},{x:W*0.32,y:H*0.14,t:'Model Town'},
+    {x:W*0.55,y:H*0.14,t:'Civil Lines'},{x:W*0.74,y:H*0.14,t:'Kashmere Gate'},
+    {x:W*0.08,y:H*0.40,t:'Punjabi Bagh'},{x:W*0.30,y:H*0.40,t:'Karol Bagh'},
+    {x:W*0.55,y:H*0.40,t:'Connaught Pl'},{x:W*0.74,y:H*0.40,t:'ITO'},
+    {x:W*0.08,y:H*0.62,t:'Dwarka'},{x:W*0.28,y:H*0.62,t:'Dhaula Kuan'},
+    {x:W*0.55,y:H*0.62,t:'Lodhi Colony'},{x:W*0.74,y:H*0.62,t:'Nizamuddin'},
+    {x:W*0.30,y:H*0.94,t:'Hauz Khas'},{x:W*0.55,y:H*0.94,t:'Saket'}
+  ];
+  labels.forEach(l=>{
+    svg+=`<text x="${l.x.toFixed(0)}" y="${l.y.toFixed(0)}" font-family="Roboto,Arial" font-size="10" fill="#5f6368" font-weight="500" text-anchor="middle" paint-order="stroke" stroke="#ffffff" stroke-width="3" stroke-linejoin="round">${l.t}</text>`;
+  });
+
+  /* ============================================================
+     ROUTE MODES
+     ============================================================ */
+
+  /* ---- MODE: TRIP (pickup → drop) ---- */
+  if(mode==='trip' && aName && bName){
+    const allVSnap=[...vMain,...vLocal];
+    const allHSnap=[...hMain,...hLocal];
+    let A={x:W*0.12+rng()*W*0.6, y:H*0.15+rng()*H*0.6};
+    let B={x:W*0.12+rng()*W*0.6, y:H*0.15+rng()*H*0.6};
+    if(Math.hypot(A.x-B.x,A.y-B.y)<W*0.35){
+      B.x=Math.min(W*0.88,B.x+W*0.4);
+      B.y=Math.min(H*0.85,B.y+H*0.15);
+    }
+    const pathPoints=[{x:A.x,y:A.y}];
+    const segments=4;
+    for(let i=1;i<=segments;i++){
+      const t=i/(segments+1);
+      let wx=A.x+(B.x-A.x)*t;
+      let wy=A.y+(B.y-A.y)*t;
+      const snapV=allVSnap.reduce((b,x)=>Math.abs(x-wx)<Math.abs(b-wx)?x:b,allVSnap[0]);
+      const snapH=allHSnap.reduce((b,y)=>Math.abs(y-wy)<Math.abs(b-wy)?y:b,allHSnap[0]);
+      if(Math.abs(snapV-wx)<Math.abs(snapH-wy)) wx=snapV; else wy=snapH;
+      const prev=pathPoints[pathPoints.length-1];
+      if(Math.abs(prev.x-wx)>Math.abs(prev.y-wy)){
+        pathPoints.push({x:wx,y:prev.y});
+      } else {
+        pathPoints.push({x:prev.x,y:wy});
+      }
+      pathPoints.push({x:wx,y:wy});
+    }
+    const last=pathPoints[pathPoints.length-1];
+    pathPoints.push({x:B.x,y:last.y});
+    pathPoints.push({x:B.x,y:B.y});
+    let routeD=`M ${pathPoints[0].x.toFixed(1)} ${pathPoints[0].y.toFixed(1)}`;
+    for(let i=1;i<pathPoints.length;i++){
+      routeD+=` L ${pathPoints[i].x.toFixed(1)} ${pathPoints[i].y.toFixed(1)}`;
+    }
+    let totalDist=0; const segs=[];
+    for(let i=1;i<pathPoints.length;i++){
+      const dx=pathPoints[i].x-pathPoints[i-1].x;
+      const dy=pathPoints[i].y-pathPoints[i-1].y;
+      const d=Math.hypot(dx,dy);
+      segs.push({p0:pathPoints[i-1],p1:pathPoints[i],d,start:totalDist});
+      totalDist+=d;
+    }
+    const targetDist=totalDist*progress;
+    let vx=A.x, vy=A.y;
+    for(const s of segs){
+      if(targetDist<=s.start+s.d){
+        const t=(targetDist-s.start)/s.d;
+        vx=s.p0.x+(s.p1.x-s.p0.x)*t;
+        vy=s.p0.y+(s.p1.y-s.p0.y)*t;
+        break;
+      }
+    }
+    if(progress>=1){vx=B.x;vy=B.y}
+
+    svg+=`<path d="${routeD}" fill="none" stroke="#ffffff" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>`;
+    svg+=`<path d="${routeD}" fill="none" stroke="#4285F4" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>`;
+    svg+=`<path d="${routeD}" fill="none" stroke="#1967d2" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="3200" stroke-dashoffset="${3200*(1-progress)}"/>`;
+
+    svg+=`<circle cx="${A.x.toFixed(1)}" cy="${A.y.toFixed(1)}" r="11" fill="#0F9D58" opacity="0.28"/>`;
+    svg+=`<circle cx="${A.x.toFixed(1)}" cy="${A.y.toFixed(1)}" r="7" fill="#0F9D58" stroke="#ffffff" stroke-width="2"/>`;
+
+    svg+=`<g transform="translate(${B.x.toFixed(1)},${B.y.toFixed(1)})">
+      <ellipse cx="0" cy="2" rx="7" ry="2.5" fill="rgba(0,0,0,.22)"/>
+      <path d="M 0 -30 C -9 -30 -15 -23 -15 -14 C -15 -5 0 3 0 3 C 0 3 15 -5 15 -14 C 15 -23 9 -30 0 -30 Z" fill="#EA4335" stroke="#ffffff" stroke-width="2.2" stroke-linejoin="round"/>
+      <circle cx="0" cy="-15" r="4.5" fill="#ffffff"/>
+    </g>`;
+
+    svg+=`<g transform="translate(${vx.toFixed(1)},${vy.toFixed(1)})">
+      <circle r="22" fill="rgba(66,133,244,.2)">
+        <animate attributeName="r" values="18;26;18" dur="2s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values=".4;.14;.4" dur="2s" repeatCount="indefinite"/>
+      </circle>
+      <circle r="16" fill="#ffffff" stroke="#c8c5bb" stroke-width="1"/>
+      <circle r="13" fill="#FFD400"/>
+      <text y="5" text-anchor="middle" font-size="14" fill="#0A0A0F">${icon}</text>
+    </g>`;
+  }
+
+  /* ---- MODE: ARRIVING (driver → pickup, with real approach route) ---- */
+  else if(mode==='arriving' && bName){
+    const dest = { x: W*0.5, y: H*0.5 };                       // pickup point
+    const startX = dest.x + W*0.30;                            // driver starts SE of pickup
+    const startY = dest.y + H*0.26;
+    const cx1 = (startX + dest.x)/2 - W*0.04;
+    const cy1 = (startY + dest.y)/2 - H*0.06;
+    const path = `M ${startX.toFixed(1)} ${startY.toFixed(1)} Q ${cx1.toFixed(1)} ${cy1.toFixed(1)} ${dest.x.toFixed(1)} ${dest.y.toFixed(1)}`;
+
+    // Route base (white outline) + blue line
+    svg+=`<path d="${path}" fill="none" stroke="#ffffff" stroke-width="14" stroke-linecap="round"/>`;
+    svg+=`<path d="${path}" fill="none" stroke="#4285F4" stroke-width="9" stroke-linecap="round"/>`;
+    // Travelled portion (darker blue)
+    svg+=`<path d="${path}" fill="none" stroke="#1967d2" stroke-width="9" stroke-linecap="round" stroke-dasharray="1400" stroke-dashoffset="${1400*(1-progress)}"/>`;
+
+    // Driver start dot
+    svg+=`<circle cx="${startX.toFixed(1)}" cy="${startY.toFixed(1)}" r="7" fill="#FF8A00" stroke="#ffffff" stroke-width="2.5"/>`;
+    svg+=`<text x="${startX.toFixed(1)}" y="${(startY+22).toFixed(1)}" font-family="Roboto,Arial" font-size="9.5" font-weight="700" fill="#a35a10" text-anchor="middle" paint-order="stroke" stroke="#ffffff" stroke-width="3" stroke-linejoin="round">Driver start</text>`;
+
+    // Compute marker position along quad bezier
+    const t = progress;
+    const mx = (1-t)*(1-t)*startX + 2*(1-t)*t*cx1 + t*t*dest.x;
+    const my = (1-t)*(1-t)*startY + 2*(1-t)*t*cy1 + t*t*dest.y;
+
+    // Pickup pulse — animated concentric rings
+    svg+=`<circle cx="${dest.x}" cy="${dest.y}" r="26" fill="none" stroke="rgba(15,157,88,.45)" stroke-width="3">
+      <animate attributeName="r" values="14;34;14" dur="2s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values=".9;0;.9" dur="2s" repeatCount="indefinite"/>
+    </circle>`;
+    svg+=`<circle cx="${dest.x}" cy="${dest.y}" r="18" fill="none" stroke="rgba(15,157,88,.4)" stroke-width="3">
+      <animate attributeName="r" values="10;26;10" dur="2s" begin="0.5s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values=".85;0;.85" dur="2s" begin="0.5s" repeatCount="indefinite"/>
+    </circle>`;
+    svg+=`<circle cx="${dest.x}" cy="${dest.y}" r="10" fill="#0F9D58" stroke="#ffffff" stroke-width="3"/>`;
+    svg+=`<text x="${dest.x.toFixed(0)}" y="${(dest.y+34).toFixed(0)}" font-family="Roboto,Arial" font-size="11" font-weight="800" fill="#0f6b3d" text-anchor="middle" paint-order="stroke" stroke="#ffffff" stroke-width="3.5" stroke-linejoin="round">${bName}</text>`;
+
+    // Moving driver marker
+    svg+=`<g transform="translate(${mx.toFixed(1)},${my.toFixed(1)})">
+      <circle r="26" fill="rgba(66,133,244,.25)">
+        <animate attributeName="r" values="22;30;22" dur="2s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values=".55;.2;.55" dur="2s" repeatCount="indefinite"/>
+      </circle>
+      <circle r="18" fill="#ffffff" stroke="#c8c5bb" stroke-width="1"/>
+      <circle r="14" fill="#FFD400"/>
+      <text y="5" text-anchor="middle" font-size="15" fill="#0A0A0F">${icon}</text>
+    </g>`;
+  }
+
+  return svg;
+}
+
+/* ============================================================
+   DRIVER
+   ============================================================ */
+const DRIVER_REQUESTS=[
+  {name:'Anjali Nair',  from:'Connaught Place',  to:'India Gate',      km:2.1, fare:62},
+  {name:'Suresh Kumar', from:'Karol Bagh',       to:'Hauz Khas',       km:14.2,fare:245},
+  {name:'Fathima Khan', from:'Saket',            to:'IGI Airport T3',  km:12.8,fare:218},
+  {name:'Rajesh P.',    from:'Lajpat Nagar',     to:'Noida Sector 62', km:19.4,fare:310},
+  {name:'Deepa Menon',  from:'Chandni Chowk',    to:'Red Fort',        km:2.6, fare:72},
+];
+
+function initDriver(){
+  renderDriverBars('#drv-bars'); renderDriverBars('#drv-bars2');
+  renderDriverTripLog();
+  updateOnlineUI();
+}
+$('#online-switch').addEventListener('click',()=>{
+  state.driverOnline=!state.driverOnline;
+  updateOnlineUI();
+  if(state.driverOnline){ toast('🟢 You are online'); setTimeout(showDriverRequest,1800); }
+  else { toast('⚫ You are offline');
+    $('#drv-req-list').innerHTML=`<div class="empty"><span class="e">📡</span><p>You're offline.</p></div>`;
+  }
+});
+function updateOnlineUI(){
+  const card=$('#online-card'), sw=$('#online-switch');
+  if(state.driverOnline){
+    card.classList.remove('off'); sw.classList.add('on');
+    $('#online-title').textContent="You're online";
+    $('#online-sub').textContent='Receiving requests in Delhi NCR';
+  } else {
+    card.classList.add('off'); sw.classList.remove('on');
+    $('#online-title').textContent="You're offline";
+    $('#online-sub').textContent='Go online to start receiving requests';
+  }
+}
+function showDriverRequest(){
+  if(!state.driverOnline)return;
+  const r=DRIVER_REQUESTS[Math.floor(Math.random()*DRIVER_REQUESTS.length)];
+  const wrap=$('#drv-req-list');
+  let secs=30;
+  wrap.innerHTML=`<div class="req-card">
+    <div class="req-head">
+      <div class="fare">${money(r.fare)}<small>Fixed fare</small></div>
+      <div class="timer" id="req-timer">30</div>
+    </div>
+    <div class="req-route">
+      <div>🟢 <b>${r.from}</b></div>
+      <div style="margin-left:14px;color:var(--violet-light)">↓ ${r.km} km</div>
+      <div>🔴 <b>${r.to}</b></div>
+      <div style="margin-top:8px;font-size:11px">👤 ${r.name}</div>
+    </div>
+    <div class="req-actions">
+      <button class="btn btn-ghost sm" id="req-reject">Reject</button>
+      <button class="btn btn-primary sm" id="req-accept">Accept</button>
+    </div></div>`;
+  $('#req-accept').onclick=()=>{clearInterval(state.timers.req);acceptRequest(r)};
+  $('#req-reject').onclick=()=>{
+    clearInterval(state.timers.req);
+    wrap.innerHTML=`<div class="empty"><span class="e">🔍</span><p>Declined. Waiting…</p></div>`;
+    setTimeout(showDriverRequest,3500);
+  };
+  clearInterval(state.timers.req);
+  state.timers.req=setInterval(()=>{
+    secs--; const el=$('#req-timer'); if(el) el.textContent=secs;
+    if(secs<=0){
+      clearInterval(state.timers.req);
+      wrap.innerHTML=`<div class="empty"><span class="e">⌛</span><p>Expired. Waiting…</p></div>`;
+      setTimeout(showDriverRequest,2500);
+    }
+  },1000);
+}
+function acceptRequest(r){
+  $('#drv-cust-name').textContent=r.name;
+  $('#drv-trip-cust').textContent=r.name;
+  state.currentTrip={r, earn:Math.round(r.fare*0.97)};
+  goPane('drv-approach');
+  startDriverApproach(r);
+  toast(`✅ Accepted — head to ${r.from}`);
+}
+function startDriverApproach(r){
+  const totalKm=1.5+Math.random()*1.5;
+  const totalMin=Math.max(3, Math.round(totalKm/22*60));
+  const DURATION_MS=14000;
+  $('#drv-approach-sub').innerHTML=`Heading to <b>${r.from}</b>`;
+  const svg=document.getElementById('drv-approach-map');
+  const start=performance.now();
+  clearInterval(state.timers.dappr);
+  state.timers.dappr=setInterval(()=>{
+    const p=Math.min(1,(performance.now()-start)/DURATION_MS);
+    const kmLeft=totalKm*(1-p), minLeft=totalMin*(1-p);
+    $('#drv-appr-dist').innerHTML=kmLeft<1?`${Math.round(kmLeft*1000)} <small>m</small>`:`${kmLeft.toFixed(1)} <small>km</small>`;
+    $('#drv-appr-time').innerHTML=minLeft<1?`${Math.round(minLeft*60)} <small>sec</small>`:`${Math.floor(minLeft)} <small>min</small>`;
+    $('#drv-appr-fill').style.width=(p*100)+'%';
+    $('#drv-approach-eta').textContent=Math.ceil(minLeft);
+    svg.innerHTML=buildDelhiMap({
+      W:720,H:480, seed:hashStr(r.from+'approach'+r.name),
+      aName:null, bName:r.from,
+      progress:p, icon:'🛺', mode:'arriving'
+    });
+    if(p>=1){
+      clearInterval(state.timers.dappr);
+      $('#drv-approach-eta').textContent='0';
+      toast('🎉 You have arrived');
+    }
+  },90);
+}
+$('#btn-arrived').addEventListener('click',()=>{
+  clearInterval(state.timers.dappr);
+  const r=state.currentTrip.r;
+  $('#drv-prog-from').textContent=r.from;
+  $('#drv-prog-to').textContent=r.to;
+  $('#drv-trip-fare').textContent=money(r.fare);
+  $('#drv-trip-fee').textContent='−'+money(r.fare-Math.round(r.fare*0.97));
+  $('#drv-trip-earn').textContent=money(Math.round(r.fare*0.97));
+  goPane('drv-trip');
+  startDriverTripAnimation(r);
+});
+
+function startDriverTripAnimation(r){
+  const svg=document.getElementById('drv-map');
+  const totalKm=r.km;
+  const totalMin=Math.max(4,Math.round(r.km/22*60));
+  const DURATION_MS=22000;
+  const seed=hashStr(r.from+r.to+r.name);
+  const start=performance.now();
+  clearInterval(state.timers.dtrip);
+  state.timers.dtrip=setInterval(()=>{
+    const p=Math.min(1,(performance.now()-start)/DURATION_MS);
+    const kmLeft=totalKm*(1-p), minLeft=totalMin*(1-p);
+    $('#drv-prog-dist').innerHTML=kmLeft<1?`${Math.round(kmLeft*1000)} <small>m</small>`:`${kmLeft.toFixed(1)} <small>km</small>`;
+    $('#drv-prog-time').innerHTML=minLeft<1?`${Math.round(minLeft*60)} <small>sec</small>`:`${Math.floor(minLeft)} <small>min</small>`;
+    $('#drv-prog-fill').style.width=(p*100)+'%';
+    $('#drv-prog-pct').textContent=Math.round(p*100)+'%';
+    svg.innerHTML=buildDelhiMap({
+      W:720,H:480, seed,
+      aName:r.from, bName:r.to,
+      progress:p, icon:'🛺', mode:'trip'
+    });
+    if(p>=1){clearInterval(state.timers.dtrip);toast('🏁 Trip done — show QR to rider')}
+  },90);
+}
+$('#btn-complete-trip').addEventListener('click',()=>{
+  clearInterval(state.timers.dtrip);
+  if(!state.currentTrip)return;
+  const t=state.currentTrip;
+  const f=t.r.fare;
+  $('#drv-qr-amt').textContent=money(f);
+  $('#drv-qr-total').textContent=money(f);
+  $('#drv-qr-rider').textContent=t.r.name;
+  drawDriverQR(hashStr(t.r.name+f));
+  goPane('drv-qr');
+  toast('💳 Show this QR to your rider');
+});
+function drawDriverQR(seed){
+  const svg=$('#drv-qr-svg');
+  const size=25, cell=200/size;
+  const rng=makeRng(seed);
+  let out='';
+  for(let y=0;y<size;y++){
+    for(let x=0;x<size;x++){
+      const isFinder=(x<7&&y<7)||(x>=size-7&&y<7)||(x<7&&y>=size-7);
+      if(isFinder) continue;
+      if(rng()<0.48){
+        out+=`<rect x="${x*cell}" y="${y*cell}" width="${cell}" height="${cell}" fill="#0A0A0F"/>`;
+      }
+    }
+  }
+  const fp=(x,y)=>`
+    <rect x="${x*cell}" y="${y*cell}" width="${7*cell}" height="${7*cell}" fill="#0A0A0F"/>
+    <rect x="${(x+1)*cell}" y="${(y+1)*cell}" width="${5*cell}" height="${5*cell}" fill="#ffffff"/>
+    <rect x="${(x+2)*cell}" y="${(y+2)*cell}" width="${3*cell}" height="${3*cell}" fill="#0A0A0F"/>`;
+  out+=fp(0,0)+fp(size-7,0)+fp(0,size-7);
+  svg.innerHTML=out;
+}
+$('#btn-qr-paid').addEventListener('click',()=>{
+  if(!state.currentTrip)return;
+  const t=state.currentTrip;
+  state.driverEarnings+=t.earn;
+  state.driverTrips+=1;
+  state.tripLog.unshift({from:t.r.from,to:t.r.to,earn:t.earn,km:t.r.km});
+  $('#drv-earn').textContent=money(state.driverEarnings);
+  $('#drv-trips').textContent=state.driverTrips;
+  $('#earn-today').textContent=money(state.driverEarnings);
+  renderDriverTripLog();
+  state.currentTrip=null;
+  goPane('drv-home');
+  toast(`💰 You earned ${money(t.earn)}`);
+  if(state.driverOnline)setTimeout(showDriverRequest,4000);
+});
+function renderDriverTripLog(){
+  const wrap=$('#drv-trip-log');
+  if(!state.tripLog.length){
+    wrap.innerHTML=`<div class="empty"><span class="e">🧾</span><p>No trips completed yet today.</p></div>`;
+    return;
+  }
+  wrap.innerHTML=state.tripLog.map(t=>`
+    <div class="ride-card">
+      <div class="rc-top"><div class="rc-id">Trip</div><div class="rc-status">Completed</div></div>
+      <div class="rc-route">${t.from} → ${t.to}</div>
+      <div class="rc-meta"><span>📏 ${t.km} km</span></div>
+      <div class="rc-bottom"><div class="rc-fare">${money(t.earn)}</div></div>
+    </div>
+  `).join('');
+}
+function renderDriverBars(sel){
+  const wrap=$(sel); if(!wrap)return;
+  const data=[480,620,540,780,890,1020,740];
+  const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const max=Math.max(...data);
+  wrap.innerHTML=data.map((v,i)=>`
+    <div class="bar-col">
+      <div class="vl">₹${(v/1000).toFixed(1)}k</div>
+      <div class="b ${i===6?'y':''}" style="height:${(v/max)*100}%"></div>
+      <div class="lb">${days[i]}</div>
+    </div>`).join('');
+}
+
+/* ============================================================
+   ADMIN
+   ============================================================ */
+function initAdmin(){
+  document.getElementById('ad-preview-map').innerHTML=buildDelhiMap({
+    W:720,H:480, seed:hashStr('preview'), aName:null, bName:null,
+    progress:0, icon:'🛺', mode:'none'
+  });
+  document.getElementById('ad-fleet-map').innerHTML=buildAdminFleetMap();
+  initAdminFleet();
+  initAdminBuses();
+  initAdminParcels();
+  renderAdminBars();
+  renderAdminDrivers();
+  renderAdminFeedback();
+  renderAdminFleetTable();
+  if(state.timers.admVehicles) clearInterval(state.timers.admVehicles);
+  state.timers.admVehicles=setInterval(()=>{
+    animateAdminFleet();
+    animateAdminBuses();
+    animateAdminParcels();
+    renderAdminFleetTable();
+  },1200);
+  if(state.timers.adm) clearInterval(state.timers.adm);
+  state.timers.adm=setInterval(()=>{
+    const r=342+Math.floor(Math.random()*20-10);
+    $('#ad-rides').textContent=r;
+  },4000);
+}
+$$('#admin-tabs .atab').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    $$('#admin-tabs .atab').forEach(b=>b.classList.remove('on'));
+    btn.classList.add('on');
+    $$('.apane').forEach(p=>p.classList.remove('active'));
+    document.getElementById(btn.dataset.apane).classList.add('active');
+    window.scrollTo({top:0,behavior:'smooth'});
+  });
+});
+function buildAdminFleetMap(){
+  return buildDelhiMap({
+    W:1200,H:700, seed:hashStr('admin-delhi'),
+    aName:null, bName:null, progress:0, icon:'🛺', mode:'none'
+  }) + `<g id="ad-bike-layer"></g><g id="ad-scooter-layer"></g><g id="ad-auto-layer"></g><g id="ad-cab-layer"></g><g id="ad-bus-routes"></g><g id="ad-bus-layer"></g><g id="ad-parcel-layer"></g>`;
+}
+function renderAdminBars(){
+  const data=[480,620,540,780,890,1020,740];
+  const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const max=Math.max(...data);
+  $('#ad-bars').innerHTML=data.map((v,i)=>`
+    <div class="bar-col">
+      <div class="vl">₹${(v/1000).toFixed(1)}k</div>
+      <div class="b ${i===6?'y':''}" style="height:${(v/max)*100}%"></div>
+      <div class="lb">${days[i]}</div>
+    </div>`).join('');
+}
+function initAdminFleet(){
+  state.adminVehicles=[];
+  const dist=[
+    {type:'bike',   count:12, color:'#FF8A00', icon:'🏍️'},
+    {type:'scooter',count:8,  color:'#A78BFA', icon:'🛵'},
+    {type:'auto',   count:10, color:'#FFD400', icon:'🛺'},
+    {type:'cab',    count:6,  color:'#4285F4', icon:'🚗'},
+  ];
+  dist.forEach(k=>{
+    for(let i=0;i<k.count;i++){
+      state.adminVehicles.push({
+        type:k.type, color:k.color, icon:k.icon,
+        x: 250+Math.random()*700,
+        y: 120+Math.random()*460,
+        dx:(Math.random()-0.5)*1.4,
+        dy:(Math.random()-0.5)*0.9,
+        status: Math.random()<0.6 ? 'idle' : 'on-trip'
+      });
+    }
+  });
+  paintAdminFleet();
+}
+function paintAdminFleet(){
+  const layers={
+    bike:    document.getElementById('ad-bike-layer'),
+    scooter: document.getElementById('ad-scooter-layer'),
+    auto:    document.getElementById('ad-auto-layer'),
+    cab:     document.getElementById('ad-cab-layer'),
+  };
+  if(!layers.bike) return;
+  Object.values(layers).forEach(l=>{if(l) l.innerHTML=''});
+  state.adminVehicles.forEach(v=>{
+    const layer=layers[v.type];
+    if(!layer) return;
+    const r = v.type==='cab' ? 12 : 10;
+    const halo = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    halo.setAttribute('cx', v.x.toFixed(1)); halo.setAttribute('cy', v.y.toFixed(1));
+    halo.setAttribute('r', (r*1.6).toFixed(1)); halo.setAttribute('fill', v.color);
+    halo.setAttribute('opacity','0.20'); layer.appendChild(halo);
+    const ring = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    ring.setAttribute('cx', v.x.toFixed(1)); ring.setAttribute('cy', v.y.toFixed(1));
+    ring.setAttribute('r', (r*0.85).toFixed(1)); ring.setAttribute('fill','#ffffff');
+    ring.setAttribute('stroke','#c8c5bb'); ring.setAttribute('stroke-width','0.8');
+    layer.appendChild(ring);
+    const dot = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    dot.setAttribute('cx', v.x.toFixed(1)); dot.setAttribute('cy', v.y.toFixed(1));
+    dot.setAttribute('r', (r*0.65).toFixed(1)); dot.setAttribute('fill', v.color);
+    layer.appendChild(dot);
+    const txt = document.createElementNS('http://www.w3.org/2000/svg','text');
+    txt.setAttribute('x', v.x.toFixed(1)); txt.setAttribute('y', (v.y+2.5).toFixed(1));
+    txt.setAttribute('text-anchor','middle'); txt.setAttribute('font-size','9');
+    txt.setAttribute('fill','#fff'); txt.textContent = v.icon;
+    layer.appendChild(txt);
+  });
+}
+function animateAdminFleet(){
+  state.adminVehicles.forEach(v=>{
+    v.x+=v.dx; v.y+=v.dy;
+    if(v.x<200||v.x>1050) v.dx*=-1;
+    if(v.y<100||v.y>600) v.dy*=-1;
+    if(Math.random()<0.02){ v.dx=(Math.random()-.5)*1.4; v.dy=(Math.random()-.5)*0.9 }
+    if(Math.random()<0.01) v.status = v.status==='idle'?'on-trip':'idle';
+  });
+  paintAdminFleet();
+}
+function renderAdminFleetTable(){
+  const counts={
+    bike:{active:0,idle:0,trip:0}, scooter:{active:0,idle:0,trip:0},
+    auto:{active:0,idle:0,trip:0}, cab:{active:0,idle:0,trip:0},
+  };
+  state.adminVehicles.forEach(v=>{
+    counts[v.type].active++;
+    if(v.status==='idle') counts[v.type].idle++;
+    else counts[v.type].trip++;
+  });
+  const rows=[
+    {type:'Bike', icon:'🏍️', key:'bike', color:'#FF8A00'},
+    {type:'Scooter', icon:'🛵', key:'scooter', color:'#A78BFA'},
+    {type:'Auto Rickshaw', icon:'🛺', key:'auto', color:'#FFD400'},
+    {type:'Cab Mini', icon:'🚗', key:'cab', color:'#4285F4'},
+    {type:'DTC Bus', icon:'🚌', key:'bus', color:'#0F9D58'},
+    {type:'Parcel Couriers', icon:'📦', key:'parcel', color:'#C77B4A'},
+  ];
+  const body=$('#ad-fleet-body');
+  if(!body) return;
+  body.innerHTML = rows.map(r=>{
+    let active, idle, trip;
+    if(r.key==='bus'){ active = state.adminBuses.length; trip = active; idle = 0; }
+    else if(r.key==='parcel'){ active = state.adminParcels.length; trip = active; idle = 0; }
+    else { active = counts[r.key].active; idle = counts[r.key].idle; trip = counts[r.key].trip; }
+    const statusClass = active>0?'ok':'bad';
+    const statusText = active>0?'Live':'Idle';
+    return `<tr>
+      <td><span style="display:inline-block;width:10px;height:10px;border-radius:50%;
+        background:${r.color};margin-right:8px;vertical-align:middle"></span>
+        <b>${r.icon} ${r.type}</b></td>
+      <td><b style="color:#6EE7A0">${active}</b></td>
+      <td>${idle}</td>
+      <td>${trip}</td>
+      <td><span class="badge-s ${statusClass}">${statusText}</span></td>
+    </tr>`;
+  }).join('');
+}
+function initAdminBuses(){
+  const routes=[
+    ['Connaught Place','India Gate'],['Karol Bagh','Rohini West'],
+    ['Hauz Khas','Saket'],['Lajpat Nagar','Noida Sector 62'],
+    ['Chandni Chowk','Red Fort'],['Dwarka Sector 21','IGI Airport T3'],
+    ['Pitampura','Red Fort'],['AIIMS','Lotus Temple'],
+    ['New Delhi Railway Stn','Karol Bagh'],['Gurugram Cyber City','Dilli Haat INA'],
+  ];
+  const B={minLat:28.35,maxLat:28.85,minLng:76.85,maxLng:77.55};
+  const proj=(lat,lng)=>({
+    x:(lng-B.minLng)/(B.maxLng-B.minLng)*1200,
+    y:(B.maxLat-lat)/(B.maxLat-B.minLat)*700
+  });
+  state.adminBuses = routes.map(r=>{
+    const a=placeByName(r[0]), b=placeByName(r[1]);
+    return {
+      route:r, A:proj(a.lat,a.lng), B:proj(b.lat,b.lng),
+      t: Math.random(), speed: 0.002 + Math.random()*0.0015,
+      dir: 1, plate: 'DL 1P' + (1000+Math.floor(Math.random()*8999)),
+    };
+  });
+  const lineLayer = document.getElementById('ad-bus-routes');
+  if(lineLayer){
+    lineLayer.innerHTML = state.adminBuses.map(b=>{
+      const cx=(b.A.x+b.B.x)/2+((hashStr(b.route[0]+b.route[1])%60)-30);
+      const cy=(b.A.y+b.B.y)/2+((hashStr(b.route[1]+b.route[0])%60)-30);
+      return `<path d="M ${b.A.x.toFixed(1)} ${b.A.y.toFixed(1)} Q ${cx.toFixed(1)} ${cy.toFixed(1)} ${b.B.x.toFixed(1)} ${b.B.y.toFixed(1)}"
+        fill="none" stroke="#0F9D58" stroke-width="3" stroke-dasharray="8 8" opacity="0.4"/>`;
+    }).join('');
+  }
+  paintAdminBuses();
+}
+function paintAdminBuses(){
+  const layer=document.getElementById('ad-bus-layer');
+  if(!layer) return;
+  layer.innerHTML='';
+  state.adminBuses.forEach(b=>{
+    const t=b.t;
+    const cx=(b.A.x+b.B.x)/2+((hashStr(b.route[0]+b.route[1])%60)-30);
+    const cy=(b.A.y+b.B.y)/2+((hashStr(b.route[1]+b.route[0])%60)-30);
+    const x=(1-t)*(1-t)*b.A.x + 2*(1-t)*t*cx + t*t*b.B.x;
+    const y=(1-t)*(1-t)*b.A.y + 2*(1-t)*t*cy + t*t*b.B.y;
+    layer.innerHTML += `
+      <circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="18" fill="#0F9D58" opacity=".22"/>
+      <circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="12" fill="#ffffff" stroke="#0a7a44" stroke-width="1.2"/>
+      <circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="9" fill="#0F9D58"/>
+      <text x="${x.toFixed(1)}" y="${(y+3).toFixed(1)}" text-anchor="middle" font-size="10">🚌</text>
+      <text x="${x.toFixed(1)}" y="${(y-15).toFixed(1)}" text-anchor="middle" font-size="8"
+        font-weight="700" fill="#0a5c38" paint-order="stroke" stroke="#fff" stroke-width="2.5">${b.route[0].slice(0,8)}</text>
+    `;
+  });
+}
+function animateAdminBuses(){
+  state.adminBuses.forEach(b=>{
+    b.t += b.speed * b.dir;
+    if(b.t>1){ b.t=1; b.dir=-1; }
+    if(b.t<0){ b.t=0; b.dir=1; }
+  });
+  paintAdminBuses();
+}
+function initAdminParcels(){
+  state.adminParcels=[];
+  for(let i=0;i<6;i++){
+    state.adminParcels.push({
+      x: 300+Math.random()*600, y: 150+Math.random()*400,
+      dx:(Math.random()-0.5)*1.1, dy:(Math.random()-0.5)*0.75,
+      id:'PKG'+Math.floor(1000+Math.random()*8999)
+    });
+  }
+  paintAdminParcels();
+}
+function paintAdminParcels(){
+  const layer=document.getElementById('ad-parcel-layer');
+  if(!layer) return;
+  layer.innerHTML = state.adminParcels.map(p=>`
+    <circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="14" fill="#C77B4A" opacity=".22"/>
+    <circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="10" fill="#ffffff" stroke="#8a5a35"/>
+    <circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="7.5" fill="#C77B4A"/>
+    <text x="${p.x.toFixed(1)}" y="${(p.y+3).toFixed(1)}" text-anchor="middle" font-size="8">📦</text>
+  `).join('');
+}
+function animateAdminParcels(){
+  state.adminParcels.forEach(p=>{
+    p.x+=p.dx; p.y+=p.dy;
+    if(p.x<200||p.x>1050) p.dx*=-1;
+    if(p.y<100||p.y>600) p.dy*=-1;
+    if(Math.random()<0.03){ p.dx=(Math.random()-.5)*1.1; p.dy=(Math.random()-.5)*0.75 }
+  });
+  paintAdminParcels();
+}
+
+const ADMIN_DRIVERS=[
+  ['Ramesh Yadav','Auto','DL 1R AB 1234',['Hindi','English'],8,4.9,2450,'ok','Active'],
+  ['Suresh Kumar','Bike','DL 2S CD 7781',['Hindi','Punjabi'],6,4.8,1890,'ok','Active'],
+  ['Anil Sharma','Cab','DL 3C EF 2210',['Hindi','English','Urdu'],12,4.9,3820,'ok','Active'],
+  ['Sanjay Singh','Scooter','DL 5S JK 5567',['Hindi','English','Punjabi'],3,5.0,410,'ok','Active'],
+  ['Krishna Murthy','Auto','DL 6R KL 3341',['Hindi','English'],15,4.8,5100,'ok','Active'],
+  ['Vinod Chauhan','Bike','DL 7S MN 8890',['Hindi','Punjabi'],7,4.6,1980,'pend','KYC Pending'],
+  ['Rajesh Verma','Cab','DL 8C PQ 1123',['Hindi','English','Urdu'],9,4.9,2720,'ok','Active'],
+  ['Deepak Joshi','Scooter','DL 4S GH 9032',['Hindi','English'],5,4.8,1240,'ok','Active'],
+  ['Arun Mehta','Bike','DL 9S RS 4455',['Hindi','English'],4,4.7,890,'ok','Active'],
+  ['Prakash Rao','Auto','DL 10R TU 6677',['Hindi','English','Tamil'],11,4.9,3210,'ok','Active'],
+];
+function renderAdminDrivers(){
+  const body=$('#ad-drivers-body');
+  body.innerHTML=ADMIN_DRIVERS.map(d=>`
+    <tr>
+      <td><b>${d[0]}</b></td>
+      <td>${d[1]}</td>
+      <td style="font-family:ui-monospace,monospace;font-size:11px">${d[2]}</td>
+      <td style="font-size:11px">${d[3].join(', ')}</td>
+      <td>${d[4]} yrs</td>
+      <td>⭐ ${d[5]}</td>
+      <td>${d[6].toLocaleString('en-IN')}</td>
+      <td><span class="badge-s ${d[7]}">${d[8]}</span></td>
+    </tr>`).join('');
+}
+function renderAdminFeedback(){
+  const wrap=$('#ad-feedback-body');
+  const allFeedback=[
+    {id:'#RYDEX2341', rating:4, cats:['Late arrival'], text:'Driver came 8 minutes late but was polite.', driver:'Ramesh Yadav', who:'Anjali N.', time:'12 min ago', status:'open'},
+    {id:'#RYDEX2338', rating:2, cats:['Overcharge','Rude behaviour'], text:'Asked for extra ₹30 above app fare.', driver:'Vinod Chauhan', who:'Karan M.', time:'1 hr ago', status:'open'},
+    {id:'#RYDEX2334', rating:5, cats:[], text:'Excellent service. Very clean auto.', driver:'Anil Sharma', who:'Priya S.', time:'2 hr ago', status:'resolved'},
+    {id:'#RYDEX2331', rating:3, cats:['Wrong route'], text:'Took a longer route than usual.', driver:'Suresh Kumar', who:'Vikram J.', time:'5 hr ago', status:'open'},
+  ];
+  const openCount=allFeedback.filter(f=>f.status==='open').length;
+  $('#fb-inbox-count').textContent=openCount+' open';
+  wrap.innerHTML=allFeedback.map(f=>`
+    <div class="fb-item">
+      <div class="fi-top">
+        <div class="fi-avatar">🧍</div>
+        <div class="fi-who">
+          <h4>${f.who} · <span style="color:var(--muted);font-weight:600">${f.id}</span></h4>
+          <p>Driver: ${f.driver} · ${f.time}</p>
+        </div>
+        <div class="fi-stars">${'★'.repeat(f.rating)}${'☆'.repeat(5-f.rating)}</div>
+      </div>
+      ${f.cats.length?`<div class="fi-cats">${f.cats.map(c=>`<span>${c}</span>`).join('')}</div>`:''}
+      ${f.text?`<div class="fi-body">"${f.text}"</div>`:''}
+      <div class="fi-actions">
+        <button class="mini-btn" onclick="toast('📞 Calling ${f.who}…')">📞 Call rider</button>
+        <button class="mini-btn" onclick="toast('💬 Message sent to ${f.driver}')">💬 Message driver</button>
+        ${f.status==='open'?`<button class="mini-btn" onclick="toast('✅ Resolved')">✓ Resolve</button>`:`<span class="badge-s ok">Resolved</span>`}
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ============================================================
+   CALL
+   ============================================================ */
+let callTimer=null, callSeconds=0;
+function openCallModal(){
+  const d=state.booking?.driver||DRIVER_POOL[0];
+  $('#call-avatar').textContent=d.ic||'🧑‍✈️';
+  $('#call-name').textContent=d.n||'Driver';
+  $('#call-phone').textContent=d.phone||'+91 98110 11111';
+  $('#call-status').textContent='Calling…';
+  $('#call-timer').textContent='00:00';
+  callSeconds=0;
+  $('#call-modal').classList.add('show');
+  clearInterval(callTimer);
+  callTimer=setInterval(()=>{
+    callSeconds++;
+    const m=String(Math.floor(callSeconds/60)).padStart(2,'0');
+    const s=String(callSeconds%60).padStart(2,'0');
+    $('#call-timer').textContent=`${m}:${s}`;
+    if(callSeconds===2)$('#call-status').textContent='Ringing…';
+    if(callSeconds===4)$('#call-status').textContent='Connected';
+  },1000);
+}
+function endCall(){clearInterval(callTimer);$('#call-modal').classList.remove('show');toast('📞 Call ended')}
+$('#call-end').addEventListener('click',endCall);
+$('#call-mute').addEventListener('click',(e)=>{
+  e.currentTarget.classList.toggle('on');
+  toast(e.currentTarget.classList.contains('on')?'🔇 Muted':'🎤 Unmuted');
+});
+$('#call-speaker').addEventListener('click',(e)=>{
+  e.currentTarget.classList.toggle('on');
+  toast(e.currentTarget.classList.contains('on')?'🔊 Speaker on':'🔈 Speaker off');
+});
+$('#btn-arrive-call').addEventListener('click',openCallModal);
+
+/* ============================================================
+   INIT
+   ============================================================ */
+bindTabs('#cust-tabs');
+bindTabs('#drv-tabs');
+state.distance=routeInfo().km;
+state.duration=tripDuration(state.vehicle);
+updateRoute();
+$('#prof-sched').textContent='0';
+</script>
+</body>
+</html>
